@@ -1,0 +1,47 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": [
+      "es2017"
+    ] /* Specify library files to be included in the compilation. */,
+    "baseUrl": "./src/" /* Base directory to resolve non-absolute module names. */,
+    "paths": {
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@app-core/*": [
+        "app-core/*"
+      ],
+      "@locales/*": [
+        "locales/*"
+      ],
+      "@navigation/*": [
+        "navigation/*"
+      ],
+      "@screens/*": [
+        "screens/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@constants/*": [
+        "constants/*"
+      ],
+      "@views/*": [
+        "views/*"
+      ]
+    } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
+    "types": [
+      "react-native",
+      "jest"
+    ],
+    "useDefineForClassFields": true
+  }
+}

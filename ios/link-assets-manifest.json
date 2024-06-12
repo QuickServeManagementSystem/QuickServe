@@ -1,0 +1,133 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Exo-Black.ttf",
+      "sha1": "9ed7708ef600878451e5cf2777354dab71dbd232"
+    },
+    {
+      "path": "src/assets/fonts/Exo-BlackItalic.ttf",
+      "sha1": "c37a82fc4b28e420427a0f7160ff74e2f3a761ce"
+    },
+    {
+      "path": "src/assets/fonts/Exo-Bold.ttf",
+      "sha1": "2932f103f71aa487781f1f7bce8edbab22e72356"
+    },
+    {
+      "path": "src/assets/fonts/Exo-BoldItalic.ttf",
+      "sha1": "b7dfad900a93da1478941341f2ff0ef35ea0e054"
+    },
+    {
+      "path": "src/assets/fonts/Exo-ExtraBold.ttf",
+      "sha1": "dbff895e12c87fcdcf2de2a08fe4498dbe3cd810"
+    },
+    {
+      "path": "src/assets/fonts/Exo-ExtraBoldItalic.ttf",
+      "sha1": "7a15f8968d43af80a7df1a2ac8f6a4a471d55185"
+    },
+    {
+      "path": "src/assets/fonts/Exo-ExtraLight.ttf",
+      "sha1": "68dac37f08f40a91d9398b6751b7b9d408fd55a3"
+    },
+    {
+      "path": "src/assets/fonts/Exo-ExtraLightItalic.ttf",
+      "sha1": "e26793d25d25eaee489c4824c4eb2d5878c930d2"
+    },
+    {
+      "path": "src/assets/fonts/Exo-Italic.ttf",
+      "sha1": "45cdf98a0cfc976f83bc887eedae13468d9980c4"
+    },
+    {
+      "path": "src/assets/fonts/Exo-Light.ttf",
+      "sha1": "6308cb8b208e4ce05a55505766dbede57f9b8c51"
+    },
+    {
+      "path": "src/assets/fonts/Exo-LightItalic.ttf",
+      "sha1": "203f4ba117153b57c3bfdfd702e4abd562e5e50f"
+    },
+    {
+      "path": "src/assets/fonts/Exo-Medium.ttf",
+      "sha1": "228f0c0ebcfa19d09a8112ac67c90ac0c53b088d"
+    },
+    {
+      "path": "src/assets/fonts/Exo-MediumItalic.ttf",
+      "sha1": "73e7b5b75349a58ec94bb3e974c542c34ef90100"
+    },
+    {
+      "path": "src/assets/fonts/Exo-Regular.ttf",
+      "sha1": "ff00e7e9a9b31ef087a9761ebe5371c910d9ab8b"
+    },
+    {
+      "path": "src/assets/fonts/Exo-SemiBold.ttf",
+      "sha1": "fba393bc6eee7658c3d763d3b49968addc93dfd8"
+    },
+    {
+      "path": "src/assets/fonts/Exo-SemiBoldItalic.ttf",
+      "sha1": "7ba4814eaa8c69ecc0ab1d4b4f58309f7ed0d625"
+    },
+    {
+      "path": "src/assets/fonts/Exo-Thin.ttf",
+      "sha1": "373297acea20b9955d6cf6b1a5ed29f12a6f1954"
+    },
+    {
+      "path": "src/assets/fonts/Exo-ThinItalic.ttf",
+      "sha1": "32012f10b281b0018e8974cf3ecd9a1380b3ddf5"
+    },
+    {
+      "path": "src/assets/icons/ic_angle_right.svg",
+      "sha1": "3f36c4e2b29fefe1d6b220b22949ec4e079dc3a9"
+    },
+    {
+      "path": "src/assets/icons/ic_arrow_left.svg",
+      "sha1": "11658a235f2712c18f301beb467b79247cb921c0"
+    },
+    {
+      "path": "src/assets/icons/ic_arrow_right.svg",
+      "sha1": "8f62b3951b25bc93b94249d391e8a8fdd90dd204"
+    },
+    {
+      "path": "src/assets/icons/ic_error_circle.svg",
+      "sha1": "a91d97090363d1fe38b12861288ae64fc343701d"
+    },
+    {
+      "path": "src/assets/icons/ic_eye_close.svg",
+      "sha1": "50394ca96c2c93096a3bffd049e075a0b918c91f"
+    },
+    {
+      "path": "src/assets/icons/ic_eye_open.svg",
+      "sha1": "ae6e6c9a9639089762283a50fe81d1c163120890"
+    },
+    {
+      "path": "src/assets/icons/ic_gear.svg",
+      "sha1": "5581fb1db7f909474ac83841688f420cc7545668"
+    },
+    {
+      "path": "src/assets/icons/ic_icon_logo.svg",
+      "sha1": "52b6b565e90ca882581ad03dab96aadf004f9e31"
+    },
+    {
+      "path": "src/assets/icons/ic_list_card.svg",
+      "sha1": "dfc12b6dce8eb5b654229566c0ad90c6983e5529"
+    },
+    {
+      "path": "src/assets/icons/ic_logout.svg",
+      "sha1": "364dd490dac9825ede2c9c19259720308ad11175"
+    },
+    {
+      "path": "src/assets/icons/ic_selection.svg",
+      "sha1": "3fdb048405d960cb97124738d5c7167746d4da2e"
+    },
+    {
+      "path": "src/assets/icons/ic_square.svg",
+      "sha1": "48cb5da63b210ace055ba8506c5bc15bcfbce33a"
+    },
+    {
+      "path": "src/assets/icons/ic_walter.svg",
+      "sha1": "42a256a933e0018df4f311ccf30a5ab70c0d4fc9"
+    },
+    {
+      "path": "src/assets/icons/ic_warning_circle.svg",
+      "sha1": "655e3194738ce5d8dbefdfb50eda64bdbfcc4c9a"
+    }
+  ]
+}

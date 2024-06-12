@@ -1,0 +1,93 @@
+#!/bin/bash
+export CLEAN_HARD=0
+export KEEP_ENVIRONMENT=0
+#
+# Parse options
+while (( "$#" )); do
+  case "$1" in
+    --hard)
+      CLEAN_HARD=1
+      shift
+      ;;
+    --keep-env)
+      KEEP_ENVIRONMENT=1
+      shift
+      ;;
+    --*)
+      echo "Option: $1"
+      shift 2
+      ;;
+    *)
+      echo "Invalid option: $1" 1>&2
+      exit 1
+      ;;
+  esac
+done
+# Task 5: hard clean: remove .lock file if it exists that trigger by --hard flag as boolean
+if [ "$CLEAN_HARD" = "1" ]; then
+  echo "Running hard clean..."
+  rm package-lock.json
+  rm yarn.lock
+  rm ios/Podfile.lock
+  # remove gem lock
+  rm Gemfile.lock
+else
+  echo "Skipping hard clean as it is only required for --hard flag."
+fi
+
+# Task 3: clean android
+echo "Running clean android..."
+cd android && ./gradlew clean
+cd ..
+
+# Task: remove android .gradle
+echo "Running remove android .gradle..."
+rm -rf android/.gradle
+echo "Task 6 completed."
+
+# Task 4: clean android build folder
+echo "Running clean android build folder..."
+rm -rf android/app/build
+rm -rf android/build
+rm -rf build
+# rm -rf android/app/src/main/assets/fonts
+echo "Task 5 completed."
+
+# Task 2: run pod deintegrate for react-native
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Running pod deintegrate..."
+  cd ios && rm -rf Pods && cd ..
+  rm -rf ios/build
+  echo "Task 2 completed."
+else
+  echo "Skipping pod deintegrate as it is only required for macOS."
+fi
+
+# Task 1: run remove node_modules folder
+echo "Running remove node_modules folder..."
+rm -rf node_modules
+rm -rf $TMPDIR/react-*
+
+if [ "$KEEP_ENVIRONMENT" = "0" ]; then
+  echo "Running remove bundle vendor..."
+  rm -rf vendor
+else
+  echo "Skipping remove bundle as it is only required for --keep-env flag."
+fi
+
+# Task: clean jest cache
+echo "Running clean jest cache..."
+rm -rf .jest
+rm -rf coverage
+# Task 3: clear watchman if it drawin OS and if which watchman have value
+# if [[ "$OSTYPE" == "darwin"* ]]; then
+#   if which watchman >/dev/null; then
+#     echo "Running watchman watch-del-all..."
+#     watchman watch-del-all
+#     echo "Task 3 completed."
+#   else
+#     echo "Skipping watchman watch-del-all as it is not installed."
+#   fi
+# else
+#   echo "Skipping watchman watch-del-all as it is only required for macOS."
+# fi
