@@ -66,6 +66,10 @@ export const customVariants = {
     lineHeight: 42,
   },
   /** */
+  medium_10: {
+    fontFamily: MAPPING_FONT_FAMILY[500].Exo,
+    fontSize: TEXT_SIZE.text_size_10,
+  },
   medium_12: {
     fontFamily: MAPPING_FONT_FAMILY[500].Exo,
     fontSize: TEXT_SIZE.text_size_12,
@@ -81,6 +85,10 @@ export const customVariants = {
   medium_16: {
     fontFamily: MAPPING_FONT_FAMILY[500].Exo,
     fontSize: TEXT_SIZE.text_size_16,
+  },
+  medium_18: {
+    fontFamily: MAPPING_FONT_FAMILY[500].Exo,
+    fontSize: TEXT_SIZE.text_size_18,
   },
   medium_20: {
     fontFamily: MAPPING_FONT_FAMILY[500].Exo,

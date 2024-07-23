@@ -5,29 +5,45 @@ export const lightColors = {
   white: '#FFFFFF',
   black: '#000000',
   background: '#FAFAFA',
+  background_secondary: '#F2F2F2',
+  background_disable: '#E1E1E1',
   primary: '#FFA62F',
   secondary: '#F3BE62',
-  error: '#FF3030',
+  tertiary: '#FFC96F',
+  fourth: '#ACD793',
+  success: '#51E11F',
+  warning: '#EEF155',
+  gray_9: '#999999',
+  error: '#E11F1F',
+
+  background_overlay: '#fabd0a',
   //text
   text_primary: '#181818',
   text_secondary: '#004744',
-  text_third: '#FF783C',
+  text_thrid: '#455154',
   text_disable: '#747474',
+
+  bottom_tab_inactive: '#E0E0E0',
   //stroke
   stroke_primary: '#D7D7D7',
   stroke_secondary: '#FF783C',
+  stroke_third: '#50555C',
   //
   icon_primary: '#7C7B7B',
   //text input
   text_input_primary: '#5C5C5C',
   // custom colors
-  button_primary: '#004744',
+  button_primary: '#FFA62F',
   button_background_primary: '#F1F1F1',
   button_background_secondary: '#FFC480',
+  button_background_thrid: '#F9F9F9',
 
   // header
   header_primary: '#181818',
-  header_secondary: '#004744',
+  header_secondary: '#FFA62F',
+  text_second: '#979797',
+  text_fourth: '#5C5C5C',
+  loading_primary: '#FF783C',
   // navigation theme converting
   card: '#FFFFFF',
   text: '#000000',
@@ -113,6 +129,8 @@ export const ALPHA_VALUE = {
   alpha_04: '69',
   /** alpha value 30% */
   alpha_03: '37',
+  /** alpha value 25% */
+  alpha_025: '40',
   /** alpha value 20% */
   alpha_02: '1E',
   /** alpha value 10% */
@@ -150,6 +168,8 @@ export const TEXT_SIZE = {
   text_size_16: 16,
   /** text size 17 */
   text_size_17: 17,
+  /** text size 18 */
+  text_size_18: 18,
   /** text size 19 */
   text_size_19: 19,
   /** text size 20 */

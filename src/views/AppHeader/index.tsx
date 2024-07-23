@@ -4,7 +4,7 @@ import {getStatusBarHeight} from '@utils/GetHeightStatusBar';
 import AppIcon, {ICON_TYPE} from '@views/AppIcon';
 import {AppText} from '@views/AppText';
 import React from 'react';
-import {ColorValue} from 'react-native';
+import {ColorValue, Dimensions} from 'react-native';
 import styled, {useTheme} from 'styled-components/native';
 
 interface Props {
@@ -21,7 +21,10 @@ interface Props {
   onPressIconRight?: () => void;
   onPressIconLeft?: () => void;
   widthIcon?: number;
+  widthIconLeft?: number;
+  heightIconLeft?: number;
   heightIcon?: number;
+  rightComponent?: React.ReactNode;
 }
 
 const AppHeader: React.FC<Props> = ({
@@ -37,8 +40,11 @@ const AppHeader: React.FC<Props> = ({
   backgroundColor,
   onPressIconRight,
   onPressIconLeft,
-  widthIcon = 70,
-  heightIcon = 70,
+  widthIcon = 24,
+  widthIconLeft = 24,
+  heightIconLeft = 24,
+  heightIcon = 24,
+  rightComponent,
 }) => {
   const appTheme = useTheme();
   return (
@@ -46,8 +52,8 @@ const AppHeader: React.FC<Props> = ({
       <Container backgroundColor={backgroundColor}>
         <IconLeft
           name={iconLeft ?? 'ic_arrow_left'}
-          width={24}
-          height={24}
+          width={widthIconLeft}
+          height={heightIconLeft}
           fill={colorIconLeft ?? appTheme.colors.header_primary}
           onPress={() => {
             onPressIconLeft ? onPressIconLeft() : Navigator.goBack();
@@ -71,7 +77,8 @@ const AppHeader: React.FC<Props> = ({
             height={heightIcon}
           />
         )}
-        {iconRight ? (
+
+        {iconRight && !rightComponent ? (
           <IconRight
             name={iconRight}
             width={24}
@@ -82,15 +89,19 @@ const AppHeader: React.FC<Props> = ({
         ) : (
           <IconEmpty />
         )}
+        {rightComponent && !iconRight && (
+          <ComponentRight>{rightComponent}</ComponentRight>
+        )}
       </Container>
-      <Space height={spacingBottom} />
     </>
   );
 };
 
 const Container = styled.View<{backgroundColor?: ColorValue}>`
   width: ${MaxSize.WIDTH}px;
-  margin-top: ${getStatusBarHeight()}px;
+  margin-top: ${Dimensions.get('window').width < 450
+    ? getStatusBarHeight() + 20
+    : 0}px;
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
@@ -99,6 +110,9 @@ const Container = styled.View<{backgroundColor?: ColorValue}>`
     props.backgroundColor?.toString() ?? 'transparent'};
 `;
 
+const ComponentRight = styled.View`
+  margin-right: 19px;
+`;
 const TitleHeader = styled(AppText)<{color: ColorValue}>`
   align-self: center;
   text-align: center;

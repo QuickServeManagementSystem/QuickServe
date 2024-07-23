@@ -1,22 +1,28 @@
+import {normalizeJsonApiIfNeed, formatRequest} from '@utils/normalize';
 import {AxiosResponse, AxiosError, InternalAxiosRequestConfig} from 'axios';
-import cameleKeys from 'camelcase-keys';
 
 export type ResponseData = Array<any> | Record<string, any>;
 
 export const responseInterceptor = (response: AxiosResponse) => {
-  console.log('From API: ', response?.request?.responseURL, response?.status);
+  console.log(
+    formatRequest({
+      method: response.config?.method,
+      baseURL: response.config?.baseURL ?? '',
+      url: response.config?.url,
+      data: ['post', 'POST'].includes(response.config?.method ?? '')
+        ? response.config?.data
+        : response.config?.params,
+      statusCode: response?.status,
+    }),
+  );
+
+  // console.log(
+  //   'API status: ',
+  //   response?.request?.responseURL,
+  //   colorStatusCode(response?.status),
+  // );
 
   if (response.status >= 400) {
-    console.log('From API with error: ', response?.data);
-    if (response.status === 404) {
-      // not found => show customize message instead
-      const customError = {
-        status: 404,
-        ...response?.data,
-      };
-      return Promise.reject(customError);
-    }
-
     /**
      * {
      * "data": null,
@@ -59,37 +65,72 @@ export const responseInterceptor = (response: AxiosResponse) => {
         return Promise.reject(new Error('IGNORE'));
       }
     } */
-    // need to show message from server
-    const errorObject = cameleKeys(response?.data);
+    if (response.status === 404) {
+      // not found => show customize message instead
+    }
+    let normalizeError = normalizeJsonApiIfNeed(response?.data);
+    normalizeError.status = response.status.toString();
+    console.log('API error: ', JSON.stringify(normalizeError));
+    console.groupEnd();
+    return Promise.reject(normalizeError);
+  } else {
+    // this response from s3 have key and value, we need keep it the same
+    const ignoreResponseFromUrl = [''];
+    const requestUrl = response?.request?.responseURL ?? '';
 
-    return Promise.reject({
-      ...errorObject,
-      status: response.status.toString(),
-    });
+    const shouldIgnore = ignoreResponseFromUrl.reduce(
+      (rs, next) => requestUrl.includes(next) || rs,
+      false,
+    );
+
+    // https://github.com/yury-dymov/json-api-normalizer/issues/71
+    let normalizeData = normalizeJsonApiIfNeed(response?.data);
+
+    if (shouldIgnore) {
+      normalizeData = response?.data;
+    }
+
+    console.log('API response: ', JSON.stringify(normalizeData, null, 2));
+    console.groupEnd();
+    return Promise.resolve(normalizeData);
   }
-  const dataObject = Array.isArray(response?.data)
-    ? [...response?.data]
-    : {
-        ...response?.data,
-      };
-  // https://github.com/yury-dymov/json-api-normalizer/issues/71
-  let normalizeData = cameleKeys(dataObject);
-  console.log('From API with data: ', normalizeData);
-  console.groupEnd();
-  return Promise.resolve(normalizeData);
 };
 
 export const errorInterceptor = (error: AxiosError) => {
+  console.log('Error from API: ', error);
   return Promise.reject(error);
 };
 
 export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
-  console.group('REQUEST: ');
-  console.log(
-    config?.method,
-    (config?.baseURL ?? '') + config?.url,
-    config?.method === 'POST' ? config?.data : undefined,
-  );
+  // console.group('CALL NETWORK');
+  // console.log(
+  //   'REQUEST: ',
+  //   formatRequest(
+  //     `${config?.method}${(config?.baseURL ?? '') + config?.url}${
+  //       ['post', 'POST'].includes(config?.method ?? '')
+  //         ? config?.data
+  //         : config?.params
+  //     }`,
+  //   ),
+  // );
+  // console.log(
+  //   'REQUEST: ',
+  //   config?.method,
+  //   (config?.baseURL ?? '') + config?.url,
+  //   ['post', 'POST'].includes(config?.method ?? '')
+  //     ? config?.data
+  //     : config?.params,
+  // );
 
+  // console.log(
+  //   formatRequest({
+  //     method: config?.method,
+  //     baseURL: config?.baseURL ?? '',
+  //     url: config?.url,
+  //     data: ['post', 'POST'].includes(config?.method ?? '')
+  //       ? config?.data
+  //       : config?.params,
+  //   }),
+  // );
   return config;
 };

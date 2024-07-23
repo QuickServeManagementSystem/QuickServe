@@ -69,7 +69,7 @@ export const isIPhoneWithDynamicIsland = () => isIPhoneWithDynamicIsland_v;
 
 export function getStatusBarHeight(skipAndroid: boolean = false) {
   return Platform.select({
-    ios: statusBarHeight + 8,
+    ios: statusBarHeight,
     android: skipAndroid ? 0 : StatusBar.currentHeight,
     default: 0,
   });

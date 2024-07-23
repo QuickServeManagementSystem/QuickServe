@@ -1,13 +1,13 @@
 // In App.js in a new project
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {Splash} from '@screens/index';
 import React from 'react';
 
 import {APP_SCREEN} from './constant';
 import {screenOptionsNativeStack} from './constant';
 import AppStack from './Stack/AppStack';
 import AuthStack from './Stack/AuthStack';
-import {Splash} from '@screens/index';
 
 const Stack = createNativeStackNavigator();
 

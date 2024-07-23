@@ -4,12 +4,20 @@ import applicationReducer, {
   Slice as ApplicationSlice,
   resetStateAction,
 } from './application/reducer';
-import {reduxStorage} from './storage';
-import todoReducer, {TodoSlice} from './todo/reducer';
+import authReducer, {authSlice} from './auth/reducer';
+import ingredientReducer, {ingredientSlice} from './ingredient/reducer';
+import orderReducer, {orderSlice} from './order/reducer';
+import paymentReducer, {paymentSlice} from './payment/reducer';
+import productReducer, {productSlice} from './product/reducer';
+import {DEFAULT_STORE_KEY, reduxStorage} from './storage';
 
 const appReducer = {
   [ApplicationSlice.name]: applicationReducer,
-  [TodoSlice.name]: todoReducer,
+  [authSlice.name]: authReducer,
+  [productSlice.name]: productReducer,
+  [ingredientSlice.name]: ingredientReducer,
+  [orderSlice.name]: orderReducer,
+  [paymentSlice.name]: paymentReducer,
 };
 
 const appCombineReducer = combineReducers(appReducer);
@@ -21,7 +29,7 @@ export const rootReducer = (
 ) => {
   if (resetStateAction.match(action)) {
     // for all keys defined in your persistConfig(s)
-    reduxStorage.removeItem('persist:root');
+    reduxStorage.removeItem('persist:' + DEFAULT_STORE_KEY);
     // storage.removeItem('persist:otherKey')
 
     return appCombineReducer(undefined, action);

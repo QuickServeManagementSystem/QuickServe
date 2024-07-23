@@ -1,20 +1,31 @@
+import {resetStateAction} from '@app-core/state/application/reducer';
+import {
+  UserAuth,
+  UserPreferencesType,
+  selectUserPreferences,
+} from '@app-core/state/auth/reducer';
+import {AUTH_KEY} from '@app-core/state/storage';
 import {isNull} from '@utils/common';
+import EventInstance from '@utils/eventInstance/eventInstance';
+import {EventType} from '@utils/eventInstance/type';
 import cloneDeep from 'lodash/cloneDeep';
-
-import {ResponseData} from './interceptor';
+import {call, put, select} from 'redux-saga/effects';
 
 // mocking test refresh token
-let shouldRefresh = true;
-let interval = setInterval(() => {
-  shouldRefresh = !shouldRefresh;
-}, 100000);
+// let shouldRefresh = true;
+// let interval = setInterval(() => {
+//   shouldRefresh = !shouldRefresh;
+// }, 100000);
 
 export function* apiCallProxy(execFunction: Function, ...args: any[]) {
   try {
+    const userPref: UserPreferencesType = yield select(selectUserPreferences);
+    const currentAuth: UserAuth = userPref.getUserPreferences(AUTH_KEY);
     // const accessToken: string = select(
-    //   state => state.authentication?.tokenData?.accessToken,
+    //   state: => state.auth.userAuth.data.accessToken,
     // );
-    const accessToken = 'accessToken';
+
+    const accessToken = currentAuth?.data?.accessToken;
 
     // position arguments: function, param1, param2, ...
     const argumentsIncludeToken = cloneDeep(args);
@@ -22,7 +33,7 @@ export function* apiCallProxy(execFunction: Function, ...args: any[]) {
 
     // Call api as normal
     // @ts-ignore
-    return yield execFunction(...argumentsIncludeToken);
+    return yield call(execFunction, argumentsIncludeToken);
   } catch (error: any) {
     console.log('API CALL PROXY');
     console.log('error axios', error);
@@ -32,8 +43,9 @@ export function* apiCallProxy(execFunction: Function, ...args: any[]) {
 
     if (error?.status === '401' && !error?.error?.code) {
       try {
+        // Error 401 => Should refresh token
+        yield put(resetStateAction());
       } catch (refreshError) {}
-      // Error 401 => Should refresh token
     }
 
     //
@@ -43,19 +55,29 @@ export function* apiCallProxy(execFunction: Function, ...args: any[]) {
       (error?.status === 403 || error?.status === '403')
     ) {
       // Error 401 => Should refresh token
+      yield put(resetStateAction());
     }
-    throw error;
+    yield call(handleError, error);
   }
 }
 
-export function* handleError(
-  e: any,
-  defaultMsg: string,
-  autoHide: boolean = false,
-) {
-  // case normal
-  let messageError =
-    e?.errorDescription ?? e?.message ?? e?.error ?? defaultMsg;
+export function* handleError(e: any, defaultMsg: string = 'error') {
+  let error = {
+    errorCode: 0,
+    message: '',
+  };
+  let errorCode = e?.errorCode as number;
+  if (Array.isArray(e)) {
+    for (let i = 0; i < e.length; i++) {
+      if (e[i]?.errorCode) {
+        error.errorCode = e[i]?.errorCode;
+      }
+      if (e[i]?.description) {
+        error.message = e[i]?.description ? e[i]?.description : defaultMsg;
+      }
+    }
+  }
+
   // case 400
   // if (e?.status >= 400 && e?.status < 500 && e?.data?.length) {
   //   messageError = e?.data.reduce((str: string, nextError: any) => {
@@ -70,9 +92,35 @@ export function* handleError(
   //   }, '');
   // }
 
-  if (messageError === 'IGNORE') {
+  //set error code
+  switch (error.errorCode || errorCode || e?.status) {
+    case 15:
+      EventInstance.emitEventListener(EventType.LOGIN_FAIL, {
+        _error: e.message || error.message,
+      });
+      EventInstance.emitEventListener(EventType.LOADING, {
+        _loading: false,
+      });
+      break;
+    case 400:
+      EventInstance.emitEventListener(EventType.LOGIN_FAIL, {
+        _error: e.message || error.message,
+      });
+      EventInstance.emitEventListener(EventType.LOADING, {
+        _loading: false,
+      });
+      break;
+    default:
+      break;
+  }
+
+  if (error.message === 'IGNORE') {
     return;
   }
+  // statusCode: 400,
+  // errorCode: 100001,
+  // message: 'User not exist',
+  // status: '400'
 }
 
 export const makeParam = (params: any) => {

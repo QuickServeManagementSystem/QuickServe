@@ -1,9 +1,8 @@
 // import {Platform} from 'react-native';
-// import * as NativeConfig from 'react-native-config';
 
 function Config() {
   const default_config = {
-    API_URL: '',
+    API_URL: 'https://quickserve-api.azurewebsites.net/api/',
     GOOGLE_CLIENT_ID: '',
     GOOGLE_IOS_CLIENT_ID: '',
     APPLE_IOS_CLIENT_ID: '',

@@ -1,10 +1,9 @@
 import {handleError} from '@app-core/network/proxy';
+import {APP_SCREEN, AUTH_APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
-import {CONFIG} from '@utils/config';
 import {REHYDRATE} from 'redux-persist';
 import {
   call,
-  all,
   put,
   takeEvery,
   select,
@@ -13,10 +12,18 @@ import {
 } from 'redux-saga/effects';
 
 import {
+  selectUserPreferences,
+  UserPreferencesType,
+  UserAuth,
+} from '../auth/reducer';
+import {AUTH_KEY} from '../storage';
+
+import {
   launchAppAction,
   setLoading,
   updateApplication,
   firstLoadSelector,
+  resetStateAction,
 } from './reducer';
 
 function* loadInitialData() {
@@ -63,17 +70,14 @@ function* launchApp(action: any) {
   } catch (error) {
     yield call(handleError, error, '');
   } finally {
-    // if (authorizes.includes(authState)) {
-    //   navigateReset('AppStack');
-    //   if (appAuthorizes.includes(authState)) {
-    //     yield call(loadInitialData);
-    //   }
-    // } else if (authState === AuthState.UNAUTHORIZED) {
-    //   navigateReset('OnBoarding');
-    // } else {
-    //   // avoid app hang when auth state increases in the future
-    //   navigateReset('AuthStack');
-    // }
+    const userPref: UserPreferencesType = yield select(selectUserPreferences);
+    const currentAuth: UserAuth = userPref.getUserPreferences(AUTH_KEY);
+    console.log('currentAuth', currentAuth);
+    if (currentAuth.email && currentAuth.data.accessToken) {
+      Navigation.reset(APP_SCREEN.AppStack.name);
+    } else {
+      Navigation.reset(APP_SCREEN.AuthStack.name);
+    }
   }
 }
 
@@ -87,7 +91,36 @@ function* onRehydrateState(action: any) {
   }
 }
 
+function* resetStateHandler(action: any) {
+  try {
+    if (!resetStateAction.match(action)) {
+      return;
+    }
+    const currentRoute = Navigation.getRef().current?.getCurrentRoute()?.name;
+    if (
+      currentRoute &&
+      currentRoute !== AUTH_APP_SCREEN.SignIn.name &&
+      currentRoute !== APP_SCREEN.Splash.name
+    ) {
+      Navigation.reset(APP_SCREEN.AuthStack.name);
+    }
+    Navigation.reset(APP_SCREEN.AuthStack.name);
+    // const response = yield call(getMyProfile);
+    // if (response?.data) {
+    //   yield put(
+    //     updateUserProfile({
+    //       myProfile: response?.data,
+    //     }),
+    //   );
+    // }
+    // yield put(getPrivacySettings());
+  } catch (error) {
+    yield error;
+  }
+}
+
 export default function* () {
   yield takeEvery(launchAppAction.type, launchApp);
   yield takeLatest(REHYDRATE, onRehydrateState);
+  yield takeLatest(resetStateAction.type, resetStateHandler);
 }

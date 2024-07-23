@@ -22,9 +22,7 @@ const AppStack = () => {
   }, []);
 
   return (
-    <Stack.Navigator
-      initialRouteName={APP_SCREEN.Home.name}
-      screenOptions={navigationOptions as any}>
+    <Stack.Navigator screenOptions={navigationOptions as any}>
       <Stack.Screen
         name={APP_SCREEN.BottomStack.name}
         component={BottomTabStack}
