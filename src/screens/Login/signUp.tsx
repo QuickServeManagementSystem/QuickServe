@@ -1,8 +1,7 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import styled from 'styled-components/native';
 import AppHeader from '@views/AppHeader';
+import React from 'react';
 import {scale} from 'react-native-size-matters';
+import styled from 'styled-components/native';
 
 const SignUp = () => {
   return (
@@ -12,7 +11,7 @@ const SignUp = () => {
         widthIcon={scale(150)}
         heightIcon={scale(20)}
       />
-      <BoxScanQr></BoxScanQr>
+      <BoxScanQr />
     </Container>
   );
 };

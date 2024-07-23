@@ -1,15 +1,13 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import styled, {useTheme} from 'styled-components/native';
-import AppHeader from '@views/AppHeader';
-import {AppText, AppTextSupportColor} from '@views/AppText';
 import {en} from '@assets/text_constant';
-import {Space} from '@utils/common';
-import {scale} from 'react-native-size-matters';
-import AppIcon from '@views/AppIcon';
-import AppTouchable from '@views/AppTouchable';
-import Navigation from '@navigation/Provider';
 import {APP_SCREEN, AUTH_APP_SCREEN} from '@navigation/constant';
+import Navigation from '@navigation/Provider';
+import {Space} from '@utils/common';
+import AppIcon from '@views/AppIcon';
+import {AppText, AppTextSupportColor} from '@views/AppText';
+import AppTouchable from '@views/AppTouchable';
+import React from 'react';
+import {scale} from 'react-native-size-matters';
+import styled, {useTheme} from 'styled-components/native';
 
 const Welcome = () => {
   const appTheme = useTheme();
@@ -29,34 +27,36 @@ const Welcome = () => {
       </WrapTitle>
       <WrapAccount>
         <BoxAccountInfo
-          onPress={() => Navigation.navigateTo(AUTH_APP_SCREEN.SignUp.name)}>
+          onPress={() => Navigation.reset(APP_SCREEN.AppStack.name)}>
           <AppIcon
             name="ic_not_account"
             width={scale(50)}
             height={scale(100)}
             stroke={appTheme.colors.primary}
           />
-          <AppText variant="semibold_16">{en.login.younotAccount}</AppText>
+          <AppText variant="semibold_14">{en.login.younotAccount}</AppText>
         </BoxAccountInfo>
         <Space horizontal={scale(appTheme.gap_10)} />
         <BoxAccountInfo
-          onPress={() => Navigation.navigateTo(AUTH_APP_SCREEN.SignIn.name)}>
+          onPress={() => {
+            Navigation.navigateTo(AUTH_APP_SCREEN.SignIn.name);
+          }}>
           <AppIcon
             name="ic_have_account"
             width={scale(50)}
             height={scale(100)}
             stroke={appTheme.colors.primary}
           />
-          <AppText variant="semibold_16">{en.login.youHaveAccount}</AppText>
+          <AppText variant="semibold_14">{en.login.youHaveAccount}</AppText>
         </BoxAccountInfo>
       </WrapAccount>
       <WrapFooter>
-        <AppText variant="regular_14">Contact Us</AppText>
+        <AppText variant="regular_14">{en.common.contactUs}</AppText>
         <Space vertical={scale(appTheme.gap_5)} />
         <AppTextSupportColor
           variant="semibold_16"
           color={appTheme.colors.primary}>
-          123123123123
+          123 123123123
         </AppTextSupportColor>
       </WrapFooter>
     </Container>
@@ -67,6 +67,8 @@ const Container = styled.SafeAreaView`
   flex: 1;
   align-items: center;
   justify-content: space-between;
+  background-color: ${props =>
+    props.theme.colors.primary + props.theme.alpha_008};
 `;
 
 const WrapTitle = styled.View`
