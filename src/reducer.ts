@@ -39,6 +39,7 @@ export const reducer = (state: TInitPrice = initPrice, action: any) => {
         orderProduct: product,
         price: action.payload.price,
       };
+
     case order_data_ingredients:
       const ingredient = [...state.orderIngredient];
       const _index = ingredient.findIndex(

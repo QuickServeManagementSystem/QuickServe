@@ -4,7 +4,7 @@ import {getStatusBarHeight} from '@utils/GetHeightStatusBar';
 import AppIcon, {ICON_TYPE} from '@views/AppIcon';
 import {AppText} from '@views/AppText';
 import React from 'react';
-import {ColorValue, Dimensions} from 'react-native';
+import {ColorValue, Dimensions, Platform} from 'react-native';
 import styled, {useTheme} from 'styled-components/native';
 
 interface Props {
@@ -100,7 +100,9 @@ const AppHeader: React.FC<Props> = ({
 const Container = styled.View<{backgroundColor?: ColorValue}>`
   width: ${MaxSize.WIDTH}px;
   margin-top: ${Dimensions.get('window').width < 450
-    ? getStatusBarHeight() + 20
+    ? Platform.OS
+      ? getStatusBarHeight()
+      : getStatusBarHeight() + 20
     : 0}px;
   justify-content: space-between;
   align-items: center;

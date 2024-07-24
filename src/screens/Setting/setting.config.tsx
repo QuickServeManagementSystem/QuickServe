@@ -24,9 +24,9 @@ export const dataSettings: SettingsProps[] = [
     icon: 'ic_logout',
     id: ESetting.logout,
   },
-  {
-    name: en.setting.historyproduct,
-    icon: 'ic_history',
-    id: ESetting.historyProduct,
-  },
+  // {
+  //   name: en.setting.historyproduct,
+  //   icon: 'ic_history',
+  //   id: ESetting.historyProduct,
+  // },
 ];

@@ -2,14 +2,7 @@ import {IngredientTypesDetail} from '@app-core/state/ingredient/type';
 import {SubmitOrderResponse} from '@app-core/state/payment/type';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import Cart from '@screens/Cart';
-import {
-  DetailProduct,
-  Home,
-  Order,
-  Setting,
-  Splash,
-  IngredientDetail,
-} from '@screens/index';
+import {DetailProduct, Home, Order, Setting, Splash} from '@screens/index';
 import Welcome from '@screens/Login';
 import SignIn from '@screens/Login/signIn';
 import SignUp from '@screens/Login/signUp';
@@ -97,10 +90,7 @@ export const APP_SCREEN = {
     name: 'Splash',
     component: Splash,
   },
-  IngredientDetail: {
-    name: 'IngredientDetail',
-    component: IngredientDetail,
-  },
+
   Cart: {
     name: 'Cart',
     component: Cart,
@@ -136,10 +126,6 @@ export interface ScreenPropType {
     detailProduct: any;
   };
 
-  [APP_SCREEN.IngredientDetail.name]: {
-    detailIngredient: IngredientTypesDetail[];
-    productId: number;
-  };
   [APP_SCREEN.Cart.name]: undefined;
   [APP_SCREEN.Payment.name]: {
     orderId: string;

@@ -251,7 +251,6 @@ const Cart = () => {
   return (
     <Container>
       <AppHeader title="Giỏ Hàng" />
-
       <AppFlatlist
         data={listProduct}
         renderItem={renderProductItem}

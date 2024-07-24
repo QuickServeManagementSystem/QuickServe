@@ -147,6 +147,7 @@ const Wrapp = styled.View`
 const ProductItem = styled(AppTouchable)`
   box-shadow: 0px 2px 2px rgba(195, 195, 195, 0.25);
   flex: 0.5;
+  min-height: ${scale(200)}px;
 `;
 
 const HeaderSearchBar = styled.View`

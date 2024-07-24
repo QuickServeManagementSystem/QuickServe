@@ -52,12 +52,14 @@ const Container = styled.View`
   border-radius: ${({theme}) => theme.border_radius_12}px;
   margin: ${({theme}) => theme.gap_5}px;
   border-radius: 10px;
+  flex: 1;
 `;
 
 const WrapInfo = styled.View`
   padding: ${({theme}) => theme.gap_10}px;
   align-items: center;
   justify-content: center;
+  flex: 1;
 `;
 
 const ImageCard = styled.Image`

@@ -21,7 +21,9 @@ interface Props {}
 
 const OrderStaff: React.FC<Props> = () => {
   const appTheme = useTheme();
+
   const dispatch = useAppDispatch();
+
   const {popupStatusRef} = useAppContext();
   const [listOrder, setListOrder] = useState<TGetOrder[]>([]);
 
@@ -60,6 +62,7 @@ const OrderStaff: React.FC<Props> = () => {
             </Status>
           </WrapStatus>
         );
+
       case 4:
         return (
           <WrapStatus background={appTheme.colors.success}>
@@ -76,11 +79,8 @@ const OrderStaff: React.FC<Props> = () => {
             </Status>
           </WrapStatus>
         );
-      default:
-        return null;
     }
   };
-
   const handleSearch = useCallback(
     (text: string) => {
       setListOrder(
@@ -136,7 +136,6 @@ const Container = styled.View`
   margin-top: 15px;
   background-color: ${props => props.theme.colors.background};
 `;
-
 const OrderItem = styled(AppTouchable)`
   border-radius: ${props => props.theme.border_radius_8}px;
   padding: ${scale(30)}px ${scale(18)}px;
@@ -165,5 +164,4 @@ const WrapStatus = styled.View<{background: string}>`
   right: 0;
   bottom: 0;
 `;
-
 export default OrderStaff;

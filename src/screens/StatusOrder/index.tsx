@@ -12,9 +12,8 @@ import {useAutoExecutesSingle} from '@utils/hooks/useAutoExcutesSingle';
 import toast from '@utils/toast';
 import {AppTextSupportColor} from '@views/AppText';
 import LottieView from 'lottie-react-native';
-import {Dimensions} from 'react-native';
 import React from 'react';
-
+import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -77,10 +76,10 @@ const Overlay = styled.View`
 
 const LottieAnimation = styled(LottieView)`
   align-self: center;
-  height: ${scale(MaxSize.HEIGHT)}px;
   height: ${Dimensions.get('window').width < 2000
     ? scale(MaxSize.HEIGHT / 2)
     : scale(MaxSize.HEIGHT)}px;
+  width: ${scale(MaxSize.WIDTH)}px;
   justify-content: center;
   align-items: center;
 `;

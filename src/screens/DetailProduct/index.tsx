@@ -34,7 +34,7 @@ const DetailProduct = () => {
   const [amount, setAmount] = React.useState(1);
 
   const listIngredients = useAppSelector(getListGredientTypesSelectors);
-  const {state, orderProduct, orderIngredient} = useContext(Context);
+  const {orderProduct} = useContext(Context);
   const handelIncreaseAmount = () => {
     setAmount(prev => prev + 1);
   };
@@ -53,21 +53,7 @@ const DetailProduct = () => {
       price: detailProduct.price * amount,
       name: detailProduct.name,
     });
-    listIngredients.map(i => {
-      i.ingredients.map(item => {
-        if (item.defaultQuantity !== 0) {
-          orderIngredient({
-            productId: detailProduct.id,
-            id: item.id,
-            name: item.name,
-            quantity: item.defaultQuantity,
-            ingredientPrice: item.price,
-            price: item.price,
-          });
-        }
-      });
-    });
-  }, [amount, listIngredients, detailProduct]);
+  }, [amount, detailProduct]);
 
   useEffect(() => {
     dispatch(getIngredientByIdAction({productTemplateId: detailProduct.id}));
@@ -156,10 +142,10 @@ const DetailProduct = () => {
         </WrapInfoProduct>
       </WrapDetailProduct>
       <AppFlatlist
+        contentContainerStyle={{paddingHorizontal: scale(20)}}
         data={listIngredients ?? []}
         renderItem={item => renderIngredient(item)}
       />
-      <Space vertical={scale(appTheme.gap_22)} />
     </Container>
   );
 };
