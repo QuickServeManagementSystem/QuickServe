@@ -11,6 +11,7 @@ import CardItem from '@components/CardItem';
 import {SearchBar} from '@components/SearchBar';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
+import {Space} from '@utils/common';
 import useAPIList from '@utils/hooks/useAPIList';
 import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
@@ -104,6 +105,7 @@ function App(): React.JSX.Element {
 
   return (
     <Wrapp>
+      <Space vertical={scale(appTheme.gap_5)} />
       <AppHeader
         iconLeft="ic_quickserve"
         widthIconLeft={scale(100)}

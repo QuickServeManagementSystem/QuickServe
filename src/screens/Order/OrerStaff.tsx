@@ -81,13 +81,16 @@ const OrderStaff: React.FC<Props> = () => {
     }
   };
 
-  const handleSearch = useCallback((text: string) => {
+  const handleSearch = useCallback(
+    (text: string) => {
       setListOrder(
         data?.filter(order =>
           order.billCode.toLowerCase().includes(text.toLowerCase()),
         ) ?? [],
       );
-    }, [data]);
+    },
+    [data],
+  );
 
   return (
     <Container>

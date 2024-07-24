@@ -14,7 +14,11 @@ interface Props {}
 const OrderClient: React.FC<Props> = () => {
   const appTheme = useTheme();
 
-  return <></>;
+  return (
+    <>
+      <Space vertical={scale(appTheme.gap_5)} />
+    </>
+  );
 };
 
 const Container = styled.View`

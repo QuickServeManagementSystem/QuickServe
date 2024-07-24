@@ -16,6 +16,7 @@ import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect} from 'react';
+import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -78,6 +79,7 @@ const DetailProduct = () => {
 
   return (
     <Container>
+      <Space vertical={scale(appTheme.gap_5)} />
       <AppHeader
         title={detailProduct.name}
         onPressIconLeft={() => {
@@ -189,8 +191,8 @@ const BoxImage = styled.View`
 `;
 
 const ImageProduct = styled.Image`
-  width: 100%;
-  height: ${scale(160)}px;
+  width: ${Dimensions.get('window').width < 2000 ? 50 : 100}%;
+  height: ${Dimensions.get('window').width < 2000 ? scale(80) : scale(160)}px;
   border-radius: ${({theme}) => theme.border_radius_12}px;
 `;
 
