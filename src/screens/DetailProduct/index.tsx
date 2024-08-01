@@ -84,7 +84,7 @@ const DetailProduct = () => {
         <WrapInfoProduct>
           <Space vertical={scale(appTheme.gap_5)} />
           <BoxDescriptionProduct>
-            <AppText variant="bold_20">{detailProduct.name}</AppText>
+            <AppText variant="bold_22">{detailProduct.name}</AppText>
             <Space vertical={scale(appTheme.gap_5)} />
             <AppText variant="regular_16">
               {en.common.calo.replace(
@@ -142,7 +142,6 @@ const DetailProduct = () => {
         </WrapInfoProduct>
       </WrapDetailProduct>
       <AppFlatlist
-        contentContainerStyle={{paddingHorizontal: scale(20)}}
         data={listIngredients ?? []}
         renderItem={item => renderIngredient(item)}
       />
@@ -177,8 +176,8 @@ const BoxImage = styled.View`
 `;
 
 const ImageProduct = styled.Image`
-  width: ${Dimensions.get('window').width < 2000 ? 50 : 100}%;
-  height: ${Dimensions.get('window').width < 2000 ? scale(80) : scale(160)}px;
+  width: ${Dimensions.get('window').width < 450 ? 100 : 80}%;
+  height: ${Dimensions.get('window').width < 450 ? scale(130) : scale(110)}px;
   border-radius: ${({theme}) => theme.border_radius_12}px;
 `;
 

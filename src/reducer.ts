@@ -91,7 +91,11 @@ export const calculateTotalPriceSelector = (
 
   const totalIngredient = ingredient.reduce(
     (sum: number, _ingredient: TInitPrice['orderIngredient']) => {
-      return sum + _ingredient.price;
+      return (
+        sum +
+        (_ingredient.price -
+          _ingredient.ingredientPrice * _ingredient._quantity)
+      );
     },
     0,
   );

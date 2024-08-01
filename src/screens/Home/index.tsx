@@ -19,10 +19,14 @@ import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect} from 'react';
 import {ViewStyle} from 'react-native';
+import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
 function App(): React.JSX.Element {
+  const {width, height} = Dimensions.get('window');
+  const isTablet = width >= 768;
+
   const appTheme = useTheme();
 
   const [selectedCategory, setSelectedCategory] = React.useState<TCategory>();
@@ -147,7 +151,12 @@ const Wrapp = styled.View`
 const ProductItem = styled(AppTouchable)`
   box-shadow: 0px 2px 2px rgba(195, 195, 195, 0.25);
   flex: 0.5;
-  min-height: ${scale(200)}px;
+  min-height: ${Dimensions.get('window').width < 450
+    ? scale(200)
+    : scale(100)}px;
+  max-width: ${Dimensions.get('window').width < 450
+    ? scale(200)
+    : scale(180)}px;
 `;
 
 const HeaderSearchBar = styled.View`

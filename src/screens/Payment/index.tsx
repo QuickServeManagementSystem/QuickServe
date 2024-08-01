@@ -31,11 +31,14 @@ import {Context} from '../../reducer';
 type FormInput = {
   message: string;
 };
+
 const Payment = () => {
   const appTheme = useTheme();
   const router: any = useRoute();
 
-  const [productIngredients, setProductIngredients] = useState<any[]>([]);
+  const [showIngredients, setShowIngredients] = useState<{
+    [key: string]: boolean;
+  }>({});
   const {orderId} = router.params;
   const dispatch = useAppDispatch();
   const listProduct = useAppSelector(selectOrderByIdSelector);
@@ -43,12 +46,6 @@ const Payment = () => {
   useEffect(() => {
     dispatch(getOrderByIdAction({orderId: orderId}));
   }, [dispatch, orderId]);
-
-  useEffect(() => {
-    setProductIngredients(
-      listProduct?.products?.flatMap(item => item.ingredients),
-    );
-  }, [listProduct]);
 
   const radioButtons = useMemo(
     () => [
@@ -107,66 +104,63 @@ const Payment = () => {
     }
     // clearData();
   };
+
+  const toggleIngredients = (productTemplateId: string) => {
+    setShowIngredients(prev => ({
+      ...prev,
+      [productTemplateId]: !prev[productTemplateId],
+    }));
+  };
+
   const renderProductItem = ({item}: {item: any}) => {
+    const ingredients = item.ingredients
+      .map((ingredient: any) => ingredient.name)
+      .join(', ');
+
     return (
       <ContainerCart key={item.productTemplateId}>
-        <AppTextSupportColor
-          variant="medium_18"
-          color={appTheme.colors.primary}>
-          {en.cart.mainDishes}
-        </AppTextSupportColor>
-        <Space vertical={scale(10)} />
         <WrapProduct>
           <WrapInfoProduct>
             <AppTextSupportColor
-              variant="bold_16"
+              variant="bold_20"
               color={appTheme.colors.black}>
               {item.name}
             </AppTextSupportColor>
-            <Space vertical={scale(10)} />
-            <AppTextSupportColor
-              variant="semibold_16"
-              color={appTheme.colors.primary}>
-              {en.common.vnd.replace('{number}', formatNumber(item.price))}
-            </AppTextSupportColor>
+            <Space vertical={scale(2)} />
+            {showIngredients[item.productTemplateId] && (
+              <IngredientsContainer>
+                <AppTextSupportColor
+                  variant="regular_16"
+                  color={appTheme.colors.gray_9}>
+                  Thành phần: {ingredients}
+                </AppTextSupportColor>
+              </IngredientsContainer>
+            )}
+            <Space vertical={scale(2)} />
+            <AppTouchable
+              onPress={() => toggleIngredients(item.productTemplateId)}>
+              <AppTextSupportColor
+                variant="regular_16"
+                color={appTheme.colors.primary}>
+                {showIngredients[item.productTemplateId]
+                  ? 'Ẩn đi'
+                  : 'Hiện thêm'}
+              </AppTextSupportColor>
+            </AppTouchable>
           </WrapInfoProduct>
+          <AppTextSupportColor
+            variant="bold_20"
+            color={appTheme.colors.primary}>
+            {en.common.vnd.replace('{number}', formatNumber(item.price))}
+          </AppTextSupportColor>
         </WrapProduct>
-        <AppTextSupportColor
-          variant="regular_16"
-          color={appTheme.colors.primary}>
-          {en.cart.ingedients}
-        </AppTextSupportColor>
-        <AppFlatlist
-          data={productIngredients}
-          renderItem={({item: ingredient}: any) => {
-            return (
-              <WrapProduct>
-                <WrapInfoProduct>
-                  <AppTextSupportColor
-                    variant="bold_16"
-                    color={appTheme.colors.black}>
-                    {ingredient.name}
-                  </AppTextSupportColor>
-                  <Space vertical={scale(10)} />
-                  <AppTextSupportColor
-                    variant="semibold_16"
-                    color={appTheme.colors.primary}>
-                    {en.common.vnd.replace(
-                      '{number}',
-                      formatNumber(ingredient.price),
-                    )}
-                  </AppTextSupportColor>
-                </WrapInfoProduct>
-              </WrapProduct>
-            );
-          }}
-          keyExtractor={(ingredient: any) => ingredient.id.toString()}
-        />
       </ContainerCart>
     );
   };
+
   return (
     <>
+      <Space vertical={scale(5)} />
       <AppHeader
         title="Thanh Toán"
         onPressIconLeft={() => {
@@ -176,12 +170,15 @@ const Payment = () => {
         }}
       />
       <Container>
+        <AppTextSupportColor variant="regular_24" color={appTheme.colors.black}>
+          Hoá đơn
+        </AppTextSupportColor>
+        <Space vertical={scale(5)} />
         <AppFlatlist
           data={listProduct?.products ?? []}
           renderItem={renderProductItem}
           keyExtractor={(item: any) => item.productTemplateId.toString()}
         />
-        <Space vertical={scale(160)} />
         <Footer>
           <FormTextInput
             placeholder={en.order.message}
@@ -208,7 +205,7 @@ const Payment = () => {
               layout="row"
             />
             <AppTextSupportColor
-              variant="semibold_16"
+              variant="bold_20"
               color={appTheme.colors.primary}>
               {en.common.vnd.replace(
                 '{number}',
@@ -220,7 +217,7 @@ const Payment = () => {
             <AppTextSupportColor
               variant="semibold_16"
               color={appTheme.colors.white}>
-              Xác Nhận Đơn Hàng
+              Tiến hành thanh toán
             </AppTextSupportColor>
           </ButtonSubmit>
         </Footer>
@@ -259,24 +256,23 @@ const Footer = styled.View`
 
 const ContainerCart = styled.View``;
 
-const ButtonViewMore = styled(AppTouchable)`
-  margin: ${({theme}) => theme.gap_10}px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 const WrapProduct = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: ${({theme}) => theme.gap_10}px;
   background-color: ${({theme}) => theme.colors.white};
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: ${({theme}) => theme.border_radius_8}px;
   margin-bottom: ${({theme}) => theme.gap_10}px;
 `;
 
-const WrapInfoProduct = styled.View``;
+const WrapInfoProduct = styled.View`
+  max-width: 75%;
+`;
+
+const IngredientsContainer = styled.View`
+  flex-wrap: nowrap;
+  max-width: 100%;
+`;
 
 export default Payment;

@@ -1,4 +1,3 @@
-import {IngredientTypesDetail} from '@app-core/state/ingredient/type';
 import {SubmitOrderResponse} from '@app-core/state/payment/type';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import Cart from '@screens/Cart';

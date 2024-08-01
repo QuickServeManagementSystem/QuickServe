@@ -117,10 +117,18 @@ const Cart = () => {
       return {
         productTemplateId: productTemplate.productTemplateId,
         quantity: productTemplate.quantity,
-        ingredients: state.orderIngredient.filter(
-          (_ingredient: any) =>
-            _ingredient.productId === productTemplate.productTemplateId,
-        ),
+        ingredients: state.orderIngredient
+          .filter(
+            (_ingredient: any) =>
+              _ingredient.productId === productTemplate.productTemplateId,
+          )
+          .map((ingredient: any) => {
+            return {
+              id: ingredient.id,
+              quantity: ingredient._quantity,
+              price: ingredient.ingredientPrice,
+            };
+          }),
       };
     });
 
@@ -133,7 +141,7 @@ const Cart = () => {
             products: products,
           }),
         );
-        clearData();
+        // clearData();
       },
     );
   };

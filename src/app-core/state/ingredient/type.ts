@@ -9,6 +9,7 @@ export interface IngredientTypesDetail {
   calo: number;
   defaultQuantity: number;
   imageUrl: string;
+  quantity?: number;
 }
 export interface IngredientTypes {
   ingredientTypeId: number;

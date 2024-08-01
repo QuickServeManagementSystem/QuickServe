@@ -34,6 +34,10 @@ const Ingredients = ({itemIngredient, productId}: IIngredients) => {
   }, [itemIngredient]);
 
   const handelIncreaseAmount = (item: IngredientTypesDetail) => {
+    const index = itemIngredient.ingredients.findIndex(
+      ing => ing.id === item.id,
+    );
+
     orderIngredient({
       productId: productId,
       id: item.id,
@@ -41,6 +45,7 @@ const Ingredients = ({itemIngredient, productId}: IIngredients) => {
       quantity: item.defaultQuantity + 1,
       ingredientPrice: item.price,
       price: item.price * (item.defaultQuantity + 1),
+      _quantity: itemIngredient.ingredients[index].defaultQuantity,
     });
     setIngredient(
       ingredient.map(ing => {
@@ -56,6 +61,9 @@ const Ingredients = ({itemIngredient, productId}: IIngredients) => {
   };
 
   const handelDecreaseAmount = (item: IngredientTypesDetail) => {
+    const index = itemIngredient.ingredients.findIndex(
+      ing => ing.id === item.id,
+    );
     orderIngredient({
       productId: productId,
       id: item.id,
@@ -63,6 +71,7 @@ const Ingredients = ({itemIngredient, productId}: IIngredients) => {
       quantity: item.defaultQuantity > 0 ? item.defaultQuantity - 1 : 0,
       ingredientPrice: item.price,
       price: item.price * (item.defaultQuantity - 1),
+      _quantity: itemIngredient.ingredients[index].defaultQuantity,
     });
     setIngredient(
       ingredient.map(ing => {

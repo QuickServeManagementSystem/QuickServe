@@ -1,4 +1,3 @@
-import {handleError} from '@app-core/network/proxy';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {useRoute} from '@react-navigation/native';
@@ -31,15 +30,15 @@ const WebViewPaymentVNPay = () => {
             });
           } else {
             toast.error(res.data.errors?.[0].description ?? '');
-            Navigation.replace(APP_SCREEN.HomeStack.name);
+            Navigation.replace(APP_SCREEN.AppStack.name);
           }
         });
       }
       if (navUrl.includes('paymentv2/Payment/Error')) {
-        Navigation.replace(APP_SCREEN.HomeStack.name);
+        Navigation.replace(APP_SCREEN.AppStack.name);
       }
       if (navUrl.includes('paymentv2/Payment/Cancel')) {
-        Navigation.replace(APP_SCREEN.HomeStack.name);
+        Navigation.replace(APP_SCREEN.AppStack.name);
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -51,7 +50,7 @@ const WebViewPaymentVNPay = () => {
       <AppHeader
         title="Thanh Toán"
         onPressIconLeft={() => {
-          Navigation.navigateTo(APP_SCREEN.HomeStack.name);
+          Navigation.navigateTo(APP_SCREEN.AppStack.name);
           clearData();
         }}
       />
