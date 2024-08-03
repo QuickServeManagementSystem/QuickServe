@@ -76,9 +76,9 @@ const Overlay = styled.View`
 
 const LottieAnimation = styled(LottieView)`
   align-self: center;
-  height: ${Dimensions.get('window').width < 2000
-    ? scale(MaxSize.HEIGHT / 2)
-    : scale(MaxSize.HEIGHT)}px;
+  height: ${Dimensions.get('window').width < 450
+    ? scale(MaxSize.HEIGHT)
+    : scale(MaxSize.HEIGHT / 2)}px;
   width: ${scale(MaxSize.WIDTH)}px;
   justify-content: center;
   align-items: center;

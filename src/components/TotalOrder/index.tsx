@@ -19,6 +19,7 @@ import {Context} from '../../reducer';
 
 export type TotalOrderRefType = {
   setChangeRoute(route?: string): void;
+  onOk: (active: boolean) => void;
 };
 
 export type TotalOrderRef = React.ForwardedRef<TotalOrderRefType>;
@@ -26,12 +27,16 @@ export type TotalOrderRef = React.ForwardedRef<TotalOrderRefType>;
 const TotalOrder = React.forwardRef((props, ref: TotalOrderRef) => {
   const appTheme = useTheme();
   const {state, calculateTotalPriceSelector} = useContext(Context);
-
+  const popupOrderProps = React.useRef<any>();
   const [currentRoute, setCurrentRoute] = useState<string>();
+  const [orderActive, setOrderActive] = useState<boolean>(false);
 
   useImperativeHandle(ref, () => ({
     setChangeRoute: (route?: string) => {
       setCurrentRoute(route);
+    },
+    onOk: active => {
+      setOrderActive(active);
     },
   }));
 
@@ -52,6 +57,7 @@ const TotalOrder = React.forwardRef((props, ref: TotalOrderRef) => {
     state.orderProduct.length !== 0 ? (
     <WrapAddProduct
       {...props}
+      disabled={!orderActive}
       onPress={() => {
         Navigation.navigateTo(APP_SCREEN.Cart.name);
       }}>

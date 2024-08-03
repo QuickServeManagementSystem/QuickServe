@@ -1,144 +1,109 @@
-import {useAppDispatch, useAppSelector} from '@app-core/state';
-import {
-  getIngredientByIdAction,
-  getListGredientTypesSelectors,
-} from '@app-core/state/ingredient/reducer';
-import {
-  IngredientTypes,
-  IngredientTypesDetail,
-} from '@app-core/state/ingredient/type';
+import {Ingredient, Step} from '@app-core/state/ingredient/type';
 import {en} from '@assets/text_constant';
+import {useAppContext} from '@utils/appContext';
 import {formatNumber, Space} from '@utils/common';
 import AppFlatlist from '@views/AppFlatlist';
 import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect, useState} from 'react';
+import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
 import {Context} from '../../../reducer';
 
 interface IIngredients {
-  itemIngredient: IngredientTypes;
+  itemStep: Step;
   productId: number;
+  listStep: Step[];
 }
 
-const Ingredients = ({itemIngredient, productId}: IIngredients) => {
+const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
   const appTheme = useTheme();
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
-  const [ingredient, setIngredient] = useState<IngredientTypesDetail[]>([]);
-  const {orderIngredient} = useContext(Context);
+
+  const {state, orderIngredient} = useContext(Context);
+  const {totalPrice} = useAppContext();
+
   useEffect(() => {
-    setIngredient(itemIngredient.ingredients);
-  }, [itemIngredient]);
+    const arrayStepIds = state.orderIngredient
+      .filter((_ing: any) => _ing.productId === productId)
+      .flatMap((_ing: any) => _ing.stepId);
+    const idsStepList = listStep.map(step => step.id);
 
-  const handelIncreaseAmount = (item: IngredientTypesDetail) => {
-    const index = itemIngredient.ingredients.findIndex(
-      ing => ing.id === item.id,
-    );
+    const uniqueStepIds = [...new Set(arrayStepIds)];
 
+    const areArraysEqual =
+      uniqueStepIds.length === idsStepList.length &&
+      uniqueStepIds.every((item: any) => idsStepList.includes(item));
+
+    if (!areArraysEqual) {
+      totalPrice.current?.onOk(false);
+    } else {
+      totalPrice.current?.onOk(true);
+    }
+  }, [listStep, productId, state.orderIngredient, totalPrice]);
+
+  const handleSingleSelection = (ingredient: Ingredient) => {
     orderIngredient({
-      productId: productId,
-      id: item.id,
-      name: item.name,
-      quantity: item.defaultQuantity + 1,
-      ingredientPrice: item.price,
-      price: item.price * (item.defaultQuantity + 1),
-      _quantity: itemIngredient.ingredients[index].defaultQuantity,
+      productId,
+      stepId: itemStep.id,
+      id: ingredient.id,
+      name: ingredient.name,
+      price: ingredient.price,
+      img: ingredient.img,
     });
-    setIngredient(
-      ingredient.map(ing => {
-        if (ing.id === item.id) {
-          return {
-            ...ing,
-            defaultQuantity: ing.defaultQuantity + 1,
-          };
-        }
-        return ing;
-      }),
-    );
   };
 
-  const handelDecreaseAmount = (item: IngredientTypesDetail) => {
-    const index = itemIngredient.ingredients.findIndex(
-      ing => ing.id === item.id,
+  const renderIngredientDetail = (item: Ingredient) => {
+    const isSelected = state.orderIngredient.some(
+      (ing: any) =>
+        ing.id === item.id &&
+        ing.stepId === itemStep.id &&
+        ing.productId === productId,
     );
-    orderIngredient({
-      productId: productId,
-      id: item.id,
-      name: item.name,
-      quantity: item.defaultQuantity > 0 ? item.defaultQuantity - 1 : 0,
-      ingredientPrice: item.price,
-      price: item.price * (item.defaultQuantity - 1),
-      _quantity: itemIngredient.ingredients[index].defaultQuantity,
-    });
-    setIngredient(
-      ingredient.map(ing => {
-        if (ing.id === item.id) {
-          return {
-            ...ing,
-            defaultQuantity:
-              ing.defaultQuantity > 0 ? ing.defaultQuantity - 1 : 0,
-          };
-        }
-        return ing;
-      }),
-    );
-  };
+    let isDisabled = false;
 
-  const renderIngredientDetail = (item: IngredientTypesDetail) => {
+    const index = state.orderIngredient.findIndex(
+      (ing: any) => ing.stepId === itemStep.id,
+    );
+
+    if (index !== -1) {
+      const numberSelect = state.orderIngredient.filter(
+        (ing: any) => ing.stepId === itemStep.id && ing.productId === productId,
+      ).length;
+
+      if (numberSelect === itemStep.max && !isSelected) {
+        isDisabled = true;
+      }
+    }
+
     return (
-      <ListInfo key={item.id}>
-        <WrapImageIngredient>
-          <ImageIngredient source={{uri: item.imageUrl}} />
-        </WrapImageIngredient>
-        <Space horizontal={scale(appTheme.gap_10)} />
-        <WrapInfoIngredient>
-          <AppText variant="medium_20">{item.name}</AppText>
-          <Space vertical={scale(appTheme.gap_5)} />
-          <BoxAction>
-            <WrapPrice>
-              <AppTextSupportColor
-                variant="bold_20"
-                color={appTheme.colors.primary}>
-                {en.common.vnd.replace('{number}', formatNumber(item.price))}
-              </AppTextSupportColor>
-            </WrapPrice>
-            <Space vertical={scale(appTheme.gap_5)} />
-            <Space horizontal={scale(10)} />
-            <WrapActionAmount>
-              <TouchableMinus onPress={() => handelDecreaseAmount(item)}>
-                <AppIcon
-                  name="ic_minus"
-                  stroke={appTheme.colors.stroke_third}
-                  width={24}
-                  height={24}
-                />
-              </TouchableMinus>
-              <Space horizontal={scale(appTheme.gap_5)} />
-              <AppTextSupportColor
-                variant="bold_24"
-                color={appTheme.colors.primary}>
-                {item.defaultQuantity}
-              </AppTextSupportColor>
-              <Space horizontal={scale(appTheme.gap_5)} />
-              <TouchableAdd onPress={() => handelIncreaseAmount(item)}>
-                <AppIcon
-                  name="ic_add"
-                  stroke={appTheme.colors.stroke_third}
-                  width={24}
-                  height={24}
-                />
-              </TouchableAdd>
-            </WrapActionAmount>
-          </BoxAction>
-        </WrapInfoIngredient>
+      <ListInfo key={item.id} isSelected={isSelected} isDisabled={isDisabled}>
+        <AppTouchable
+          disabled={isDisabled}
+          onPress={() => handleSingleSelection(item)}>
+          <WrapImageIngredient>
+            <ImageIngredient source={{uri: item.img}} />
+            <WrapInfo>
+              <AppText variant="regular_16">{item.name}</AppText>
+              <Space vertical={scale(5)} />
+              <WrapPrice>
+                <AppTextSupportColor
+                  variant="regular_16"
+                  color={appTheme.colors.primary}>
+                  {en.common.vnd.replace('{number}', formatNumber(item.price))}
+                </AppTextSupportColor>
+              </WrapPrice>
+            </WrapInfo>
+          </WrapImageIngredient>
+        </AppTouchable>
       </ListInfo>
     );
   };
 
-  const handelExpandIngredient = (id: number) => {
+  const handleExpandIngredient = (id: number) => {
     setExpandedIds(
       expandedIds.includes(id)
         ? expandedIds.filter(expId => expId !== id)
@@ -146,21 +111,23 @@ const Ingredients = ({itemIngredient, productId}: IIngredients) => {
     );
   };
 
+  const numberSelect = state.orderIngredient.filter(
+    (ing: any) => ing.stepId === itemStep.id && ing.productId === productId,
+  ).length;
+
   return (
     <Container>
-      <WrapIngredients
-        onPress={() => handelExpandIngredient(itemIngredient.ingredientTypeId)}>
+      <WrapIngredients onPress={() => handleExpandIngredient(itemStep.id)}>
         <WrapImage>
-          <Space horizontal={scale(10)} />
           <AppTextSupportColor
             color={appTheme.colors.black}
-            variant="semibold_20">
-            {itemIngredient.name}
+            variant="semibold_16">
+            {itemStep.step_name}: Chọn {numberSelect} trong {itemStep.max}
           </AppTextSupportColor>
         </WrapImage>
         <AppIcon
           name={
-            expandedIds.includes(itemIngredient.ingredientTypeId)
+            expandedIds.includes(itemStep.id)
               ? 'ic_chevron_up'
               : 'ic_chevron_down'
           }
@@ -168,24 +135,30 @@ const Ingredients = ({itemIngredient, productId}: IIngredients) => {
           width={24}
           height={24}
         />
-        {itemIngredient.ingredients.some(item => item.defaultQuantity > 0) && (
-          <WrapAmount />
-        )}
       </WrapIngredients>
-      {expandedIds.includes(itemIngredient.ingredientTypeId) && (
-        <AppFlatlist
-          data={ingredient ?? []}
-          renderItem={({item}) => renderIngredientDetail(item)}
-        />
-      )}
+      <ListIngredient>
+        {expandedIds.includes(itemStep.id) && (
+          <AppFlatlist
+            data={itemStep.ingredient}
+            renderItem={({item}) => renderIngredientDetail(item)}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        )}
+      </ListIngredient>
     </Container>
   );
 };
+
+const ListIngredient = styled.View`
+  margin: 0 ${({theme}) => theme.gap_20}px;
+`;
 
 const WrapImage = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+
 const Container = styled.View`
   margin: ${({theme}) => theme.gap_10}px;
 `;
@@ -200,62 +173,45 @@ const WrapIngredients = styled(AppTouchable)`
   box-shadow: 0px 2px 2px rgba(197, 197, 197, 0.25);
 `;
 
-const WrapAmount = styled.View`
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  background-color: ${({theme}) => theme.colors.primary};
-  border-radius: 99999px;
-  width: 10px;
-  height: 10px;
-`;
-
-const ListInfo = styled.View`
-  padding: ${scale(10)}px;
-  margin-top: ${scale(10)}px;
+const ListInfo = styled.View<{isSelected: boolean; isDisabled: boolean}>`
+  padding: ${scale(5)}px;
+  margin-top: ${scale(5)}px;
+  margin-right: ${scale(10)}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
   background-color: ${({theme}) => theme.colors.white};
-  padding: ${scale(10)}px;
-  border-radius: ${({theme}) => theme.border_radius_8}px;
-  box-shadow: 0px 2px 2px rgba(24, 24, 24, 0.1);
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 2px 2px rgba(24, 24, 24, 0.1);
+  opacity: ${({isDisabled}) => (isDisabled ? 0.5 : 1)};
+  border: ${({isSelected, theme}) =>
+    isSelected ? `2px solid ${theme.colors.green}` : 'none'};
+  max-width: ${scale(130)}px;
 `;
 
-const WrapInfoIngredient = styled(AppTouchable)``;
+const WrapImageIngredient = styled.View`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: ${scale(10)}px;
+`;
 
-const WrapImageIngredient = styled.View``;
+const WrapInfo = styled.View`
+  margin-top: ${scale(5)}px;
+`;
+
+const WrapPrice = styled.View`
+  margin-top: ${scale(1)}px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
 
 const ImageIngredient = styled.Image`
-  height: ${scale(80)}px;
-  width: ${scale(80)}px;
+  height: ${Dimensions.get('window').width < 450 ? scale(80) : scale(70)}px;
+  width: ${Dimensions.get('window').width < 450 ? scale(90) : scale(90)}px;
+  margin-right: ${({theme}) => theme.gap_5}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
-`;
-
-const WrapPrice = styled.View``;
-
-const BoxAction = styled.View``;
-const WrapActionAmount = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid ${({theme}) => theme.colors.stroke_primary};
-  border-radius: ${({theme}) => theme.border_radius_5}px;
-  padding: ${({theme}) => theme.gap_2}px;
-  max-width: ${scale(100)}px;
-  min-width: ${scale(100)}px;
-`;
-
-const TouchableMinus = styled(AppTouchable)`
-  background-color: ${({theme}) => theme.colors.button_background_thrid};
-  padding: ${({theme}) => theme.gap_2}px;
-  border-radius: ${({theme}) => theme.border_radius_5}px;
-`;
-
-const TouchableAdd = styled(AppTouchable)`
-  background-color: ${({theme}) => theme.colors.secondary};
-  padding: ${({theme}) => theme.gap_2}px;
-  border-radius: ${({theme}) => theme.border_radius_5}px;
 `;
 
 export default Ingredients;

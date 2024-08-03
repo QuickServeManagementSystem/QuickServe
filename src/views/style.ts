@@ -14,6 +14,7 @@ export const lightColors = {
   success: '#51E11F',
   warning: '#EEF155',
   gray_9: '#999999',
+  green: '#01d911',
   error: '#E11F1F',
 
   background_overlay: '#fabd0a',

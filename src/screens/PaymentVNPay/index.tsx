@@ -4,7 +4,7 @@ import {useRoute} from '@react-navigation/native';
 import toast from '@utils/toast';
 import AppHeader from '@views/AppHeader';
 import axios from 'axios';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {SafeAreaView} from 'react-native';
 import {WebView} from 'react-native-webview';
 import styled from 'styled-components/native';
@@ -17,11 +17,16 @@ const WebViewPaymentVNPay = () => {
   const ref = React.useRef(null);
   const {clearData} = useContext(Context);
 
+  useEffect(() => {
+    return () => {
+      clearData();
+    };
+  }, [clearData]);
+
   const handleNavigationStateChange = (navState: any) => {
     const {url: navUrl} = navState;
-
     try {
-      if (navUrl.includes('v1/Payments/call-back')) {
+      if (navUrl.includes('status=PAID')) {
         axios.get(navUrl).then(res => {
           if (res.data.success) {
             toast.success('Thanh toán thành công');
@@ -34,10 +39,10 @@ const WebViewPaymentVNPay = () => {
           }
         });
       }
-      if (navUrl.includes('paymentv2/Payment/Error')) {
+      if (navUrl.includes('status=ERROR')) {
         Navigation.replace(APP_SCREEN.AppStack.name);
       }
-      if (navUrl.includes('paymentv2/Payment/Cancel')) {
+      if (navUrl.includes('status=CANCELLED')) {
         Navigation.replace(APP_SCREEN.AppStack.name);
       }
     } catch (error: any) {
@@ -50,8 +55,7 @@ const WebViewPaymentVNPay = () => {
       <AppHeader
         title="Thanh Toán"
         onPressIconLeft={() => {
-          Navigation.navigateTo(APP_SCREEN.AppStack.name);
-          clearData();
+          Navigation.replace(APP_SCREEN.AppStack.name);
         }}
       />
       <StyledMyWebComponent

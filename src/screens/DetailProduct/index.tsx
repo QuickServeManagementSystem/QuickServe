@@ -2,9 +2,9 @@
 import {useAppDispatch, useAppSelector} from '@app-core/state';
 import {
   getIngredientByIdAction,
-  getListGredientTypesSelectors,
+  selectStepList,
 } from '@app-core/state/ingredient/reducer';
-import {IngredientTypes} from '@app-core/state/ingredient/type';
+import {Step} from '@app-core/state/ingredient/type';
 import {TProduct} from '@app-core/state/product/type';
 import {en} from '@assets/text_constant';
 import Navigation from '@navigation/Provider';
@@ -33,8 +33,9 @@ const DetailProduct = () => {
   const appTheme = useTheme();
   const [amount, setAmount] = React.useState(1);
 
-  const listIngredients = useAppSelector(getListGredientTypesSelectors);
+  const listStep = useAppSelector(selectStepList);
   const {orderProduct} = useContext(Context);
+
   const handelIncreaseAmount = () => {
     setAmount(prev => prev + 1);
   };
@@ -59,8 +60,14 @@ const DetailProduct = () => {
     dispatch(getIngredientByIdAction({productTemplateId: detailProduct.id}));
   }, [detailProduct, dispatch]);
 
-  const renderIngredient = ({item}: {item: IngredientTypes}) => {
-    return <Ingredients itemIngredient={item} productId={detailProduct.id} />;
+  const renderIngredient = ({item}: {item: Step}) => {
+    return (
+      <Ingredients
+        listStep={listStep}
+        itemStep={item}
+        productId={detailProduct.id}
+      />
+    );
   };
 
   return (
@@ -142,7 +149,7 @@ const DetailProduct = () => {
         </WrapInfoProduct>
       </WrapDetailProduct>
       <AppFlatlist
-        data={listIngredients ?? []}
+        data={listStep ?? []}
         renderItem={item => renderIngredient(item)}
       />
     </Container>
@@ -151,7 +158,7 @@ const DetailProduct = () => {
 
 const Container = styled.View`
   flex: 1;
-  margin-bottom: ${scale(60)}px;
+  padding-bottom: ${({theme}) => scale(theme.gap_64)}px;
 `;
 
 const WrapInfoProduct = styled.View`

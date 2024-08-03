@@ -5,12 +5,19 @@ import {Space} from '@utils/common';
 import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React from 'react';
+import React, {useEffect} from 'react';
+import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
 const Welcome = () => {
   const appTheme = useTheme();
+  const {width, height} = Dimensions.get('window');
+  useEffect(() => {
+    if (width > height && width >= 768) {
+      Navigation.reset(APP_SCREEN.AppStack.name);
+    }
+  }, [width, height]);
   return (
     <Container>
       <WrapTitle>

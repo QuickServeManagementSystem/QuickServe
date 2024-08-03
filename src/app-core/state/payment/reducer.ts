@@ -14,8 +14,8 @@ export const paymentSlice = createSlice({
 
 export const {} = paymentSlice.actions;
 
-export const paymentVNPayAction = createAction<TCreateVNPayRequest>(
-  `${paymentSlice.name}/paymentVNPayAction`,
+export const paymentVNPayOSAction = createAction<TCreateVNPayRequest>(
+  `${paymentSlice.name}/paymentVNPayOSAction`,
 );
 
 export const paymentOCDAction = createAction<TCreateVNPayRequest>(

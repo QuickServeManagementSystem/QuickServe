@@ -2,11 +2,12 @@ import {createSlice, createAction, PayloadAction} from '@reduxjs/toolkit';
 
 import {AppRootState} from '..';
 
-import {IngredientTypes, TIngredient, TIngredientRequest} from './type';
+import {IngredientTypes, Step, TIngredient, TIngredientRequest} from './type';
 
 type SliceState = {
   listIngredient: TIngredient;
   ingredientTypes: IngredientTypes[];
+  step: Step[];
 };
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
     price: 0,
     templates: [],
   },
+  step: [],
   ingredientTypes: [],
 } as SliceState;
 
@@ -37,9 +39,13 @@ export const ingredientSlice = createSlice({
     ) => {
       state.ingredientTypes = payload;
     },
+
+    setStepList: (state: SliceState, {payload}: PayloadAction<Step[]>) => {
+      state.step = payload;
+    },
   },
 });
-export const {setListIngredient, setListIngredientTypes} =
+export const {setListIngredient, setListIngredientTypes, setStepList} =
   ingredientSlice.actions;
 
 // actions
@@ -54,5 +60,7 @@ export const getListIngredientByIdSelectors = (state: AppRootState) =>
 
 export const getListGredientTypesSelectors = (state: AppRootState) =>
   state.ingredient.ingredientTypes;
+
+export const selectStepList = (state: AppRootState) => state.ingredient.step;
 
 export default ingredientSlice.reducer;

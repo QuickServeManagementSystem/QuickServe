@@ -6,8 +6,9 @@ import {
   getIngredientByIdAction,
   setListIngredient,
   setListIngredientTypes,
+  setStepList,
 } from './reducer';
-import {TIngredient, parceIngredientType} from './type';
+import {Step, TIngredient, parceIngredientType, transformData} from './type';
 
 function* getIngredientByIdSaga(action: any) {
   if (!getIngredientByIdAction.match(action)) {
@@ -22,9 +23,9 @@ function* getIngredientByIdSaga(action: any) {
     if (data) {
       const ingredientType = parceIngredientType(data);
       yield put(setListIngredient(data));
-
       yield put(setListIngredientTypes(ingredientType));
-      // parce data type
+      const stepIngredient: Step[] = transformData(data);
+      yield put(setStepList(stepIngredient));
     }
   } catch (error: any) {
     handleError(error);

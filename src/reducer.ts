@@ -46,7 +46,7 @@ export const reducer = (state: TInitPrice = initPrice, action: any) => {
         item => item.id === action.payload.id,
       );
       if (_index !== -1) {
-        ingredient[_index] = action.payload;
+        ingredient.splice(_index, 1);
       } else {
         ingredient.push(action.payload);
       }
@@ -82,25 +82,14 @@ export const calculateTotalPriceSelector = (
   product: TInitPrice['orderProduct'],
   ingredient: TInitPrice['orderIngredient'],
 ) => {
-  const totalProduct = product.reduce(
-    (sum: number, _product: TInitPrice['orderProduct']) => {
-      return sum + _product.price;
-    },
-    0,
-  );
-
   const totalIngredient = ingredient.reduce(
     (sum: number, _ingredient: TInitPrice['orderIngredient']) => {
-      return (
-        sum +
-        (_ingredient.price -
-          _ingredient.ingredientPrice * _ingredient._quantity)
-      );
+      return sum + _ingredient.price;
     },
     0,
   );
 
-  return totalIngredient + totalProduct;
+  return totalIngredient;
 };
 
 export const getListCart = (

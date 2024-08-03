@@ -1,8 +1,6 @@
 import {BaseResType} from '../type';
 
 export type TOrderRequest = {
-  name: string;
-  phoneNumber: string;
   products: [
     {
       productTemplateId: number;
@@ -10,7 +8,6 @@ export type TOrderRequest = {
       ingredients: [
         {
           id: number;
-          quantity: number;
           price: number;
         },
       ];

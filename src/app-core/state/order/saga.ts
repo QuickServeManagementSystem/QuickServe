@@ -46,12 +46,12 @@ function* createOrderSaga(action: any) {
       });
       yield put(setOrder(response));
     }
-    if (response.errors) {
+    if (!response.success) {
       toast.error(response.errors?.[0].description ?? '');
       Navigation.replace(APP_SCREEN.HomeStack.name);
     }
   } catch (error: any) {
-    toast.error(en.order.error);
+    toast.error(error.errors?.[0]?.description);
     handleError(error);
   }
 }

@@ -5,7 +5,7 @@ import {
 } from '@app-core/state/order/reducer';
 import {
   paymentOCDAction,
-  paymentVNPayAction,
+  paymentVNPayOSAction,
 } from '@app-core/state/payment/reducer';
 import {en} from '@assets/text_constant';
 import {FormTextInput} from '@components/Form/Input';
@@ -56,7 +56,7 @@ const Payment = () => {
       },
       {
         id: '2',
-        label: 'VNPay',
+        label: 'PayOS',
         value: '2',
       },
     ],
@@ -95,7 +95,7 @@ const Payment = () => {
     }
     if (selectedId === '2') {
       dispatch(
-        paymentVNPayAction({
+        paymentVNPayOSAction({
           orderId: orderId,
           totalPrice: listProduct?.totalPrice,
           orderInfo: data.message,
@@ -165,7 +165,7 @@ const Payment = () => {
         title="Thanh Toán"
         onPressIconLeft={() => {
           toast.error('Thanh toán thất bại');
-          Navigation.replace(APP_SCREEN.HomeStack.name);
+          Navigation.replace(APP_SCREEN.AppStack.name);
           clearData();
         }}
       />

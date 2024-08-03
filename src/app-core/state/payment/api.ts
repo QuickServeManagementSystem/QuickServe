@@ -34,3 +34,13 @@ export function* apiSubmitPaymentVNPay(
 
   return yield call(apiCallProxy, apiRequest);
 }
+
+export function* apiSubmitPaymentOS(
+  param: TCreateVNPayRequest,
+): Generator<any, TPaymentResponse, any> {
+  const apiRequest = (token: string) => {
+    return new apiClient(token).post(`v1/Payments/CreatePayOS`, param);
+  };
+
+  return yield call(apiCallProxy, apiRequest);
+}

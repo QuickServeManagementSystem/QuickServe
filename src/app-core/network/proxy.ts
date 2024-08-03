@@ -8,6 +8,7 @@ import {AUTH_KEY} from '@app-core/state/storage';
 import {isNull} from '@utils/common';
 import EventInstance from '@utils/eventInstance/eventInstance';
 import {EventType} from '@utils/eventInstance/type';
+import toast from '@utils/toast';
 import cloneDeep from 'lodash/cloneDeep';
 import {call, put, select} from 'redux-saga/effects';
 

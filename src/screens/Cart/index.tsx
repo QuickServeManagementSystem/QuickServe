@@ -9,6 +9,7 @@ import AppIcon from '@views/AppIcon';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect} from 'react';
+import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -29,13 +30,9 @@ const Cart = () => {
 
   const dispatch = useAppDispatch();
 
-  const {popupOrderRef} = useAppContext();
-
   useEffect(() => {
     setListIngredient(state.orderIngredient);
     setListProduct(state.orderProduct.filter((item: any) => item.quantity > 0));
-
-    console.log('state.orderIngredient', state.orderIngredient);
   }, [state]);
 
   const toggleExpand = (productId: number) => {
@@ -68,31 +65,6 @@ const Cart = () => {
     }
   };
 
-  const handelIngcreaseIngredient = (id: number) => {
-    const index = state.orderIngredient.findIndex(
-      (item: any) => item.id === id,
-    );
-    if (index > -1) {
-      state.orderIngredient[index].quantity += 1;
-      state.orderIngredient[index].price +=
-        state.orderIngredient[index].ingredientPrice;
-      setListIngredient([...state.orderIngredient]);
-    }
-  };
-
-  const handelDecreaseIngredient = (id: number) => {
-    const index = state.orderIngredient.findIndex(
-      (item: any) => item.id === id,
-    );
-    if (state.orderIngredient[index].price <= 0) return;
-    if (index > -1 && state.orderIngredient[index].quantity > 0) {
-      state.orderIngredient[index].quantity -= 1;
-      state.orderIngredient[index].price -=
-        state.orderIngredient[index].ingredientPrice;
-      setListIngredient([...state.orderIngredient]);
-    }
-  };
-
   const handelDelete = (id: number) => {
     const index = state.orderProduct.findIndex(
       (item: any) => item.productTemplateId === id,
@@ -100,16 +72,6 @@ const Cart = () => {
     if (index > -1) {
       state.orderProduct.splice(index, 1);
       setListProduct([...state.orderProduct]);
-    }
-  };
-
-  const handelDeleteIngredient = (id: number) => {
-    const index = state.orderIngredient.findIndex(
-      (item: any) => item.id === id,
-    );
-    if (index > -1) {
-      state.orderIngredient.splice(index, 1);
-      setListIngredient([...state.orderIngredient]);
     }
   };
   const handelOrder = () => {
@@ -125,25 +87,29 @@ const Cart = () => {
           .map((ingredient: any) => {
             return {
               id: ingredient.id,
-              quantity: ingredient._quantity,
-              price: ingredient.ingredientPrice,
+              price: ingredient.price,
             };
           }),
       };
     });
 
-    popupOrderRef.current?.display(
-      (data: {phoneNumber: string; fullName: string}) => {
-        dispatch(
-          createOrderAction({
-            name: data.fullName,
-            phoneNumber: data.fullName,
-            products: products,
-          }),
-        );
-        // clearData();
-      },
+    dispatch(
+      createOrderAction({
+        products: products,
+      }),
     );
+    // clearData();
+  };
+
+  const handelChooseIngredient = (ingredient: any) => {
+    const index = listIngredient.findIndex(
+      (item: any) => item.id === ingredient.id,
+    );
+    if (index > -1) {
+      setListIngredient(prevState => {
+        return prevState.splice(index, 1);
+      });
+    }
   };
 
   const renderProductItem = ({item}: {item: any}) => {
@@ -154,17 +120,15 @@ const Cart = () => {
 
     return (
       <ContainerCart key={item.productTemplateId}>
-        <Space vertical={scale(10)} />
-        <AppTextSupportColor
-          variant="medium_18"
-          color={appTheme.colors.primary}>
+        <Space vertical={scale(5)} />
+        <AppTextSupportColor variant="medium_18" color={appTheme.colors.black}>
           {en.cart.mainDishes}
         </AppTextSupportColor>
         <Space vertical={scale(10)} />
         <WrapProduct>
           <WrapInfoProduct>
             <AppTextSupportColor
-              variant="bold_16"
+              variant="bold_20"
               color={appTheme.colors.black}>
               {item.name}
             </AppTextSupportColor>
@@ -237,27 +201,24 @@ const Cart = () => {
           </ButtonViewMore>
         ) : null}
         {isExpanded && productIngredients.length > 0 ? (
-          <AppFlatlist
-            data={productIngredients}
-            renderItem={({item: ingredient}: any) => (
-              <IngredientCard
-                ingredient={ingredient}
-                handelIncreaseAmount={handelIngcreaseIngredient}
-                handelDecreaseAmount={handelDecreaseIngredient}
-                handelDelete={handelDeleteIngredient}
-              />
-            )}
-            keyExtractor={(ingredient: any) => ingredient.id.toString()}
-          />
+          <>
+            <AppFlatlist
+              data={productIngredients}
+              renderItem={({item: ingredient}: any) => (
+                <IngredientCard ingredient={ingredient} />
+              )}
+              keyExtractor={(ingredient: any) => ingredient.id.toString()}
+            />
+            <Line />
+          </>
         ) : null}
-
-        <Line />
       </ContainerCart>
     );
   };
 
   return (
     <Container>
+      <Space vertical={scale(5)} />
       <AppHeader title="Giỏ Hàng" />
       <AppFlatlist
         data={listProduct}
@@ -273,7 +234,15 @@ const Cart = () => {
     </Container>
   );
 };
-
+const CartContainer = styled.View`
+  background-color: ${({theme}) => theme.colors.gray_9};
+  padding: ${({theme}) => theme.gap_10}px;
+  shadow-color: ${({theme}) => theme.colors.black};
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.1;
+  shadow-radius: 10px;
+  elevation: 5;
+`;
 const ContainerCart = styled.View`
   margin: 0 ${({theme}) => theme.gap_16}px;
 `;
@@ -307,7 +276,7 @@ const Container = styled.View`
   background-color: ${({theme}) => theme.colors.white};
 `;
 
-const WrapProduct = styled.View`
+const WrapProduct = styled(CartContainer)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
