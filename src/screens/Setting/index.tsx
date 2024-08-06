@@ -1,10 +1,6 @@
 import {useAppDispatch, useAppSelector} from '@app-core/state';
 import {resetStateAction} from '@app-core/state/application/reducer';
-import {
-  ERole,
-  selectCurrentRole,
-  selectEmail,
-} from '@app-core/state/auth/reducer';
+import {ERole, selectEmail, selectRole} from '@app-core/state/auth/reducer';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {Space} from '@utils/common';
@@ -22,7 +18,9 @@ const Setting = () => {
   const appTheme = useTheme();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectEmail);
+  const currentRole = useAppSelector(selectRole);
   const {clearData} = useContext(Context);
+
   const handelActions = (item: SettingsProps) => {
     switch (item.id) {
       case ESetting.logout:
@@ -33,11 +31,14 @@ const Setting = () => {
         Navigation.reset(APP_SCREEN.AuthStack.name);
         return;
       case ESetting.historyProduct:
-        // Navigation.navigateTo(APP_SCREEN.Cart.name);
-        console.log(123123123);
+        Navigation.navigateTo(APP_SCREEN.HistoryOrder.name);
+        return;
+      case ESetting.profile:
+        Navigation.navigateTo(APP_SCREEN.Profile.name);
         return;
     }
   };
+
   return (
     <Container>
       <AppHeader
@@ -49,8 +50,16 @@ const Setting = () => {
       />
       <Content>
         {dataSettings.map(item => {
+          if (item.id === ESetting.profile && currentRole !== ERole.Customer)
+            return null;
+          if (
+            item.id === ESetting.historyProduct &&
+            currentRole !== ERole.Customer
+          )
+            return null;
           if (item.id === ESetting.login && currentUser) return null;
-          if (item.id === ESetting.logout && currentUser === '') return null;
+          if (item.id === ESetting.logout && !currentUser) return null;
+
           return (
             <Wrap key={item.id}>
               <AppButton

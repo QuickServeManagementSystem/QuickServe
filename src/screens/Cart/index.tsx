@@ -13,7 +13,7 @@ import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
-import {Context} from '../../reducer';
+import {clearIngredients, Context} from '../../reducer';
 
 import IngredientCard from './renderIngredient';
 
@@ -48,8 +48,16 @@ const Cart = () => {
       (item: any) => item.productTemplateId === id,
     );
     if (index > -1) {
-      state.orderProduct[index].quantity += 1;
-      state.orderProduct[index].price += state.orderProduct[index].productPrice;
+      const product = state.orderProduct[index];
+      const ingredients = listIngredient.filter(
+        (ingredient: any) => ingredient.productId === product.productTemplateId,
+      );
+      const ingredientTotal = ingredients.reduce(
+        (sum: number, ingredient: any) => sum + ingredient.price,
+        0,
+      );
+      product.quantity += 1;
+      product.price = ingredientTotal * product.quantity;
       setListProduct([...state.orderProduct]);
     }
   };
@@ -59,8 +67,16 @@ const Cart = () => {
       (item: any) => item.productTemplateId === id,
     );
     if (index > -1 && state.orderProduct[index].quantity > 0) {
-      state.orderProduct[index].quantity -= 1;
-      state.orderProduct[index].price -= state.orderProduct[index].productPrice;
+      const product = state.orderProduct[index];
+      const ingredients = listIngredient.filter(
+        (ingredient: any) => ingredient.productId === product.productTemplateId,
+      );
+      const ingredientTotal = ingredients.reduce(
+        (sum: number, ingredient: any) => sum + ingredient.price,
+        0,
+      );
+      product.quantity -= 1;
+      product.price = ingredientTotal * product.quantity;
       setListProduct([...state.orderProduct]);
     }
   };
@@ -74,31 +90,34 @@ const Cart = () => {
       setListProduct([...state.orderProduct]);
     }
   };
+
   const handelOrder = () => {
-    const products = state.orderProduct.map((productTemplate: any) => {
+    const newProducts = state.orderProduct.map((productTemplate: any) => {
+      const ingredients = state.orderIngredient.filter(
+        (ingredient: any) =>
+          ingredient.productId === productTemplate.productTemplateId,
+      );
+
+      // Calculate the total price of the ingredients
+      const ingredientTotal = ingredients.reduce(
+        (sum: number, ingredient: any) => sum + ingredient.price,
+        0,
+      );
+
+      // Create a new entry for each product order
       return {
         productTemplateId: productTemplate.productTemplateId,
         quantity: productTemplate.quantity,
-        ingredients: state.orderIngredient
-          .filter(
-            (_ingredient: any) =>
-              _ingredient.productId === productTemplate.productTemplateId,
-          )
-          .map((ingredient: any) => {
-            return {
-              id: ingredient.id,
-              price: ingredient.price,
-            };
-          }),
+        price: ingredientTotal * productTemplate.quantity, // Calculate price based on quantity and ingredients
+        ingredients: ingredients.map((ingredient: any) => ({
+          id: ingredient.id,
+          price: ingredient.price,
+        })),
       };
     });
 
-    dispatch(
-      createOrderAction({
-        products: products,
-      }),
-    );
-    // clearData();
+    dispatch(createOrderAction({products: newProducts}));
+    clearIngredients();
   };
 
   const handelChooseIngredient = (ingredient: any) => {
@@ -118,6 +137,11 @@ const Cart = () => {
       (ingredient: any) => ingredient.productId === item.productTemplateId,
     );
 
+    // Tính tổng giá của các nguyên liệu cho sản phẩm
+    const ingredientTotal = productIngredients.reduce(
+      (sum: number, ingredient: any) => sum + ingredient.price,
+      0,
+    );
     return (
       <ContainerCart key={item.productTemplateId}>
         <Space vertical={scale(5)} />
@@ -136,7 +160,7 @@ const Cart = () => {
             <AppTextSupportColor
               variant="semibold_16"
               color={appTheme.colors.primary}>
-              {en.common.vnd.replace('{number}', formatNumber(item.price))}
+              {en.common.vnd.replace('{number}', formatNumber(ingredientTotal))}
             </AppTextSupportColor>
           </WrapInfoProduct>
           <WrapAction>
@@ -169,7 +193,7 @@ const Cart = () => {
               <Space horizontal={scale(appTheme.gap_5)} />
               <TouchableAdd
                 onPress={() => handelIncreaseAmount(item.productTemplateId)}
-                // disabled={detailProduct.quantity === 0}>
+                // disabled={item.quantity === 0}
               >
                 <AppIcon
                   name="ic_add"

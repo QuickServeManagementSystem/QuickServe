@@ -119,7 +119,7 @@ const OrderStaff: React.FC<Props> = () => {
                 });
               }}>
               <AppText variant="semibold_16">
-                {item.billCode.toString().substring(0, 8)}
+                Mã đơn hàng: {item.id.toString().substring(0, 6)}
               </AppText>
               {formatStatus(item.status)}
             </OrderItem>

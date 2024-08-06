@@ -11,12 +11,14 @@ import {
   apiCreateOrder,
   apiGetOrder,
   apiGetOrderById,
+  apiGetOrderHistoryCustomer,
   apiGetStatusOrder,
   apiUpdateOrder,
 } from './api';
 import {
   createOrderAction,
   getListOrderAction,
+  getListOrderHistoryAction,
   getListStatusOrderAction,
   getOrderByIdAction,
   setDetailOrder,
@@ -28,6 +30,8 @@ import {
 } from './reducer';
 import {
   TGetOrder,
+  TGetOrderHistoryCustomer,
+  TGetOrderHistoryCustomerResponse,
   TGetOrderResponse,
   TGetStatusOrderResponse,
   TOrderResponse,
@@ -130,10 +134,28 @@ function* getOrderStatusSaga(action: any) {
   }
 }
 
+function* getOrderHistoryCustomer(action: any) {
+  if (!getListStatusOrderAction.match(action)) {
+    return;
+  }
+  try {
+    const response: TGetOrderHistoryCustomerResponse = yield call(
+      apiGetOrderHistoryCustomer,
+    );
+    if (response.success) {
+      yield put(setStatusOrder(response));
+    }
+  } catch (error: any) {
+    toast.error(en.order.error);
+    handleError(error);
+  }
+}
+
 export default function* () {
   yield takeEvery(createOrderAction.type, createOrderSaga);
   yield takeEvery(getListOrderAction.type, getListORderSaga);
   yield takeEvery(updateOrderAction.type, UpdateOrderStatusSaga);
   yield takeEvery(getOrderByIdAction.type, getOrderByIdSaga);
   yield takeEvery(getListStatusOrderAction.type, getOrderStatusSaga);
+  yield takeEvery(getListOrderHistoryAction.type, getOrderHistoryCustomer);
 }

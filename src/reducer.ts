@@ -6,12 +6,15 @@ export const fetch_data_price = 'fetch_data_price';
 export const order_data_products = 'order_data_products';
 export const order_data_ingredients = 'order_data_ingredients';
 export const clear_data = 'clear_data';
+export const clear_ingredients = 'clear_ingredients';
+export const add_order = 'add_order';
 
 //MARK: init state
 export const initPrice = {
   totalPrice: 0,
   orderProduct: [] as any,
   orderIngredient: [] as any,
+  clearIngredients: [] as any,
 };
 
 export type TInitPrice = typeof initPrice;
@@ -39,6 +42,16 @@ export const reducer = (state: TInitPrice = initPrice, action: any) => {
         orderProduct: product,
         price: action.payload.price,
       };
+    case add_order:
+      return {
+        ...state,
+        orderProduct: [...state.orderProduct, action.payload], // Add the new order to the array
+      };
+    case clear_ingredients:
+      return {
+        ...state,
+        orderIngredient: [],
+      };
 
     case order_data_ingredients:
       const ingredient = [...state.orderIngredient];
@@ -63,6 +76,7 @@ export const reducer = (state: TInitPrice = initPrice, action: any) => {
       return initPrice;
   }
 };
+// In your reducer file
 
 //MARK: actions
 export const orderProduct = (dispatch: any) => (payload: any) => {
@@ -77,6 +91,9 @@ export const clearData = (dispatch: any) => () => {
   dispatch({type: clear_data});
 };
 
+export const clearIngredients = (dispatch: any) => () => {
+  dispatch({type: clear_ingredients});
+};
 //MARK: selectors
 export const calculateTotalPriceSelector = (
   product: TInitPrice['orderProduct'],
@@ -115,6 +132,7 @@ export const {Provider, Context} = createDataContext({
     orderProduct,
     orderIngredient,
     clearData,
+    clearIngredients,
   },
   selectors: {
     calculateTotalPriceSelector,

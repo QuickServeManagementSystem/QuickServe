@@ -6,6 +6,7 @@ import {BaseResType} from '../type';
 import {
   TGetOrder,
   TGetOrderByIdRequest,
+  TGetOrderHistoryCustomerResponse,
   TGetOrderRequest,
   TGetOrderResponse,
   TGetStatusOrderResponse,
@@ -65,6 +66,7 @@ type SliceState = {
   listOrder: TGetOrderResponse;
   detailOrder: TGetOrder;
   listStatusOrder: TGetStatusOrderResponse;
+  listOrderHistory: TGetOrderHistoryCustomerResponse;
 };
 
 const initialState = {
@@ -126,7 +128,12 @@ export const orderSlice = createSlice({
         listOrder.pageSize = pageSize;
       }
     },
-
+    setListOrderHistory: (
+      state: SliceState,
+      {payload}: {payload: TGetOrderHistoryCustomerResponse},
+    ) => {
+      state.listOrderHistory = payload;
+    },
     setDetailOrder: (state: SliceState, {payload}: {payload: any}) => {
       state.detailOrder = payload;
     },
@@ -139,6 +146,7 @@ export const {
   setDetailOrder,
   setStatusOrder,
   updateStatusOrder,
+  setListOrderHistory,
 } = orderSlice.actions;
 
 export const createOrderAction = createAction<TOrderRequest>(
@@ -160,6 +168,9 @@ export const getListStatusOrderAction = createAction(
   `${orderSlice.name}/getListStatusOrderAction`,
 );
 
+export const getListOrderHistoryAction = createAction(
+  `${orderSlice.name}/getListOrderHistoryAction`,
+);
 //selectors
 
 export const selectOrder = (state: AppRootState) => state.order.order;
@@ -169,5 +180,7 @@ export const selectOrderByIdSelector = (state: AppRootState) =>
 
 export const selectStatusOrderSelector = (state: AppRootState) =>
   state.order.listStatusOrder;
+export const selectListOrderHistorySelector = (state: AppRootState) =>
+  state.order.listOrderHistory;
 
 export default orderSlice.reducer;

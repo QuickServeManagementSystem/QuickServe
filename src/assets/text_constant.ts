@@ -58,6 +58,7 @@ export const en = {
     login: 'Login',
     historyproduct: 'Lịch Sử Đơn Hàng',
     userHistoryProduct: 'Lịch Sử Mưa Hàng',
+    profile: 'Thông tin cá nhân',
   },
   action: {
     off: 'Off',

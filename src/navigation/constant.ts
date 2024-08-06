@@ -1,12 +1,14 @@
 import {SubmitOrderResponse} from '@app-core/state/payment/type';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import Cart from '@screens/Cart';
+import HistoryOrder from '@screens/HistoryOrder';
 import {DetailProduct, Home, Order, Setting, Splash} from '@screens/index';
 import Welcome from '@screens/Login';
 import SignIn from '@screens/Login/signIn';
 import SignUp from '@screens/Login/signUp';
 import Payment from '@screens/Payment';
 import WebViewPaymentVNPay from '@screens/PaymentVNPay';
+import Profile from '@screens/Profile';
 import StatusOrder from '@screens/StatusOrder';
 import {Platform} from 'react-native';
 
@@ -111,6 +113,14 @@ export const APP_SCREEN = {
     name: 'WebViewPaymentVNPay',
     component: WebViewPaymentVNPay,
   },
+  HistoryOrder: {
+    name: 'HistoryOrder',
+    component: HistoryOrder,
+  },
+  Profile: {
+    name: 'Profile',
+    component: Profile,
+  },
 } as const;
 
 export interface ScreenPropType {
@@ -135,7 +145,8 @@ export interface ScreenPropType {
   [APP_SCREEN.WebViewPaymentVNPay.name]: {
     url: string;
   };
-
+  [APP_SCREEN.Profile.name]: undefined;
+  [APP_SCREEN.HistoryOrder.name]: undefined;
   [APP_SCREEN.StatusOrder.name]: {
     orderStatus?: SubmitOrderResponse['data'];
   };

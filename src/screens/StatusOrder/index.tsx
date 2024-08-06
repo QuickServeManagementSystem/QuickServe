@@ -2,14 +2,10 @@ import {
   getOrderByIdAction,
   selectOrderByIdSelector,
 } from '@app-core/state/order/reducer';
-import {SubmitOrderResponse} from '@app-core/state/payment/type';
 import {en} from '@assets/text_constant';
-import {APP_SCREEN} from '@navigation/constant';
-import Navigation from '@navigation/Provider';
 import {useRoute} from '@react-navigation/native';
 import {MaxSize, Space} from '@utils/common';
 import {useAutoExecutesSingle} from '@utils/hooks/useAutoExcutesSingle';
-import toast from '@utils/toast';
 import {AppTextSupportColor} from '@views/AppText';
 import LottieView from 'lottie-react-native';
 import React from 'react';
@@ -21,17 +17,7 @@ const StatusOrder = () => {
   const appTheme = useTheme();
   const route: any = useRoute();
 
-  const {
-    orderStatus,
-  }: {
-    orderStatus: {
-      id: string;
-      name: string;
-      paymentType: number;
-      refOrderId: string;
-      status: number;
-    };
-  } = route.params;
+  const {orderStatus} = route.params;
 
   const [data] = useAutoExecutesSingle({
     action: getOrderByIdAction,
@@ -50,6 +36,9 @@ const StatusOrder = () => {
     }
   }, [data?.status]);
 
+  // Directly use the billCode from orderStatus
+  const billCode = orderStatus?.refOrderId;
+
   return (
     <Overlay>
       <LottieAnimation
@@ -64,6 +53,12 @@ const StatusOrder = () => {
         <Space vertical={scale(10)} />
         <AppTextSupportColor variant="bold_22" color={appTheme.colors.white}>
           {statusOrder}
+        </AppTextSupportColor>
+        <Space vertical={scale(10)} />
+        <AppTextSupportColor
+          variant="semibold_20"
+          color={appTheme.colors.white}>
+          Mã đơn hàng: {billCode}
         </AppTextSupportColor>
       </WrapContent>
     </Overlay>
@@ -92,4 +87,5 @@ const WrapContent = styled.View`
   justify-content: center;
   align-items: center;
 `;
+
 export default StatusOrder;

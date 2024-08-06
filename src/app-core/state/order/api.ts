@@ -4,8 +4,10 @@ import {call} from 'redux-saga/effects';
 
 import {
   TGetOrder,
+  TGetOrderHistoryCustomer,
   TGetOrderRequest,
   TGetOrderResponse,
+  TGetStatusOrder,
   TOrderRequest,
   TOrderResponse,
   TUpdateOrder,
@@ -55,6 +57,18 @@ export function* apiGetOrderById(param: {
 export function* apiGetStatusOrder(): Generator<any, any, any> {
   const apiRequest = (token: string) => {
     return new apiClient(token).get(`v1/Orders/Store/OrderStatus`);
+  };
+
+  return yield call(apiCallProxy, apiRequest);
+}
+
+export function* apiGetOrderHistoryCustomer(): Generator<
+  any,
+  TGetOrderHistoryCustomer,
+  any
+> {
+  const apiRequest = (token: string) => {
+    return new apiClient(token).get(`v1/Orders/CustomerOrderHistory`);
   };
 
   return yield call(apiCallProxy, apiRequest);

@@ -89,6 +89,18 @@ export type TGetStatusOrder = {
   status: number;
 };
 
+export type TGetOrderHistoryCustomer = {
+  id: string;
+  totalPrice: number;
+  billCode: string;
+  status: number;
+  storeId: number;
+  created: string;
+};
+
 export type TGetStatusOrderResponse = BaseResType<TGetStatusOrder>;
 
 export type TGetOrderResponse = BaseResType<TGetOrder>;
+
+export type TGetOrderHistoryCustomerResponse =
+  BaseResType<TGetOrderHistoryCustomer>;

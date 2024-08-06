@@ -12,12 +12,12 @@ import styled, {useTheme} from 'styled-components/native';
 
 const Welcome = () => {
   const appTheme = useTheme();
-  const {width, height} = Dimensions.get('window');
-  useEffect(() => {
-    if (width > height && width >= 768) {
-      Navigation.reset(APP_SCREEN.AppStack.name);
-    }
-  }, [width, height]);
+  // const {width, height} = Dimensions.get('window');
+  // useEffect(() => {
+  //   if (width > height && width >= 768) {
+  //     Navigation.reset(APP_SCREEN.AppStack.name);
+  //   }
+  // }, [width, height]);
   return (
     <Container>
       <WrapTitle>
@@ -63,7 +63,7 @@ const Welcome = () => {
         <AppTextSupportColor
           variant="semibold_16"
           color={appTheme.colors.primary}>
-          123 123123123
+          +84395479409
         </AppTextSupportColor>
       </WrapFooter>
     </Container>

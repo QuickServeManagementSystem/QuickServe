@@ -23,8 +23,12 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
   const appTheme = useTheme();
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
 
-  const {state, orderIngredient} = useContext(Context);
+  const {state, orderIngredient, clearIngredients} = useContext(Context);
   const {totalPrice} = useAppContext();
+
+  useEffect(() => {
+    clearIngredients();
+  }, []);
 
   useEffect(() => {
     const arrayStepIds = state.orderIngredient
@@ -122,7 +126,7 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
           <AppTextSupportColor
             color={appTheme.colors.black}
             variant="semibold_16">
-            {itemStep.step_name}: Chọn {numberSelect} trong {itemStep.max}
+            {itemStep.step_name}: Chọn từ {numberSelect} tới {itemStep.max}
           </AppTextSupportColor>
         </WrapImage>
         <AppIcon

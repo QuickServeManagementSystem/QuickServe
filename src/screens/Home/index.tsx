@@ -24,9 +24,6 @@ import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
 function App(): React.JSX.Element {
-  const {width, height} = Dimensions.get('window');
-  const isTablet = width >= 768;
-
   const appTheme = useTheme();
 
   const [selectedCategory, setSelectedCategory] = React.useState<TCategory>();
