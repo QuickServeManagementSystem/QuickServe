@@ -6,49 +6,57 @@ import {
   selectStatusOrderSelector,
   updateOrderAction,
 } from '@app-core/state/order/reducer';
-import {TGetOrder} from '@app-core/state/order/type';
+import {TGetOrder, TGetStatusOrder} from '@app-core/state/order/type';
 import {en} from '@assets/text_constant';
 import {useAppContext} from '@utils/appContext';
 import {useAutoExecutes} from '@utils/hooks/useAutoExcutes';
 import AppFlatlist from '@views/AppFlatlist';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
+import {ToastAndroid} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
-interface Props {}
-
-const OrderStore: React.FC<Props> = () => {
+const OrderStore = () => {
   const appTheme = useTheme();
-
   const dispatch = useAppDispatch();
-
   const {popupStatusRef} = useAppContext();
+
+  // State to hold the current and previous order statuses
+  const [previousOrders, setPreviousOrders] = useState<TGetStatusOrder[]>([]);
+  const [currentOrders, setCurrentOrders] = useState<TGetStatusOrder[]>([]);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [data] = useAutoExecutes({
     action: getListStatusOrderAction,
     selector: selectStatusOrderSelector,
   });
 
+  useEffect(() => {
+    if (data?.data) {
+      const pendingOrders = data.data.filter(order => order.status === 3);
+      setCurrentOrders(pendingOrders);
+
+      pendingOrders.forEach(order => {
+        const prevOrder = previousOrders.find(prev => prev.id === order.id);
+        if (prevOrder && prevOrder.status === 3 && order.status === 4) {
+          ToastAndroid.show(
+            `Hóa đơn ${order.id} đã hoàn thành!`,
+            ToastAndroid.LONG,
+          );
+
+          setTimeout(() => {
+            setCurrentOrders(prev => prev.filter(o => o.id !== order.id));
+          }, 10000);
+        }
+      });
+      setPreviousOrders(data.data);
+    }
+  }, [data?.data]);
+
   const formatStatus = (status: number) => {
     switch (status) {
-      case 1:
-        return (
-          <WrapStatus background={appTheme.colors.primary}>
-            <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.create}
-            </Status>
-          </WrapStatus>
-        );
-      case 2:
-        return (
-          <WrapStatus background={appTheme.colors.primary}>
-            <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.paid}
-            </Status>
-          </WrapStatus>
-        );
       case 3:
         return (
           <WrapStatus background={appTheme.colors.primary}>
@@ -57,7 +65,6 @@ const OrderStore: React.FC<Props> = () => {
             </Status>
           </WrapStatus>
         );
-
       case 4:
         return (
           <WrapStatus background={appTheme.colors.success}>
@@ -66,29 +73,20 @@ const OrderStore: React.FC<Props> = () => {
             </Status>
           </WrapStatus>
         );
-      case 5:
-        return (
-          <WrapStatus background={appTheme.colors.error}>
-            <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.error}
-            </Status>
-          </WrapStatus>
-        );
     }
   };
+
   return (
     <Container>
       <AppFlatlist
-        data={data.data ?? []}
+        data={data?.data ?? []}
         contentContainerStyle={{
           paddingBottom: scale(100),
         }}
-        renderItem={({item, index}: {item: TGetOrder; index: number}) => {
+        renderItem={({item}: {item: TGetOrder}) => {
           return (
             <OrderItem disabled>
-              <AppText variant="semibold_16">
-                Đơn Số: {item.id.toString().substring(0, 4)} - {index + 1}
-              </AppText>
+              <AppText variant="semibold_16">Đơn Số: {item?.id}</AppText>
               {formatStatus(item.status)}
             </OrderItem>
           );
@@ -132,4 +130,5 @@ const WrapStatus = styled.View<{background: string}>`
   right: 0;
   bottom: 0;
 `;
+
 export default OrderStore;

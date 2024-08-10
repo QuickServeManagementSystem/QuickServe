@@ -130,7 +130,7 @@ function App(): React.JSX.Element {
         </WrapCategory>
       </HeaderSearchBar>
       <AppFlatlist
-        numColumns={2}
+        numColumns={4}
         data={listProduct ?? []}
         isFirstLoading={isFirstLoadingProduct}
         isLoadMore={isLoadMoreProduct}

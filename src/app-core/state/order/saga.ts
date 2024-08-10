@@ -23,6 +23,7 @@ import {
   getOrderByIdAction,
   setDetailOrder,
   setListOrder,
+  setListOrderHistory,
   setOrder,
   setStatusOrder,
   updateOrderAction,
@@ -135,7 +136,7 @@ function* getOrderStatusSaga(action: any) {
 }
 
 function* getOrderHistoryCustomer(action: any) {
-  if (!getListStatusOrderAction.match(action)) {
+  if (!getListOrderHistoryAction.match(action)) {
     return;
   }
   try {
@@ -143,7 +144,7 @@ function* getOrderHistoryCustomer(action: any) {
       apiGetOrderHistoryCustomer,
     );
     if (response.success) {
-      yield put(setStatusOrder(response));
+      yield put(setListOrderHistory(response));
     }
   } catch (error: any) {
     toast.error(en.order.error);
