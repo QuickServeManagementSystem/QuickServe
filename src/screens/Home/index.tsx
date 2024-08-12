@@ -18,13 +18,16 @@ import AppHeader from '@views/AppHeader';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect} from 'react';
-import {ViewStyle} from 'react-native';
+import {useWindowDimensions, ViewStyle} from 'react-native';
 import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
 function App(): React.JSX.Element {
   const appTheme = useTheme();
+  const dimensions = useWindowDimensions();
+  const isPortrait = dimensions.height > dimensions.width;
+  const numColumns = isPortrait ? 2 : 4;
 
   const [selectedCategory, setSelectedCategory] = React.useState<TCategory>();
   const [listProduct, setListProduct] = React.useState<TProduct[]>([]);
@@ -130,7 +133,7 @@ function App(): React.JSX.Element {
         </WrapCategory>
       </HeaderSearchBar>
       <AppFlatlist
-        numColumns={4}
+        numColumns={numColumns}
         data={listProduct ?? []}
         isFirstLoading={isFirstLoadingProduct}
         isLoadMore={isLoadMoreProduct}

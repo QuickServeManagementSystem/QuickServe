@@ -2,6 +2,7 @@ import {SubmitOrderResponse} from '@app-core/state/payment/type';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import Cart from '@screens/Cart';
 import HistoryOrder from '@screens/HistoryOrder';
+import HistoryOrderDetail from '@screens/HistoryOrder/HistoryOrderDetail';
 import {DetailProduct, Home, Order, Setting, Splash} from '@screens/index';
 import Welcome from '@screens/Login';
 import SignIn from '@screens/Login/signIn';
@@ -116,6 +117,10 @@ export const APP_SCREEN = {
   HistoryOrder: {
     name: 'HistoryOrder',
     component: HistoryOrder,
+  },
+  HistoryOrderDetail: {
+    name: 'HistoryOrderDetail',
+    component: HistoryOrderDetail,
   },
   Profile: {
     name: 'Profile',

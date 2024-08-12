@@ -54,6 +54,7 @@ const TotalOrder = React.forwardRef((props, ref: TotalOrderRef) => {
     currentRoute !== APP_SCREEN.Payment.name &&
     currentRoute !== APP_SCREEN.WebViewPaymentVNPay.name &&
     currentRoute !== APP_SCREEN.StatusOrder.name &&
+    currentRoute !== APP_SCREEN.HistoryOrder.name &&
     state.orderProduct.length !== 0 ? (
     <WrapAddProduct
       {...props}

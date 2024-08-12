@@ -1,23 +1,19 @@
 import {useAppDispatch, useAppSelector} from '@app-core/state';
-import {createOrderAction} from '@app-core/state/order/reducer';
 import {
   getListOrderHistoryAction,
   selectListOrderHistorySelector,
 } from '@app-core/state/order/reducer';
-import {en} from '@assets/text_constant';
-import {useAppContext} from '@utils/appContext';
-import {formatNumber, MaxSize, Space} from '@utils/common';
+import {APP_SCREEN} from '@navigation/constant';
+import Navigation from '@navigation/Provider';
+import {formatNumber, Space} from '@utils/common';
 import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
-import AppIcon from '@views/AppIcon';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
-
-import {Context} from '../../reducer';
 
 const HistoryOrder = () => {
   const appTheme = useTheme();
@@ -28,12 +24,16 @@ const HistoryOrder = () => {
     dispatch(getListOrderHistoryAction());
   }, [dispatch]);
 
+  const handleViewDetails = (orderId: any) => {
+    console.log('Navigating to order details with ID:', orderId); // Log the orderId
+    Navigation.navigateTo(APP_SCREEN.HistoryOrderDetail.name, {orderId});
+  };
+
   return (
     <Container>
       <Space vertical={scale(5)} />
       <AppHeader title="Lịch sử đơn hàng" />
 
-      {/* Render danh sách lịch sử đơn hàng */}
       <AppFlatlist
         data={orderHistory?.data || []}
         renderItem={({item}) => (
@@ -43,7 +43,7 @@ const HistoryOrder = () => {
                 <AppTextSupportColor
                   variant="bold_20"
                   color={appTheme.colors.black}>
-                  Mã hóa đơn: {item.billCode}
+                  Mã đơn hàng: {item.id}
                 </AppTextSupportColor>
                 <AppTextSupportColor
                   variant="bold_20"
@@ -62,7 +62,13 @@ const HistoryOrder = () => {
                 </AppTextSupportColor>
               </WrapInfoProduct>
               <WrapAction>
-                {/* Các hành động như Xem chi tiết, Xóa đơn hàng */}
+                <AppTouchable onPress={() => handleViewDetails(item.id)}>
+                  <AppTextSupportColor
+                    variant="bold_16"
+                    color={appTheme.colors.primary}>
+                    Xem chi tiết
+                  </AppTextSupportColor>
+                </AppTouchable>
               </WrapAction>
             </WrapProduct>
           </CardContainer>
@@ -77,10 +83,10 @@ const HistoryOrder = () => {
 // Helper function to get status label
 const getStatusLabel = status => {
   switch (status) {
-    case 1:
-      return 'Đã hoàn thành';
-    case 2:
+    case 3:
       return 'Đang xử lý';
+    case 4:
+      return 'Đã hoàn thành';
     default:
       return 'Chưa xác định';
   }
