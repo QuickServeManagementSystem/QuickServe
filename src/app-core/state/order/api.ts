@@ -3,6 +3,7 @@ import {apiCallProxy, makeParam} from '@app-core/network/proxy';
 import {call} from 'redux-saga/effects';
 
 import {
+  TGetFilterHistoryOrder,
   TGetOrder,
   TGetOrderHistoryCustomer,
   TGetOrderRequest,
@@ -62,13 +63,11 @@ export function* apiGetStatusOrder(): Generator<any, any, any> {
   return yield call(apiCallProxy, apiRequest);
 }
 
-export function* apiGetOrderHistoryCustomer(): Generator<
-  any,
-  TGetOrderHistoryCustomer,
-  any
-> {
+export function* apiGetOrderHistoryCustomer(
+  param: TGetFilterHistoryOrder,
+): Generator<any, TGetOrderHistoryCustomer, any> {
   const apiRequest = (token: string) => {
-    return new apiClient(token).get(`v1/Orders/CustomerOrderHistory`);
+    return new apiClient(token).get(`v1/Orders/CustomerOrderHistory`, param);
   };
 
   return yield call(apiCallProxy, apiRequest);

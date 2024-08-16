@@ -10,8 +10,8 @@ import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React, {useEffect} from 'react';
-import {Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, Switch as RNSwitch} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -19,21 +19,41 @@ const HistoryOrder = () => {
   const appTheme = useTheme();
   const dispatch = useAppDispatch();
   const orderHistory = useAppSelector(selectListOrderHistorySelector);
+  const [selectedStore, setSelectedStore] = useState('');
+  const [last7Days, setLast7Days] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   useEffect(() => {
-    dispatch(getListOrderHistoryAction());
-  }, [dispatch]);
+    dispatch(
+      getListOrderHistoryAction({selectedStore, last7Days, selectedStatus}),
+    );
+  }, [dispatch, selectedStore, last7Days, selectedStatus]);
 
   const handleViewDetails = (orderId: any) => {
     console.log('Navigating to order details with ID:', orderId); // Log the orderId
     Navigation.navigateTo(APP_SCREEN.HistoryOrderDetail.name, {orderId});
   };
 
+
+  const Switch = ({label, value, onValueChange}) => (
+    <SwitchContainer>
+      <SwitchLabel>{label}</SwitchLabel>
+      <RNSwitch value={value} onValueChange={onValueChange} />
+    </SwitchContainer>
+  );
+
   return (
     <Container>
       <Space vertical={scale(5)} />
       <AppHeader title="Lịch sử đơn hàng" />
-
+      {/* Filter UI */}
+      <FilterContainer>
+        <Switch
+          label="7 ngày gần nhất"
+          value={last7Days}
+          onValueChange={setLast7Days}
+        />
+      </FilterContainer>
       <AppFlatlist
         data={orderHistory?.data || []}
         renderItem={({item}) => (
@@ -125,6 +145,16 @@ const WrapAction = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+const FilterContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${({theme}) => theme.gap_10}px;
+  background-color: ${({theme}) => theme.colors.white};
+  border-bottom-width: 1px;
+  border-color: ${({theme}) => theme.colors.stroke_primary};
+  margin-bottom: ${({theme}) => theme.gap_10}px;
+`;
 
 const TouchableDelete = styled(AppTouchable)`
   padding: ${({theme}) => theme.gap_10}px;
@@ -137,4 +167,24 @@ const TouchableDelete = styled(AppTouchable)`
   background-color: ${({theme}) => theme.colors.error + theme.alpha_05};
 `;
 
+const PickerContainer = styled.View`
+  flex: 1;
+  margin-right: ${({theme}) => theme.gap_10}px;
+`;
+
+const PickerLabel = styled.Text`
+  margin-bottom: ${({theme}) => theme.gap_5}px;
+  color: ${({theme}) => theme.colors.black};
+`;
+
+const SwitchContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-right: ${({theme}) => theme.gap_10}px;
+`;
+
+const SwitchLabel = styled.Text`
+  margin-right: ${({theme}) => theme.gap_5}px;
+  color: ${({theme}) => theme.colors.black};
+`;
 export default HistoryOrder;

@@ -14,6 +14,7 @@ import AppFlatlist from '@views/AppFlatlist';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect, useState, useCallback} from 'react';
+import {Alert} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -81,6 +82,7 @@ const OrderStaff: React.FC<Props> = () => {
         );
     }
   };
+
   const handleSearch = useCallback(
     (text: string) => {
       setListOrder(
@@ -91,6 +93,33 @@ const OrderStaff: React.FC<Props> = () => {
     },
     [data],
   );
+
+  const handleStatusUpdate = (currentStatus: number, newStatus: number) => {
+    if (newStatus === 5) return true;
+    switch (currentStatus) {
+      case 1:
+        return newStatus === 2;
+      case 2:
+        return newStatus === 3;
+      case 3:
+        return newStatus === 4;
+      case 4:
+        return false;
+      default:
+        return false;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
 
   return (
     <Container>
@@ -110,17 +139,31 @@ const OrderStaff: React.FC<Props> = () => {
             <OrderItem
               onPress={() => {
                 popupStatusRef.current?.display((status: string) => {
-                  dispatch(
-                    updateOrderAction({
-                      orderId: item.id,
-                      status: Number(status),
-                    }),
-                  );
+                  const newStatus = Number(status);
+                  if (handleStatusUpdate(item.status, newStatus)) {
+                    dispatch(
+                      updateOrderAction({
+                        orderId: item.id,
+                        status: newStatus,
+                      }),
+                    );
+                  } else {
+                    Alert.alert(
+                      'Status Change Not Allowed',
+                      'You cannot change the status to this value.',
+                      [{text: 'OK'}],
+                    );
+                  }
                 });
               }}>
-              <AppText variant="semibold_16">
-                Mã đơn hàng: {item.id.toString().substring(0, 6)}
-              </AppText>
+              <OrderDetails>
+                <AppText variant="semibold_16">
+                  Mã đơn hàng: {item.id.toString().substring(0, 6)}
+                </AppText>
+                <AppText variant="regular_14">
+                  Ngày tạo: {formatDate(item.createdAt)}
+                </AppText>
+              </OrderDetails>
               {formatStatus(item.status)}
             </OrderItem>
           );
@@ -136,6 +179,7 @@ const Container = styled.View`
   margin-top: 15px;
   background-color: ${props => props.theme.colors.background};
 `;
+
 const OrderItem = styled(AppTouchable)`
   border-radius: ${props => props.theme.border_radius_8}px;
   padding: ${scale(30)}px ${scale(18)}px;
@@ -145,6 +189,10 @@ const OrderItem = styled(AppTouchable)`
   background-color: ${props => props.theme.colors.white};
   box-shadow: 2px 2px 5px ${props => props.theme.colors.stroke_primary};
   margin-bottom: ${scale(16)}px;
+`;
+
+const OrderDetails = styled.View`
+  flex-direction: column;
 `;
 
 const Status = styled(AppTextSupportColor)`
@@ -164,4 +212,5 @@ const WrapStatus = styled.View<{background: string}>`
   right: 0;
   bottom: 0;
 `;
+
 export default OrderStaff;

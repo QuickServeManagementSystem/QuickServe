@@ -70,15 +70,11 @@ const SignIn = () => {
     backgroundColor: appTheme.colors.white,
   };
 
-  const containerStyleKeyboard: FormItemProps['containerStyle'] = {
-    flex: 0.8,
-    justifyContent: 'center',
-  };
-
   return (
     <Container>
       <KeyboardAwareScrollView
-        contentContainerStyle={containerStyleKeyboard}
+        enableResetScrollToCoords={true}
+        enableAutomaticScroll={true}
         enableOnAndroid
         extraScrollHeight={appTheme.gap_24}>
         <Content>
@@ -190,6 +186,7 @@ const Container = styled.SafeAreaView`
   flex: 1;
   background-color: ${props =>
     props.theme.colors.primary + props.theme.alpha_008};
+  margin-top: ${props => props.theme.gap_130}px;
 `;
 
 const FormContent = styled.View`

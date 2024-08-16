@@ -170,6 +170,9 @@ export const getListStatusOrderAction = createAction(
 
 export const getListOrderHistoryAction = createAction(
   `${orderSlice.name}/getListOrderHistoryAction`,
+  ({selectedStore, last7Days, selectedStatus}) => ({
+    payload: {selectedStore, last7Days, selectedStatus},
+  }),
 );
 //selectors
 

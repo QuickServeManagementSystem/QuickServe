@@ -88,6 +88,11 @@ export type TGetStatusOrder = {
   id: string;
   status: number;
 };
+export type TGetFilterHistoryOrder = {
+  StoreName: string;
+  Last7Days: boolean;
+  Status: number;
+};
 
 export type TGetOrderHistoryCustomer = {
   id: string;

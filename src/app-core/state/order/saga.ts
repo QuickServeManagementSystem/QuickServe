@@ -140,8 +140,15 @@ function* getOrderHistoryCustomer(action: any) {
     return;
   }
   try {
+    const {selectedStore, last7Days, selectedStatus} = action.payload;
+    const params = {
+      StoreName: selectedStore,
+      Last7Days: last7Days,
+      Status: selectedStatus,
+    };
     const response: TGetOrderHistoryCustomerResponse = yield call(
       apiGetOrderHistoryCustomer,
+      params,
     );
     if (response.success) {
       yield put(setListOrderHistory(response));
