@@ -11,6 +11,7 @@ import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
 import {clearIngredients, Context} from '../../reducer';
@@ -19,7 +20,7 @@ import IngredientCard from './renderIngredient';
 
 const Cart = () => {
   const appTheme = useTheme();
-
+  const userRole = useSelector(state => state.user.role);
   const {state, clearData} = useContext(Context);
 
   const [listProduct, setListProduct] = React.useState<any[]>([]);

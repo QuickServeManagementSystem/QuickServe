@@ -7,9 +7,11 @@ import {
   TGetOrder,
   TGetOrderByIdRequest,
   TGetOrderHistoryCustomerResponse,
+  TGetOrderHistoryStaffResponse,
   TGetOrderRequest,
   TGetOrderResponse,
   TGetStatusOrderResponse,
+  TOrderCustomerRequest,
   TOrderRequest,
   TOrderResponse,
   TUpdateOrder,
@@ -67,6 +69,7 @@ type SliceState = {
   detailOrder: TGetOrder;
   listStatusOrder: TGetStatusOrderResponse;
   listOrderHistory: TGetOrderHistoryCustomerResponse;
+  listOrderHistoryStaff: TGetOrderHistoryStaffResponse;
 };
 
 const initialState = {
@@ -134,6 +137,12 @@ export const orderSlice = createSlice({
     ) => {
       state.listOrderHistory = payload;
     },
+    setListOrderHistoryStaff: (
+      state: SliceState,
+      {payload}: {payload: TGetOrderHistoryStaffResponse},
+    ) => {
+      state.listOrderHistoryStaff = payload;
+    },
     setDetailOrder: (state: SliceState, {payload}: {payload: any}) => {
       state.detailOrder = payload;
     },
@@ -147,6 +156,7 @@ export const {
   setStatusOrder,
   updateStatusOrder,
   setListOrderHistory,
+  setListOrderHistoryStaff,
 } = orderSlice.actions;
 
 export const createOrderAction = createAction<TOrderRequest>(
@@ -174,6 +184,17 @@ export const getListOrderHistoryAction = createAction(
     payload: {selectedStore, last7Days, selectedStatus},
   }),
 );
+
+export const createOrderCustomerAction = createAction<TOrderCustomerRequest>(
+  `${orderSlice.name}/orderCustomerAction`,
+);
+export const getListOrderHistoryStaffAction = createAction(
+  `${orderSlice.name}/getListOrderHistoryStaffAction`,
+  ({selectedStatus}) => ({
+    payload: {selectedStatus},
+  }),
+);
+
 //selectors
 
 export const selectOrder = (state: AppRootState) => state.order.order;
@@ -183,7 +204,11 @@ export const selectOrderByIdSelector = (state: AppRootState) =>
 
 export const selectStatusOrderSelector = (state: AppRootState) =>
   state.order.listStatusOrder;
+
 export const selectListOrderHistorySelector = (state: AppRootState) =>
   state.order.listOrderHistory;
+
+export const selectListOrderHistoryStaffSelector = (state: AppRootState) =>
+  state.order.listOrderHistoryStaff;
 
 export default orderSlice.reducer;

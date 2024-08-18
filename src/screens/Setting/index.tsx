@@ -33,6 +33,9 @@ const Setting = () => {
       case ESetting.historyProduct:
         Navigation.navigateTo(APP_SCREEN.HistoryOrder.name);
         return;
+      case ESetting.historyOrderStaff:
+        Navigation.navigateTo(APP_SCREEN.HistoryOrderStaff.name);
+        return;
       case ESetting.profile:
         Navigation.navigateTo(APP_SCREEN.Profile.name);
         return;
@@ -55,6 +58,11 @@ const Setting = () => {
           if (
             item.id === ESetting.historyProduct &&
             currentRole !== ERole.Customer
+          )
+            return null;
+          if (
+            item.id === ESetting.historyOrderStaff &&
+            currentRole !== ERole.Staff
           )
             return null;
           if (item.id === ESetting.login && currentUser) return null;

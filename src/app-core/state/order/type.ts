@@ -15,6 +15,23 @@ export type TOrderRequest = {
   ];
 };
 
+export type TOrderCustomerRequest = {
+  products: [
+    {
+      productTemplateId: number;
+      quantity: number;
+      ingredients: [
+        {
+          id: number;
+          price: number;
+          quantity: number;
+        },
+      ];
+    },
+  ];
+  storeId: number;
+};
+
 export type TUpdateOrder = {
   orderId: string;
   status: number;
@@ -94,6 +111,10 @@ export type TGetFilterHistoryOrder = {
   Status: number;
 };
 
+export type TGetFilterHistoryOrderStaff = {
+  Status: number;
+};
+
 export type TGetOrderHistoryCustomer = {
   id: string;
   totalPrice: number;
@@ -103,9 +124,18 @@ export type TGetOrderHistoryCustomer = {
   created: string;
 };
 
+export type TGetOrderHistoryStaff = {
+  id: string;
+  status: number;
+  created: string;
+  platform: number;
+};
+
 export type TGetStatusOrderResponse = BaseResType<TGetStatusOrder>;
 
 export type TGetOrderResponse = BaseResType<TGetOrder>;
 
 export type TGetOrderHistoryCustomerResponse =
   BaseResType<TGetOrderHistoryCustomer>;
+
+export type TGetOrderHistoryStaffResponse = BaseResType<TGetOrderHistoryStaff>;

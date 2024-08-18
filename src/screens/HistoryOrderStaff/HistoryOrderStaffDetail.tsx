@@ -12,12 +12,12 @@ import {Text} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
-const HistoryOrderDetail = () => {
+const HistoryOrderStaffDetail = () => {
   const theme = useTheme();
   const route = useRoute();
   const dispatch = useAppDispatch();
   const orderHistoryDetail = useAppSelector(selectOrderByIdSelector);
-  const orderId: any = route.params;
+  const {orderId} = route.params;
 
   useEffect(() => {
     if (orderId) {
@@ -73,12 +73,16 @@ const HistoryOrderDetail = () => {
 // Helper function to get status label
 const getStatusLabel = (status: any) => {
   switch (status) {
+    case 1:
+      return 'Hóa đơn vừa được tạo';
+    case 2:
+      return 'Hóa đơn đã thanh toán';
     case 3:
-      return 'Đang chuẩn bị';
+      return 'Hóa đơn đang chuẩn bị';
     case 4:
-      return 'Đã hoàn thành';
+      return 'Hóa đơn đã hoàn thành';
     default:
-      return 'Chưa xác định';
+      return 'Đang xử lý';
   }
 };
 
@@ -137,4 +141,4 @@ const ProductPrice = styled.Text`
   color: ${({theme}) => theme.colors.primary};
 `;
 
-export default HistoryOrderDetail;
+export default HistoryOrderStaffDetail;

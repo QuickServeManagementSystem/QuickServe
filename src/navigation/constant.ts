@@ -3,6 +3,8 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import Cart from '@screens/Cart';
 import HistoryOrder from '@screens/HistoryOrder';
 import HistoryOrderDetail from '@screens/HistoryOrder/HistoryOrderDetail';
+import HistoryOrderStaff from '@screens/HistoryOrderStaff';
+import HistoryOrderStaffDetail from '@screens/HistoryOrderStaff/HistoryOrderStaffDetail';
 import {DetailProduct, Home, Order, Setting, Splash} from '@screens/index';
 import Welcome from '@screens/Login';
 import SignIn from '@screens/Login/signIn';
@@ -123,6 +125,14 @@ export const APP_SCREEN = {
     name: 'HistoryOrderDetail',
     component: HistoryOrderDetail,
   },
+  HistoryOrderStaff: {
+    name: 'HistoryOrderStaff',
+    component: HistoryOrderStaff,
+  },
+  HistoryOrderStaffDetail: {
+    name: 'HistoryOrderStaffDetail',
+    component: HistoryOrderStaffDetail,
+  },
   Profile: {
     name: 'Profile',
     component: Profile,
@@ -161,6 +171,8 @@ export interface ScreenPropType {
     orderStatus?: SubmitOrderResponse['data'];
   };
   [APP_SCREEN.HistoryOrderDetail.name]: undefined;
+  [APP_SCREEN.HistoryOrderStaff.name]: undefined;
+  [APP_SCREEN.HistoryOrderStaffDetail.name]: undefined;
   [APP_SCREEN.Welcome.name]: undefined;
   [APP_SCREEN.StoreSelection.name]: undefined;
   [APP_SCREEN.SignIn.name]: undefined;

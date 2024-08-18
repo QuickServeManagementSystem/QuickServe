@@ -9,21 +9,26 @@ import {BaseResType, BaseResTypeSingle} from '../type';
 
 import {
   apiCreateOrder,
+  apiCreateOrderCustomer,
   apiGetOrder,
   apiGetOrderById,
   apiGetOrderHistoryCustomer,
+  apiGetOrderHistoryStaff,
   apiGetStatusOrder,
   apiUpdateOrder,
 } from './api';
 import {
   createOrderAction,
+  createOrderCustomerAction,
   getListOrderAction,
   getListOrderHistoryAction,
+  getListOrderHistoryStaffAction,
   getListStatusOrderAction,
   getOrderByIdAction,
   setDetailOrder,
   setListOrder,
   setListOrderHistory,
+  setListOrderHistoryStaff,
   setOrder,
   setStatusOrder,
   updateOrderAction,
@@ -33,6 +38,7 @@ import {
   TGetOrder,
   TGetOrderHistoryCustomer,
   TGetOrderHistoryCustomerResponse,
+  TGetOrderHistoryStaffResponse,
   TGetOrderResponse,
   TGetStatusOrderResponse,
   TOrderResponse,
@@ -159,6 +165,54 @@ function* getOrderHistoryCustomer(action: any) {
   }
 }
 
+function* createOrderCustomerSaga(action: any) {
+  if (!createOrderCustomerAction.match(action)) {
+    return;
+  }
+  try {
+    const response: TOrderResponse = yield call(
+      apiCreateOrderCustomer,
+      action.payload,
+    );
+    if (response.success) {
+      toast.success(en.order.success);
+      Navigation.navigateTo(APP_SCREEN.Payment.name, {
+        orderId: response.data.orderId.toString(),
+      });
+      yield put(setOrder(response));
+    }
+    if (!response.success) {
+      toast.error(response.errors?.[0].description ?? '');
+      Navigation.replace(APP_SCREEN.HomeStack.name);
+    }
+  } catch (error: any) {
+    toast.error(error.errors?.[0]?.description);
+    handleError(error);
+  }
+}
+
+function* getOrderHistoryStaff(action: any) {
+  if (!getListOrderHistoryStaffAction.match(action)) {
+    return;
+  }
+  try {
+    const {selectedStatus} = action.payload;
+    const params = {
+      Status: selectedStatus,
+    };
+    const response: TGetOrderHistoryStaffResponse = yield call(
+      apiGetOrderHistoryStaff,
+      params,
+    );
+    if (response.success) {
+      yield put(setListOrderHistoryStaff(response));
+    }
+  } catch (error: any) {
+    toast.error(en.order.error);
+    handleError(error);
+  }
+}
+
 export default function* () {
   yield takeEvery(createOrderAction.type, createOrderSaga);
   yield takeEvery(getListOrderAction.type, getListORderSaga);
@@ -166,4 +220,6 @@ export default function* () {
   yield takeEvery(getOrderByIdAction.type, getOrderByIdSaga);
   yield takeEvery(getListStatusOrderAction.type, getOrderStatusSaga);
   yield takeEvery(getListOrderHistoryAction.type, getOrderHistoryCustomer);
+  yield takeEvery(createOrderCustomerAction.type, createOrderCustomerSaga);
+  yield takeEvery(getListOrderHistoryStaffAction.type, getOrderHistoryStaff);
 }

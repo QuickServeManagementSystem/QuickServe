@@ -1,7 +1,7 @@
 import {useAppDispatch, useAppSelector} from '@app-core/state';
 import {
-  getListOrderHistoryAction,
-  selectListOrderHistorySelector,
+  getListOrderHistoryStaffAction,
+  selectListOrderHistoryStaffSelector,
 } from '@app-core/state/order/reducer';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
@@ -15,44 +15,26 @@ import {Dimensions, Switch as RNSwitch} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
-const HistoryOrder = () => {
+const HistoryOrderStaff = () => {
   const appTheme = useTheme();
   const dispatch = useAppDispatch();
-  const orderHistory = useAppSelector(selectListOrderHistorySelector);
-  const [selectedStore, setSelectedStore] = useState('');
-  const [last7Days, setLast7Days] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const orderHistory = useAppSelector(selectListOrderHistoryStaffSelector);
+  const [selectedStatus, setSelectedStatus] = useState(null);
 
   useEffect(() => {
-    dispatch(
-      getListOrderHistoryAction({selectedStore, last7Days, selectedStatus}),
-    );
-  }, [dispatch, selectedStore, last7Days, selectedStatus]);
+    dispatch(getListOrderHistoryStaffAction({selectedStatus}));
+  }, [dispatch, selectedStatus]);
 
   const handleViewDetails = (orderId: any) => {
     console.log('Navigating to order details with ID:', orderId);
-    Navigation.navigateTo(APP_SCREEN.HistoryOrderDetail.name, {orderId});
+    Navigation.navigateTo(APP_SCREEN.HistoryOrderStaffDetail.name, {orderId});
   };
-
-  const Switch = ({label, value, onValueChange}) => (
-    <SwitchContainer>
-      <SwitchLabel>{label}</SwitchLabel>
-      <RNSwitch value={value} onValueChange={onValueChange} />
-    </SwitchContainer>
-  );
-
   return (
     <Container>
       <Space vertical={scale(5)} />
       <AppHeader title="Lịch sử đơn hàng" />
       {/* Filter UI */}
-      <FilterContainer>
-        <Switch
-          label="7 ngày gần nhất"
-          value={last7Days}
-          onValueChange={setLast7Days}
-        />
-      </FilterContainer>
+      <FilterContainer></FilterContainer>
       <AppFlatlist
         data={orderHistory?.data || []}
         renderItem={({item}) => (
@@ -67,7 +49,7 @@ const HistoryOrder = () => {
                 <AppTextSupportColor
                   variant="bold_20"
                   color={appTheme.colors.black}>
-                  Đơn giá: {formatNumber(item.totalPrice)} đ
+                  Loại đơn hàng: {getPlatformLabel(item.platform)}
                 </AppTextSupportColor>
                 <AppTextSupportColor
                   variant="bold_20"
@@ -98,19 +80,30 @@ const HistoryOrder = () => {
     </Container>
   );
 };
-
-// Helper function to get status label
 const getStatusLabel = (status: any) => {
   switch (status) {
+    case 1:
+      return 'Hóa đơn vừa được tạo';
+    case 2:
+      return 'Hóa đơn đã thanh toán';
     case 3:
-      return 'Đang chuẩn bị';
+      return 'Hóa đơn đang chuẩn bị';
     case 4:
-      return 'Đã hoàn thành';
+      return 'Hóa đơn đã hoàn thành';
     default:
-      return 'Chưa xác định';
+      return 'Đang xử lý';
   }
 };
-
+const getPlatformLabel = (status: any) => {
+  switch (status) {
+    case 1:
+      return 'Đơn đặt tại chỗ';
+    case 2:
+      return 'Đơn đặt Onlline';
+    default:
+      return 'Đang xử lý';
+  }
+};
 // Styles
 const Container = styled.View`
   flex: 1;
@@ -155,35 +148,4 @@ const FilterContainer = styled.View`
   margin-bottom: ${({theme}) => theme.gap_10}px;
 `;
 
-const TouchableDelete = styled(AppTouchable)`
-  padding: ${({theme}) => theme.gap_10}px;
-  border-radius: 99999px;
-  width: ${({theme}) => theme.gap_30}px;
-  height: ${({theme}) => theme.gap_30}px;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-  background-color: ${({theme}) => theme.colors.error + theme.alpha_05};
-`;
-
-const PickerContainer = styled.View`
-  flex: 1;
-  margin-right: ${({theme}) => theme.gap_10}px;
-`;
-
-const PickerLabel = styled.Text`
-  margin-bottom: ${({theme}) => theme.gap_5}px;
-  color: ${({theme}) => theme.colors.black};
-`;
-
-const SwitchContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-right: ${({theme}) => theme.gap_10}px;
-`;
-
-const SwitchLabel = styled.Text`
-  margin-right: ${({theme}) => theme.gap_5}px;
-  color: ${({theme}) => theme.colors.black};
-`;
-export default HistoryOrder;
+export default HistoryOrderStaff;
