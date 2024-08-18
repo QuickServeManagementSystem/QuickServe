@@ -116,7 +116,7 @@ export const orderSlice = createSlice({
           pageNumber = 1,
           totalPages = 0,
           totalItems = 0,
-          pageSize = 10,
+          pageSize = 20,
         } = payload;
 
         listOrder.data = pageNumber === 1 ? data : [...listOrder.data, ...data];

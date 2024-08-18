@@ -11,6 +11,7 @@ import Payment from '@screens/Payment';
 import WebViewPaymentVNPay from '@screens/PaymentVNPay';
 import Profile from '@screens/Profile';
 import StatusOrder from '@screens/StatusOrder';
+import StoreSelection from '@screens/StoreList';
 import {Platform} from 'react-native';
 
 import HomeStack from './Stack/HomeStack';
@@ -126,6 +127,10 @@ export const APP_SCREEN = {
     name: 'Profile',
     component: Profile,
   },
+  StoreSelection: {
+    name: 'StoreSelection',
+    component: StoreSelection,
+  },
 } as const;
 
 export interface ScreenPropType {
@@ -155,8 +160,9 @@ export interface ScreenPropType {
   [APP_SCREEN.StatusOrder.name]: {
     orderStatus?: SubmitOrderResponse['data'];
   };
-
+  [APP_SCREEN.HistoryOrderDetail.name]: undefined;
   [APP_SCREEN.Welcome.name]: undefined;
+  [APP_SCREEN.StoreSelection.name]: undefined;
   [APP_SCREEN.SignIn.name]: undefined;
   [APP_SCREEN.SignUp.name]: undefined;
 

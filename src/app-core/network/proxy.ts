@@ -21,13 +21,15 @@ import {call, put, select} from 'redux-saga/effects';
 export function* apiCallProxy(execFunction: Function, ...args: any[]) {
   try {
     const userPref: UserPreferencesType = yield select(selectUserPreferences);
+    console.log('User Preferences:', userPref);
     const currentAuth: UserAuth = userPref.getUserPreferences(AUTH_KEY);
+    console.log('Current Auth:', currentAuth);
     // const accessToken: string = select(
     //   state: => state.auth.userAuth.data.accessToken,
     // );
 
     const accessToken = currentAuth?.data?.accessToken;
-
+    console.log('Access Token:', accessToken);
     // position arguments: function, param1, param2, ...
     const argumentsIncludeToken = cloneDeep(args);
     argumentsIncludeToken.splice(0, 0, accessToken);

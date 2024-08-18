@@ -30,10 +30,9 @@ const HistoryOrder = () => {
   }, [dispatch, selectedStore, last7Days, selectedStatus]);
 
   const handleViewDetails = (orderId: any) => {
-    console.log('Navigating to order details with ID:', orderId); // Log the orderId
+    console.log('Navigating to order details with ID:', orderId);
     Navigation.navigateTo(APP_SCREEN.HistoryOrderDetail.name, {orderId});
   };
-
 
   const Switch = ({label, value, onValueChange}) => (
     <SwitchContainer>

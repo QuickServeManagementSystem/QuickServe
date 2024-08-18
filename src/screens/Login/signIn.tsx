@@ -4,6 +4,7 @@ import {userLoginAction} from '@app-core/state/auth/reducer';
 import {en} from '@assets/text_constant';
 import {FormTextInput} from '@components/Form/Input';
 import {FormItemProps} from '@components/Form/Item';
+import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {Space} from '@utils/common';
 import EventInstance from '@utils/eventInstance/eventInstance';
@@ -186,7 +187,7 @@ const Container = styled.SafeAreaView`
   flex: 1;
   background-color: ${props =>
     props.theme.colors.primary + props.theme.alpha_008};
-  margin-top: ${props => props.theme.gap_130}px;
+  padding-top: ${props => props.theme.gap_130}px;
 `;
 
 const FormContent = styled.View`

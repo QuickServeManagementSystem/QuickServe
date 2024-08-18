@@ -7,6 +7,7 @@ import {
 import {TGetOrder} from '@app-core/state/order/type';
 import {en} from '@assets/text_constant';
 import {SearchBar} from '@components/SearchBar';
+import {unwrapResult} from '@reduxjs/toolkit';
 import {useAppContext} from '@utils/appContext';
 import {Space} from '@utils/common';
 import useAPIList from '@utils/hooks/useAPIList';
@@ -14,19 +15,17 @@ import AppFlatlist from '@views/AppFlatlist';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect, useState, useCallback} from 'react';
-import {Alert} from 'react-native';
+import {Alert, ScrollView, View} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
-interface Props {}
-
-const OrderStaff: React.FC<Props> = () => {
+const OrderStaff: React.FC = () => {
   const appTheme = useTheme();
-
   const dispatch = useAppDispatch();
-
   const {popupStatusRef} = useAppContext();
+
   const [listOrder, setListOrder] = useState<TGetOrder[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<number | null>(null);
 
   const {data, isLoadMore, isRefreshing, onLoadMore, onRefresh} = useAPIList(
     getListOrderAction,
@@ -34,8 +33,14 @@ const OrderStaff: React.FC<Props> = () => {
   );
 
   useEffect(() => {
-    setListOrder(data ?? []);
-  }, [data]);
+    if (selectedStatus === null) {
+      setListOrder(data ?? []);
+    } else {
+      setListOrder(
+        data?.filter(order => order.status === selectedStatus) ?? [],
+      );
+    }
+  }, [data, selectedStatus]);
 
   const formatStatus = (status: number) => {
     switch (status) {
@@ -87,7 +92,7 @@ const OrderStaff: React.FC<Props> = () => {
     (text: string) => {
       setListOrder(
         data?.filter(order =>
-          order.billCode.toLowerCase().includes(text.toLowerCase()),
+          order.id.toLowerCase().includes(text.toLowerCase()),
         ) ?? [],
       );
     },
@@ -110,21 +115,90 @@ const OrderStaff: React.FC<Props> = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+  // Sửa hàm handleUpdateOrderStatus để không dùng .then
+  const handleUpdateOrderStatus = async (
+    item: TGetOrder,
+    newStatus: number,
+  ) => {
+    if (handleStatusUpdate(item.status, newStatus)) {
+      try {
+        const resultAction = await dispatch(
+          updateOrderAction({
+            orderId: item.id,
+            status: newStatus,
+          }),
+        );
+        unwrapResult(resultAction); // Lấy kết quả nếu thành công
+        setSelectedStatus(newStatus);
+        handleFilterChange(newStatus); // cập nhật lại filter
+      } catch (error) {
+        console.error('Failed to update order status:', error);
+        Alert.alert(
+          'Lỗi cập nhật',
+          'Đã xảy ra lỗi khi cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.',
+          [{text: 'OK'}],
+        );
+      }
+    } else {
+      Alert.alert(
+        'Không thể thay đổi trạng thái',
+        'Bạn không thể thay đổi trạng thái như thế.',
+        [{text: 'OK'}],
+      );
+    }
+  };
 
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  const handleFilterChange = (status: number | null) => {
+    setSelectedStatus(status);
+    if (status !== null) {
+      setListOrder(data?.filter(order => order.status === status) ?? []);
+    } else {
+      setListOrder(data ?? []);
+    }
   };
 
   return (
     <Container>
       <SearchBar placeholder="Tìm kiếm đơn hàng" onChangeText={handleSearch} />
-      <Space vertical={16} />
+      <Space vertical={10} />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{paddingVertical: scale(8)}}>
+        <FilterContainer>
+          <FilterButton onPress={() => handleFilterChange(null)}>
+            <FilterText variant="regular_16" selected={selectedStatus === null}>
+              Tất cả
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(1)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 1}>
+              Tạo mới
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(2)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 2}>
+              Đã thanh toán
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(3)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 3}>
+              Đang chuẩn bị
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(4)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 4}>
+              Đã hoàn tất
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(5)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 5}>
+              Lỗi
+            </FilterText>
+          </FilterButton>
+        </FilterContainer>
+      </ScrollView>
+      <Space vertical={10} />
       <AppFlatlist
         data={listOrder ?? []}
         isLoadMore={isLoadMore}
@@ -140,28 +214,15 @@ const OrderStaff: React.FC<Props> = () => {
               onPress={() => {
                 popupStatusRef.current?.display((status: string) => {
                   const newStatus = Number(status);
-                  if (handleStatusUpdate(item.status, newStatus)) {
-                    dispatch(
-                      updateOrderAction({
-                        orderId: item.id,
-                        status: newStatus,
-                      }),
-                    );
-                  } else {
-                    Alert.alert(
-                      'Status Change Not Allowed',
-                      'You cannot change the status to this value.',
-                      [{text: 'OK'}],
-                    );
-                  }
+                  handleUpdateOrderStatus(item, newStatus);
                 });
               }}>
               <OrderDetails>
                 <AppText variant="semibold_16">
                   Mã đơn hàng: {item.id.toString().substring(0, 6)}
                 </AppText>
-                <AppText variant="regular_14">
-                  Ngày tạo: {formatDate(item.createdAt)}
+                <AppText variant="regular_16">
+                  Tổng tiền: {item.totalPrice}
                 </AppText>
               </OrderDetails>
               {formatStatus(item.status)}
@@ -211,6 +272,31 @@ const WrapStatus = styled.View<{background: string}>`
   position: absolute;
   right: 0;
   bottom: 0;
+`;
+
+const FilterContainer = styled(View)`
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: ${scale(8)}px;
+`;
+
+const FilterButton = styled.TouchableOpacity`
+  padding: ${scale(8)}px ${scale(8)}px;
+  border-radius: ${props => props.theme.border_radius_8}px;
+  background-color: ${props => props.theme.colors.white};
+  height: ${scale(50)}px;
+  width: ${scale(120)}px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const FilterText = styled(AppText)<{selected: boolean}>`
+  color: ${props =>
+    props.selected ? props.theme.colors.primary : props.theme.colors.text};
+  font-weight: ${props => (props.selected ? 'bold' : 'normal')};
+  text-align: center;
 `;
 
 export default OrderStaff;

@@ -3728,7 +3728,6 @@ __metadata:
     react-hook-form: ^7.51.5
     react-native: 0.74.2
     react-native-actions-sheet: 0.9.3
-    react-native-dropdown-picker: ^5.4.6
     react-native-fast-image: ^8.6.3
     react-native-gesture-handler: ^2.15.0
     react-native-keyboard-aware-scroll-view: ^0.9.5
@@ -9396,16 +9395,6 @@ __metadata:
     react-native: "*"
     react-native-gesture-handler: "*"
   checksum: f5c18f3e0d510bfb2c81b6f8ac6b1dc0fe8c3ae7547f213c698df5906ba5c570e8ab1bb8f14b46cc685691e2d2775ca8db29240eb459c906e668ff4f12e5965a
-  languageName: node
-  linkType: hard
-
-"react-native-dropdown-picker@npm:^5.4.6":
-  version: 5.4.6
-  resolution: "react-native-dropdown-picker@npm:5.4.6"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: d81ee3d68c17107a4d21dbdf9c2fe2ffe4bf4398973d10113139aadc0674221ce5038b945299fba2abc796930ec5e6d5f84291945bf903344493a15b8e2fca43
   languageName: node
   linkType: hard
 
