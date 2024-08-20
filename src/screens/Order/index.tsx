@@ -27,7 +27,6 @@ const Order: React.FC<Props> = () => {
 
   const selectCurrent = useAppSelector(selectRole);
 
-  console.log('selectCurrent>>>', selectCurrent);
   const renderRightComponent = () => {
     return <AppText variant="semibold_20">{en.cart.cart}</AppText>;
   };

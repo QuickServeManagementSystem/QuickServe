@@ -29,11 +29,18 @@ export const reducer = (state: TInitPrice = initPrice, action: any) => {
 
     case order_data_products:
       let product = [...state.orderProduct];
-      const index = product.findIndex(
+      const productIndex = product.findIndex(
         item => item.productTemplateId === action.payload.productTemplateId,
       );
-      if (index !== -1) {
-        product[index] = action.payload;
+      if (action.payload.quantity === 0) {
+        product.splice(productIndex, 1);
+        return {
+          ...state,
+          orderProduct: product,
+        };
+      }
+      if (productIndex !== -1) {
+        product[productIndex] = action.payload;
       } else {
         product.push(action.payload);
       }
@@ -59,10 +66,15 @@ export const reducer = (state: TInitPrice = initPrice, action: any) => {
         item => item.id === action.payload.id,
       );
       if (_index !== -1) {
-        ingredient.splice(_index, 1);
+        if (action.payload.isSelected) {
+          ingredient.splice(_index, 1);
+        } else {
+          ingredient[_index] = action.payload;
+        }
       } else {
         ingredient.push(action.payload);
       }
+
       return {
         ...state,
         orderIngredient: ingredient,
@@ -101,7 +113,7 @@ export const calculateTotalPriceSelector = (
 ) => {
   const totalIngredient = ingredient.reduce(
     (sum: number, _ingredient: TInitPrice['orderIngredient']) => {
-      return sum + _ingredient.price;
+      return sum + _ingredient.totalProductPrice;
     },
     0,
   );

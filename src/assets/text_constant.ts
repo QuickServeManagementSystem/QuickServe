@@ -18,6 +18,7 @@ export const en = {
     payment: 'Thanh Toán',
     mainDishes: 'Món chính',
     ingedients: 'Nguyên liệu',
+    amountQuality: 'Số lượng: {number}',
   },
   order: {
     success: 'Đơn hoàn thành',

@@ -9,6 +9,7 @@ import {TCategory, TProduct} from '@app-core/state/product/type';
 import {en} from '@assets/text_constant';
 import CardItem from '@components/CardItem';
 import {SearchBar} from '@components/SearchBar';
+import Skeleton from '@components/Skeleton';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {Space} from '@utils/common';
@@ -28,7 +29,6 @@ function App(): React.JSX.Element {
   const dimensions = useWindowDimensions();
   const isPortrait = dimensions.height > dimensions.width;
   const numColumns = isPortrait ? 2 : 4;
-
   const [selectedCategory, setSelectedCategory] = React.useState<TCategory>();
   const [listProduct, setListProduct] = React.useState<TProduct[]>([]);
   const dispatch = useAppDispatch();
@@ -107,6 +107,25 @@ function App(): React.JSX.Element {
     );
   };
 
+  const renderSkeleton = () => {
+    const skeletons = [];
+
+    for (let i = 0; i < 10; i++) {
+      skeletons.push(
+        <ContainerSkeleton key={i}>
+          <ItemSkeleton>
+            <Skeleton width={200} height={200} />
+          </ItemSkeleton>
+          <Space vertical={appTheme.gap_10} />
+          <ItemSkeleton>
+            <Skeleton width={200} height={200} />
+          </ItemSkeleton>
+        </ContainerSkeleton>,
+      );
+    }
+    return <>{skeletons}</>;
+  };
+
   return (
     <Wrapp>
       <Space vertical={scale(appTheme.gap_5)} />
@@ -134,12 +153,14 @@ function App(): React.JSX.Element {
       </HeaderSearchBar>
       <AppFlatlist
         numColumns={numColumns}
+        isShowUIEmptyData={false}
         data={listProduct ?? []}
         isFirstLoading={isFirstLoadingProduct}
         isLoadMore={isLoadMoreProduct}
         isRefreshing={isRefreshingProduct}
         contentContainerStyle={listProductStyle}
         renderItem={({item}) => renderProduct(item)}
+        ListSkeletonComponent={renderSkeleton}
       />
     </Wrapp>
   );
@@ -148,6 +169,9 @@ function App(): React.JSX.Element {
 const Wrapp = styled.View`
   flex: 1;
 `;
+
+const ItemSkeleton = styled.View``;
+
 const ProductItem = styled(AppTouchable)`
   box-shadow: 0px 2px 2px rgba(195, 195, 195, 0.25);
   flex: 0.5;
@@ -162,6 +186,13 @@ const ProductItem = styled(AppTouchable)`
 const HeaderSearchBar = styled.View`
   padding: 0 ${({theme}) => theme.gap_16}px;
   margin-top: ${({theme}) => theme.gap_10}px;
+`;
+
+const ContainerSkeleton = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  padding: ${props => props.theme.gap_16}px ${props => props.theme.gap_16}px
+    ${props => props.theme.gap_16}px ${props => props.theme.gap_16}px;
 `;
 
 const WrapCategory = styled.View``;

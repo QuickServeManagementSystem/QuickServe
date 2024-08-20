@@ -1,9 +1,7 @@
 import {en} from '@assets/text_constant';
 import {formatNumber, Space} from '@utils/common';
-import AppIcon from '@views/AppIcon';
 import {AppTextSupportColor} from '@views/AppText';
-import AppTouchable from '@views/AppTouchable';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -17,16 +15,11 @@ const IngredientCard = ({ingredient}: IIngredientCard) => {
 
   const {orderIngredient} = useContext(Context);
 
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  function handelChooseIngredient(ingredient: any) {
-    orderIngredient({
-      productId: ingredient.productId,
-      id: ingredient.id,
-      name: ingredient.name,
-      price: ingredient.price,
-      img: ingredient.img,
-    });
-  }
+  const [amounts, setAmounts] = React.useState(1);
+
+  useEffect(() => {
+    setAmounts(ingredient.quantity || 1);
+  }, [ingredient]);
 
   return (
     <WrapProduct>
@@ -35,31 +28,25 @@ const IngredientCard = ({ingredient}: IIngredientCard) => {
           {ingredient.name}
         </AppTextSupportColor>
         <Space vertical={scale(10)} />
+      </WrapInfoProduct>
+      <WrapAmount>
         <AppTextSupportColor
           variant="semibold_16"
           color={appTheme.colors.primary}>
           {en.common.vnd.replace('{number}', formatNumber(ingredient.price))}
         </AppTextSupportColor>
-      </WrapInfoProduct>
-      <AppTouchable
-        onPress={() => {
-          handelChooseIngredient(ingredient);
-        }}>
-        <AppIcon
-          name="ic_x"
-          fill={appTheme.colors.primary}
-          width={scale(24)}
-          height={scale(24)}
-        />
-      </AppTouchable>
+        <Space horizontal={scale(10)} />
+        <AppTextSupportColor
+          variant="semibold_16"
+          color={appTheme.colors.primary}>
+          {en.cart.amountQuality.replace('{number}', ingredient.quantity)}
+        </AppTextSupportColor>
+      </WrapAmount>
     </WrapProduct>
   );
 };
 
 const WrapProduct = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   margin: ${({theme}) => theme.gap_16}px 0;
   padding: ${({theme}) => theme.gap_10}px;
   background-color: ${({theme}) => theme.colors.white};
@@ -68,5 +55,35 @@ const WrapProduct = styled.View`
 `;
 
 const WrapInfoProduct = styled.View``;
+
+// const WrapActionAmount = styled.View`
+//   flex-direction: row;
+//   justify-content: space-between;
+//   align-items: center;
+//   border: 1px solid ${({theme}) => theme.colors.stroke_primary};
+//   border-radius: ${({theme}) => theme.border_radius_5}px;
+//   padding: ${({theme}) => theme.gap_2}px;
+//   max-width: ${scale(100)}px;
+//   min-width: ${scale(100)}px;
+// `;
+
+// const TouchableMinus = styled(AppTouchable)`
+//   background-color: ${({theme}) => theme.colors.button_background_thrid};
+//   padding: ${({theme}) => theme.gap_2}px;
+//   border-radius: ${({theme}) => theme.border_radius_5}px;
+// `;
+
+// const TouchableAdd = styled(AppTouchable)`
+//   background-color: ${({theme}) => theme.colors.secondary};
+//   padding: ${({theme}) => theme.gap_2}px;
+//   border-radius: ${({theme}) => theme.border_radius_5}px;
+// `;
+
+const WrapAmount = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+`;
 
 export default IngredientCard;

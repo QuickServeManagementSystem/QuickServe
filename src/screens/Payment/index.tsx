@@ -67,11 +67,6 @@ const Payment = () => {
         label: 'PayOS',
         value: '2',
       },
-      {
-        id: '3',
-        label: 'ZaloPay',
-        value: '3',
-      },
     ],
     [],
   );
@@ -115,86 +110,86 @@ const Payment = () => {
         }),
       );
     }
-    if (selectedId === '3') {
-      createZaloPayOrder(listProduct?.totalPrice)
-        .then(response => {
-          console.log('ZaloPay response:', response);
+    // if (selectedId === '3') {
+    //   createZaloPayOrder(listProduct?.totalPrice)
+    //     .then(response => {
+    //       console.log('ZaloPay response:', response);
 
-          if (response.return_code === 1) {
-            var payZP = NativeModules.PayZaloBridge;
-            payZP.payOrder(response.zp_trans_token);
-          } else {
-            toast.error(
-              'Thanh toán ZaloPay thất bại: ' + response.return_message,
-            );
-          }
-        })
-        .catch(error => {
-          console.error('Error in ZaloPay payment:', error);
-          toast.error('Đã xảy ra lỗi khi thực hiện thanh toán ZaloPay');
-        });
-    }
+    //       if (response.return_code === 1) {
+    //         var payZP = NativeModules.PayZaloBridge;
+    //         payZP.payOrder(response.zp_trans_token);
+    //       } else {
+    //         toast.error(
+    //           'Thanh toán ZaloPay thất bại: ' + response.return_message,
+    //         );
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('Error in ZaloPay payment:', error);
+    //       toast.error('Đã xảy ra lỗi khi thực hiện thanh toán ZaloPay');
+    //     });
+    // }
     // clearData();
   };
 
-  const createZaloPayOrder = async totalPrice => {
-    let apptransid = getCurrentDateYYMMDD() + '_' + new Date().getTime();
-    let appid = 2553;
-    let amount = parseInt(totalPrice);
-    let appuser = 'ZaloPayDemo';
-    let apptime = new Date().getTime();
-    let embeddata = '{}';
-    let item = '[]';
-    let description = 'Thanh toán đơn hàng #' + apptransid;
-    let hmacInput =
-      appid +
-      '|' +
-      apptransid +
-      '|' +
-      appuser +
-      '|' +
-      amount +
-      '|' +
-      apptime +
-      '|' +
-      embeddata +
-      '|' +
-      item;
-    let mac = CryptoJS.HmacSHA256(
-      hmacInput,
-      'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL',
-    );
+  // const createZaloPayOrder = async totalPrice => {
+  //   let apptransid = getCurrentDateYYMMDD() + '_' + new Date().getTime();
+  //   let appid = 2553;
+  //   let amount = parseInt(totalPrice);
+  //   let appuser = 'ZaloPayDemo';
+  //   let apptime = new Date().getTime();
+  //   let embeddata = '{}';
+  //   let item = '[]';
+  //   let description = 'Thanh toán đơn hàng #' + apptransid;
+  //   let hmacInput =
+  //     appid +
+  //     '|' +
+  //     apptransid +
+  //     '|' +
+  //     appuser +
+  //     '|' +
+  //     amount +
+  //     '|' +
+  //     apptime +
+  //     '|' +
+  //     embeddata +
+  //     '|' +
+  //     item;
+  //   let mac = CryptoJS.HmacSHA256(
+  //     hmacInput,
+  //     'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL',
+  //   );
 
-    var order = {
-      app_id: appid,
-      app_user: appuser,
-      app_time: apptime,
-      amount: amount,
-      app_trans_id: apptransid,
-      embed_data: embeddata,
-      item: item,
-      description: description,
-      mac: mac,
-    };
+  //   var order = {
+  //     app_id: appid,
+  //     app_user: appuser,
+  //     app_time: apptime,
+  //     amount: amount,
+  //     app_trans_id: apptransid,
+  //     embed_data: embeddata,
+  //     item: item,
+  //     description: description,
+  //     mac: mac,
+  //   };
 
-    let formBody = [];
-    for (let i in order) {
-      let encodedKey = encodeURIComponent(i);
-      let encodedValue = encodeURIComponent(order[i]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
+  //   let formBody = [];
+  //   for (let i in order) {
+  //     let encodedKey = encodeURIComponent(i);
+  //     let encodedValue = encodeURIComponent(order[i]);
+  //     formBody.push(encodedKey + '=' + encodedValue);
+  //   }
+  //   formBody = formBody.join('&');
 
-    const response = await fetch('https://sb-openapi.zalopay.vn/v2/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      body: formBody,
-    }).then(response => response.json());
+  //   const response = await fetch('https://sb-openapi.zalopay.vn/v2/create', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  //     },
+  //     body: formBody,
+  //   }).then(response => response.json());
 
-    return response;
-  };
+  //   return response;
+  // };
 
   function getCurrentDateYYMMDD() {
     var todayDate = new Date().toISOString().slice(2, 10);

@@ -1,6 +1,11 @@
 import {useAppDispatch} from '@app-core/state';
-import {createOrderAction} from '@app-core/state/order/reducer';
+import {
+  createOrderAction,
+  createOrderCustomerAction,
+} from '@app-core/state/order/reducer';
 import {en} from '@assets/text_constant';
+import {APP_SCREEN} from '@navigation/constant';
+import Navigation from '@navigation/Provider';
 import {useAppContext} from '@utils/appContext';
 import {formatNumber, MaxSize, Space} from '@utils/common';
 import AppFlatlist from '@views/AppFlatlist';
@@ -9,19 +14,18 @@ import AppIcon from '@views/AppIcon';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect} from 'react';
-import {Dimensions} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
-import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
-import {clearIngredients, Context} from '../../reducer';
+import {Context} from '../../reducer';
 
 import IngredientCard from './renderIngredient';
 
 const Cart = () => {
   const appTheme = useTheme();
-  const userRole = useSelector(state => state.user.role);
-  const {state, clearData} = useContext(Context);
+  const {height, width} = useWindowDimensions();
+  const {state, clearData, orderProduct} = useContext(Context);
 
   const [listProduct, setListProduct] = React.useState<any[]>([]);
   const [listIngredient, setListIngredient] = React.useState<any[]>([]);
@@ -49,16 +53,8 @@ const Cart = () => {
       (item: any) => item.productTemplateId === id,
     );
     if (index > -1) {
-      const product = state.orderProduct[index];
-      const ingredients = listIngredient.filter(
-        (ingredient: any) => ingredient.productId === product.productTemplateId,
-      );
-      const ingredientTotal = ingredients.reduce(
-        (sum: number, ingredient: any) => sum + ingredient.price,
-        0,
-      );
-      product.quantity += 1;
-      product.price = ingredientTotal * product.quantity;
+      state.orderProduct[index].quantity += 1;
+      state.orderProduct[index].price += state.orderProduct[index].productPrice;
       setListProduct([...state.orderProduct]);
     }
   };
@@ -68,16 +64,8 @@ const Cart = () => {
       (item: any) => item.productTemplateId === id,
     );
     if (index > -1 && state.orderProduct[index].quantity > 0) {
-      const product = state.orderProduct[index];
-      const ingredients = listIngredient.filter(
-        (ingredient: any) => ingredient.productId === product.productTemplateId,
-      );
-      const ingredientTotal = ingredients.reduce(
-        (sum: number, ingredient: any) => sum + ingredient.price,
-        0,
-      );
-      product.quantity -= 1;
-      product.price = ingredientTotal * product.quantity;
+      state.orderProduct[index].quantity -= 1;
+      state.orderProduct[index].price -= state.orderProduct[index].productPrice;
       setListProduct([...state.orderProduct]);
     }
   };
@@ -89,36 +77,45 @@ const Cart = () => {
     if (index > -1) {
       state.orderProduct.splice(index, 1);
       setListProduct([...state.orderProduct]);
+      orderProduct([...state.orderProduct]);
     }
   };
-
   const handelOrder = () => {
-    const newProducts = state.orderProduct.map((productTemplate: any) => {
-      const ingredients = state.orderIngredient.filter(
-        (ingredient: any) =>
-          ingredient.productId === productTemplate.productTemplateId,
-      );
-
-      // Calculate the total price of the ingredients
-      const ingredientTotal = ingredients.reduce(
-        (sum: number, ingredient: any) => sum + ingredient.price,
-        0,
-      );
-
-      // Create a new entry for each product order
+    const products = state.orderProduct.map((productTemplate: any) => {
       return {
         productTemplateId: productTemplate.productTemplateId,
         quantity: productTemplate.quantity,
-        price: ingredientTotal * productTemplate.quantity, // Calculate price based on quantity and ingredients
-        ingredients: ingredients.map((ingredient: any) => ({
-          id: ingredient.id,
-          price: ingredient.price,
-        })),
+        ingredients: state.orderIngredient
+          .filter(
+            (_ingredient: any) =>
+              _ingredient.productId === productTemplate.productTemplateId,
+          )
+          .map((ingredient: any) => {
+            return {
+              id: ingredient.id,
+              price: ingredient.price,
+              quantity: ingredient.quantity,
+            };
+          }),
       };
     });
 
-    dispatch(createOrderAction({products: newProducts}));
-    clearIngredients();
+    if (height > width) {
+      // Portrait mode - call the Customer API
+      dispatch(
+        createOrderCustomerAction({
+          products: products,
+          storeId: 1,
+        }),
+      );
+    } else {
+      dispatch(
+        createOrderAction({
+          products: products,
+          storeId: 1,
+        }),
+      );
+    }
   };
 
   const handelChooseIngredient = (ingredient: any) => {
@@ -137,7 +134,6 @@ const Cart = () => {
     const productIngredients = listIngredient.filter(
       (ingredient: any) => ingredient.productId === item.productTemplateId,
     );
-
     // Tính tổng giá của các nguyên liệu cho sản phẩm
     const ingredientTotal = productIngredients.reduce(
       (sum: number, ingredient: any) => sum + ingredient.price,
@@ -194,7 +190,7 @@ const Cart = () => {
               <Space horizontal={scale(appTheme.gap_5)} />
               <TouchableAdd
                 onPress={() => handelIncreaseAmount(item.productTemplateId)}
-                // disabled={item.quantity === 0}
+                // disabled={detailProduct.quantity === 0}>
               >
                 <AppIcon
                   name="ic_add"
@@ -230,7 +226,10 @@ const Cart = () => {
             <AppFlatlist
               data={productIngredients}
               renderItem={({item: ingredient}: any) => (
-                <IngredientCard ingredient={ingredient} />
+                <IngredientCard
+                  // handelChooseIngredient={handelChooseIngredient}
+                  ingredient={ingredient}
+                />
               )}
               keyExtractor={(ingredient: any) => ingredient.id.toString()}
             />
@@ -243,8 +242,19 @@ const Cart = () => {
 
   return (
     <Container>
-      <Space vertical={scale(5)} />
-      <AppHeader title="Giỏ Hàng" />
+      <AppHeader
+        title="Giỏ Hàng"
+        onPressIconLeft={() => {
+          if (
+            state.orderIngredient.length < 0 ||
+            state.orderProduct.length < 0
+          ) {
+            clearData();
+            Navigation.goBack();
+          }
+          Navigation.goBack();
+        }}
+      />
       <AppFlatlist
         data={listProduct}
         renderItem={renderProductItem}

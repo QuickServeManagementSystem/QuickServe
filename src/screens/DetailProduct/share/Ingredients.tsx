@@ -18,17 +18,14 @@ interface IIngredients {
   productId: number;
   listStep: Step[];
 }
-
 const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
   const appTheme = useTheme();
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
-
-  const {state, orderIngredient, clearIngredients} = useContext(Context);
+  const {state, orderIngredient} = useContext(Context);
   const {totalPrice} = useAppContext();
 
-  useEffect(() => {
-    clearIngredients();
-  }, []);
+  // Sử dụng object để lưu trữ số lượng cho từng món ăn
+  const [amounts, setAmounts] = useState<{[key: number]: number}>({});
 
   useEffect(() => {
     const arrayStepIds = state.orderIngredient
@@ -49,7 +46,43 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
     }
   }, [listStep, productId, state.orderIngredient, totalPrice]);
 
+  const handelDecreaseAmount = (item: any) => {
+    const updatedAmount = (amounts[item.id] || 1) - 1;
+    if (updatedAmount < 1) return;
+
+    setAmounts(prev => ({...prev, [item.id]: updatedAmount}));
+    orderIngredient({
+      productId,
+      stepId: itemStep.id,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      totalProductPrice: item.price * updatedAmount,
+      img: item.img,
+      quantity: updatedAmount,
+    });
+  };
+
+  const handelIncreaseAmount = (item: any) => {
+    const updatedAmount = (amounts[item.id] || 1) + 1;
+
+    setAmounts(prev => ({...prev, [item.id]: updatedAmount}));
+    orderIngredient({
+      productId,
+      stepId: itemStep.id,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      totalProductPrice: item.price * updatedAmount,
+      img: item.img,
+      quantity: updatedAmount,
+    });
+  };
+
   const handleSingleSelection = (ingredient: Ingredient) => {
+    const initialAmount = amounts[ingredient.id] || 1;
+    setAmounts(prev => ({...prev, [ingredient.id]: initialAmount}));
+
     orderIngredient({
       productId,
       stepId: itemStep.id,
@@ -57,6 +90,10 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
       name: ingredient.name,
       price: ingredient.price,
       img: ingredient.img,
+      totalProductPrice: ingredient.price * initialAmount,
+      quantity: initialAmount,
+      max: ingredient.max,
+      isSelected: true,
     });
   };
 
@@ -103,6 +140,38 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
             </WrapInfo>
           </WrapImageIngredient>
         </AppTouchable>
+        <Space vertical={10} />
+        {isSelected && (
+          <WrapActionAmount>
+            <TouchableMinus
+              disabled={amounts[item.id] < 0}
+              onPress={() => handelDecreaseAmount(item)}>
+              <AppIcon
+                name="ic_minus"
+                stroke={appTheme.colors.stroke_third}
+                width={24}
+                height={24}
+              />
+            </TouchableMinus>
+            <Space horizontal={scale(appTheme.gap_5)} />
+            <AppTextSupportColor
+              variant="bold_24"
+              color={appTheme.colors.primary}>
+              {amounts[item.id] || 1}
+            </AppTextSupportColor>
+            <Space horizontal={scale(appTheme.gap_5)} />
+            <TouchableAdd
+              onPress={() => handelIncreaseAmount(item)}
+              disabled={amounts[item.id] === item.max}>
+              <AppIcon
+                name="ic_add"
+                stroke={appTheme.colors.stroke_third}
+                width={24}
+                height={24}
+              />
+            </TouchableAdd>
+          </WrapActionAmount>
+        )}
       </ListInfo>
     );
   };
@@ -126,7 +195,7 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
           <AppTextSupportColor
             color={appTheme.colors.black}
             variant="semibold_16">
-            {itemStep.step_name}: Chọn từ {numberSelect} tới {itemStep.max}
+            {itemStep.step_name}: Chọn {numberSelect} trong {itemStep.max}
           </AppTextSupportColor>
         </WrapImage>
         <AppIcon
@@ -183,7 +252,6 @@ const ListInfo = styled.View<{isSelected: boolean; isDisabled: boolean}>`
   margin-right: ${scale(10)}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
   background-color: ${({theme}) => theme.colors.white};
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0px 2px 2px rgba(24, 24, 24, 0.1);
@@ -216,6 +284,29 @@ const ImageIngredient = styled.Image`
   width: ${Dimensions.get('window').width < 450 ? scale(90) : scale(90)}px;
   margin-right: ${({theme}) => theme.gap_5}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
+`;
+
+const WrapActionAmount = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid ${({theme}) => theme.colors.stroke_primary};
+  border-radius: ${({theme}) => theme.border_radius_5}px;
+  padding: ${({theme}) => theme.gap_2}px;
+  max-width: ${scale(100)}px;
+  min-width: ${scale(100)}px;
+`;
+
+const TouchableMinus = styled(AppTouchable)`
+  background-color: ${({theme}) => theme.colors.button_background_thrid};
+  padding: ${({theme}) => theme.gap_2}px;
+  border-radius: ${({theme}) => theme.border_radius_5}px;
+`;
+
+const TouchableAdd = styled(AppTouchable)`
+  background-color: ${({theme}) => theme.colors.secondary};
+  padding: ${({theme}) => theme.gap_2}px;
+  border-radius: ${({theme}) => theme.border_radius_5}px;
 `;
 
 export default Ingredients;

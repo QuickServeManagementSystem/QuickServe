@@ -7,9 +7,10 @@ import {
 import {Step} from '@app-core/state/ingredient/type';
 import {TProduct} from '@app-core/state/product/type';
 import {en} from '@assets/text_constant';
+import Skeleton from '@components/Skeleton';
 import Navigation from '@navigation/Provider';
 import {useRoute} from '@react-navigation/native';
-import {Space, formatNumber} from '@utils/common';
+import {MaxSize, Space, formatNumber} from '@utils/common';
 import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
 import AppIcon from '@views/AppIcon';
@@ -32,13 +33,29 @@ const DetailProduct = () => {
   const dispatch = useAppDispatch();
   const appTheme = useTheme();
   const [amount, setAmount] = React.useState(1);
+  const [expandProduct, setExpandProduct] = React.useState(true);
 
   const listStep = useAppSelector(selectStepList);
-  const {orderProduct} = useContext(Context);
+  const {state, orderProduct} = useContext(Context);
 
   const handelIncreaseAmount = () => {
     setAmount(prev => prev + 1);
   };
+
+  useEffect(() => {
+    if (amount === 0) {
+      setExpandProduct(true);
+    }
+    if (!expandProduct) {
+      orderProduct({
+        productTemplateId: detailProduct.id,
+        quantity: amount,
+        productPrice: detailProduct.price,
+        price: detailProduct.price * amount,
+        name: detailProduct.name,
+      });
+    }
+  }, [amount]);
 
   const handelDecreaseAmount = () => {
     if (amount > 0) {
@@ -46,7 +63,8 @@ const DetailProduct = () => {
     }
   };
 
-  useEffect(() => {
+  const handelAddProduct = () => {
+    setExpandProduct(false);
     orderProduct({
       productTemplateId: detailProduct.id,
       quantity: amount,
@@ -54,7 +72,8 @@ const DetailProduct = () => {
       price: detailProduct.price * amount,
       name: detailProduct.name,
     });
-  }, [amount, detailProduct]);
+    setAmount(1);
+  };
 
   useEffect(() => {
     dispatch(getIngredientByIdAction({productTemplateId: detailProduct.id}));
@@ -68,6 +87,17 @@ const DetailProduct = () => {
         productId={detailProduct.id}
       />
     );
+  };
+
+  const skeletonList = () => {
+    for (let i = 0; i < 5; i++) {
+      return (
+        <>
+          <Skeleton width={MaxSize.WIDTH} height={50} />
+          <Space vertical={scale(appTheme.gap_5)} />
+        </>
+      );
+    }
   };
 
   return (
@@ -93,12 +123,13 @@ const DetailProduct = () => {
           <BoxDescriptionProduct>
             <AppText variant="bold_22">{detailProduct.name}</AppText>
             <Space vertical={scale(appTheme.gap_5)} />
-            {/* <AppText variant="regular_16">
+            <AppText variant="regular_16">
               {en.common.calo.replace(
                 '{number}',
                 formatNumber(detailProduct.calo),
               )}
-            </AppText> */}
+            </AppText>
+            <Space vertical={scale(appTheme.gap_5)} />
             <AppText numberOfLines={3} variant="thin_16">
               {detailProduct.description}
             </AppText>
@@ -116,50 +147,74 @@ const DetailProduct = () => {
               </AppTextSupportColor>
             </WrapPrice>
             <Space horizontal={scale(10)} />
-            <WrapActionAmount>
-              <TouchableMinus onPress={() => handelDecreaseAmount()}>
-                <AppIcon
-                  name="ic_minus"
-                  stroke={appTheme.colors.stroke_third}
-                  width={24}
-                  height={24}
-                />
-              </TouchableMinus>
-              <Space horizontal={scale(appTheme.gap_5)} />
-              <AppTextSupportColor
-                variant="bold_24"
-                color={appTheme.colors.primary}>
-                {amount}
-              </AppTextSupportColor>
-              <Space horizontal={scale(appTheme.gap_5)} />
-              <TouchableAdd
-                onPress={() => handelIncreaseAmount()}
-                // disabled={detailProduct.quantity === 0}>
-              >
-                <AppIcon
-                  name="ic_add"
-                  stroke={appTheme.colors.stroke_third}
-                  width={24}
-                  height={24}
-                />
-              </TouchableAdd>
-            </WrapActionAmount>
+            {!expandProduct && (
+              <WrapActionAmount>
+                <TouchableMinus onPress={() => handelDecreaseAmount()}>
+                  <AppIcon
+                    name="ic_minus"
+                    stroke={appTheme.colors.stroke_third}
+                    width={24}
+                    height={24}
+                  />
+                </TouchableMinus>
+                <Space horizontal={scale(appTheme.gap_5)} />
+                <AppTextSupportColor
+                  variant="bold_24"
+                  color={appTheme.colors.primary}>
+                  {amount}
+                </AppTextSupportColor>
+                <Space horizontal={scale(appTheme.gap_5)} />
+                <TouchableAdd
+                  onPress={() => handelIncreaseAmount()}
+                  // disabled={detailProduct.quantity === 0}
+                >
+                  <AppIcon
+                    name="ic_add"
+                    stroke={appTheme.colors.stroke_third}
+                    width={24}
+                    height={24}
+                  />
+                </TouchableAdd>
+              </WrapActionAmount>
+            )}
           </BoxAction>
         </WrapInfoProduct>
       </WrapDetailProduct>
-      <AppFlatlist
-        data={listStep ?? []}
-        renderItem={item => renderIngredient(item)}
-      />
+      {!expandProduct ? (
+        <AppFlatlist
+          data={listStep ?? []}
+          ListSkeletonComponent={skeletonList}
+          renderItem={item => renderIngredient(item)}
+        />
+      ) : (
+        <WrapAtionAddProduct>
+          <TouchAddProduct onPress={handelAddProduct}>
+            <AppTextSupportColor
+              variant="regular_16"
+              color={appTheme.colors.white}>
+              Vui Thêm Món
+            </AppTextSupportColor>
+          </TouchAddProduct>
+        </WrapAtionAddProduct>
+      )}
     </Container>
   );
 };
 
+const TouchAddProduct = styled(AppTouchable)`
+  background-color: ${({theme}) => theme.colors.primary};
+  padding: ${({theme}) => theme.gap_8}px;
+  border-radius: ${({theme}) => theme.border_radius_5}px;
+  align-items: center;
+`;
 const Container = styled.View`
   flex: 1;
   padding-bottom: ${({theme}) => scale(theme.gap_64)}px;
 `;
 
+const WrapAtionAddProduct = styled.View`
+  padding: ${scale(40)}px;
+`;
 const WrapInfoProduct = styled.View`
   flex: 0.6;
   justify-content: space-between;

@@ -36,6 +36,7 @@ export interface Ingredient {
   name: string;
   price: number;
   img: string;
+  max: number;
 }
 
 export interface Step {
@@ -61,6 +62,7 @@ export const transformData = (data: any): Step[] => {
         name: ingredient.name,
         price: ingredient.price,
         img: ingredient.imageUrl,
+        max: ingredient.quantityMax,
       })),
     };
   });
