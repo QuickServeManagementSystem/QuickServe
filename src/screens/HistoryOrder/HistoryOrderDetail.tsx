@@ -17,7 +17,7 @@ const HistoryOrderDetail = () => {
   const route = useRoute();
   const dispatch = useAppDispatch();
   const orderHistoryDetail = useAppSelector(selectOrderByIdSelector);
-  const orderId: any = route.params;
+  const {orderId} = route.params;
 
   useEffect(() => {
     if (orderId) {
@@ -51,7 +51,7 @@ const HistoryOrderDetail = () => {
       </OrderInfoContainer>
       <Space vertical={scale(20)} />
       <ProductList>
-        {products.map((product, index) => (
+        {products?.map((product, index) => (
           <ProductItem key={index}>
             <ProductNamePriceContainer>
               <ProductName>{product.name}</ProductName>

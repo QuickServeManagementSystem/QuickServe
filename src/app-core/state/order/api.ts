@@ -10,6 +10,7 @@ import {
   TGetOrderHistoryStaff,
   TGetOrderRequest,
   TGetOrderResponse,
+  TGetOrderStaffResponse,
   TGetStatusOrder,
   TOrderCustomerRequest,
   TOrderRequest,
@@ -33,6 +34,17 @@ export function* apiGetOrder(
   const apiRequest = (token: string) => {
     const query = makeParam(param);
     return new apiClient(token).get(`v1/Orders` + query);
+  };
+
+  return yield call(apiCallProxy, apiRequest);
+}
+
+export function* apiGetOrderStaff(
+  param: TGetOrderRequest,
+): Generator<any, TGetOrderStaffResponse, any> {
+  const apiRequest = (token: string) => {
+    const query = makeParam(param);
+    return new apiClient(token).get(`v1/Orders/Staff/OrderStatus` + query);
   };
 
   return yield call(apiCallProxy, apiRequest);

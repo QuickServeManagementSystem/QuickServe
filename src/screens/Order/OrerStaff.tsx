@@ -1,10 +1,10 @@
 import {useAppDispatch} from '@app-core/state';
 import {
-  getListOrderAction,
-  selectListOrder,
+  getListOrderStaffAction,
+  selectListOrderStaff,
   updateOrderAction,
 } from '@app-core/state/order/reducer';
-import {TGetOrder} from '@app-core/state/order/type';
+import {TGetOrder, TGetOrderStaff} from '@app-core/state/order/type';
 import {en} from '@assets/text_constant';
 import {SearchBar} from '@components/SearchBar';
 import {unwrapResult} from '@reduxjs/toolkit';
@@ -24,19 +24,19 @@ const OrderStaff: React.FC = () => {
   const dispatch = useAppDispatch();
   const {popupStatusRef} = useAppContext();
 
-  const [listOrder, setListOrder] = useState<TGetOrder[]>([]);
+  const [listOrderStaff, setListOrderStaff] = useState<TGetOrderStaff[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<number | null>(null);
 
   const {data, isLoadMore, isRefreshing, onLoadMore, onRefresh} = useAPIList(
-    getListOrderAction,
-    selectListOrder,
+    getListOrderStaffAction,
+    selectListOrderStaff,
   );
 
   useEffect(() => {
     if (selectedStatus === null) {
-      setListOrder(data ?? []);
+      setListOrderStaff(data ?? []);
     } else {
-      setListOrder(
+      setListOrderStaff(
         data?.filter(order => order.status === selectedStatus) ?? [],
       );
     }
@@ -90,7 +90,7 @@ const OrderStaff: React.FC = () => {
 
   const handleSearch = useCallback(
     (text: string) => {
-      setListOrder(
+      setListOrderStaff(
         data?.filter(order =>
           order.id.toLowerCase().includes(text.toLowerCase()),
         ) ?? [],
@@ -151,9 +151,9 @@ const OrderStaff: React.FC = () => {
   const handleFilterChange = (status: number | null) => {
     setSelectedStatus(status);
     if (status !== null) {
-      setListOrder(data?.filter(order => order.status === status) ?? []);
+      setListOrderStaff(data?.filter(order => order.status === status) ?? []);
     } else {
-      setListOrder(data ?? []);
+      setListOrderStaff(data ?? []);
     }
   };
 
@@ -200,7 +200,7 @@ const OrderStaff: React.FC = () => {
       </ScrollView>
       <Space vertical={10} />
       <AppFlatlist
-        data={listOrder ?? []}
+        data={listOrderStaff ?? []}
         isLoadMore={isLoadMore}
         isRefreshing={isRefreshing}
         onLoadMore={onLoadMore}

@@ -51,7 +51,7 @@ const HistoryOrderStaffDetail = () => {
       </OrderInfoContainer>
       <Space vertical={scale(20)} />
       <ProductList>
-        {products.map((product, index) => (
+        {products?.map((product, index) => (
           <ProductItem key={index}>
             <ProductNamePriceContainer>
               <ProductName>{product.name}</ProductName>

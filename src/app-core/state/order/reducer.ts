@@ -10,6 +10,7 @@ import {
   TGetOrderHistoryStaffResponse,
   TGetOrderRequest,
   TGetOrderResponse,
+  TGetOrderStaffResponse,
   TGetStatusOrderResponse,
   TOrderCustomerRequest,
   TOrderRequest,
@@ -66,6 +67,7 @@ const listStatusDefault: TGetStatusOrderResponse = {
 type SliceState = {
   order: TOrderResponse;
   listOrder: TGetOrderResponse;
+  listOrderStaff: TGetOrderStaffResponse;
   detailOrder: TGetOrder;
   listStatusOrder: TGetStatusOrderResponse;
   listOrderHistory: TGetOrderHistoryCustomerResponse;
@@ -75,6 +77,7 @@ type SliceState = {
 const initialState = {
   order: defaultOrder,
   listOrder: defaultGetOrderResponse,
+  listOrderStaff: listStatusDefault,
   detailOrder: {},
   listStatusOrder: listStatusDefault,
 } as SliceState;
@@ -131,6 +134,30 @@ export const orderSlice = createSlice({
         listOrder.pageSize = pageSize;
       }
     },
+    setListOrderStaff: (
+      state: SliceState,
+      {payload}: {payload: TGetOrderStaffResponse},
+    ) => {
+      if (payload?.data) {
+        const {listOrderStaff} = state;
+        const {
+          data,
+          pageNumber = 1,
+          totalPages = 0,
+          totalItems = 0,
+          pageSize = 20,
+        } = payload;
+
+        listOrderStaff.data =
+          pageNumber === 1 ? data : [...listOrderStaff.data, ...data];
+
+        //panigation
+        listOrderStaff.pageNumber = pageNumber;
+        listOrderStaff.totalPages = totalPages;
+        listOrderStaff.totalItems = totalItems;
+        listOrderStaff.pageSize = pageSize;
+      }
+    },
     setListOrderHistory: (
       state: SliceState,
       {payload}: {payload: TGetOrderHistoryCustomerResponse},
@@ -152,6 +179,7 @@ export const orderSlice = createSlice({
 export const {
   setOrder,
   setListOrder,
+  setListOrderStaff,
   setDetailOrder,
   setStatusOrder,
   updateStatusOrder,
@@ -194,11 +222,17 @@ export const getListOrderHistoryStaffAction = createAction(
     payload: {selectedStatus},
   }),
 );
-
+export const getListOrderStaffAction = createAction(
+  `${orderSlice.name}/getListOrderStaffAction`,
+);
 //selectors
 
 export const selectOrder = (state: AppRootState) => state.order.order;
 export const selectListOrder = (state: AppRootState) => state.order.listOrder;
+
+export const selectListOrderStaff = (state: AppRootState) =>
+  state.order.listOrderStaff;
+
 export const selectOrderByIdSelector = (state: AppRootState) =>
   state.order.detailOrder;
 

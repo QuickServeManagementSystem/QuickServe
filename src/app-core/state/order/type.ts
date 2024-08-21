@@ -102,6 +102,13 @@ export type TGetOrder = {
   ];
 };
 
+export type TGetOrderStaff = {
+  id: string;
+  status: number;
+  created: string;
+  platform: number;
+};
+
 export type TGetStatusOrder = {
   id: string;
   status: number;
@@ -135,6 +142,8 @@ export type TGetOrderHistoryStaff = {
 export type TGetStatusOrderResponse = BaseResType<TGetStatusOrder>;
 
 export type TGetOrderResponse = BaseResType<TGetOrder>;
+
+export type TGetOrderStaffResponse = BaseResType<TGetOrderStaff>;
 
 export type TGetOrderHistoryCustomerResponse =
   BaseResType<TGetOrderHistoryCustomer>;

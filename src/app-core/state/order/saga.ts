@@ -14,6 +14,7 @@ import {
   apiGetOrderById,
   apiGetOrderHistoryCustomer,
   apiGetOrderHistoryStaff,
+  apiGetOrderStaff,
   apiGetStatusOrder,
   apiUpdateOrder,
 } from './api';
@@ -23,12 +24,14 @@ import {
   getListOrderAction,
   getListOrderHistoryAction,
   getListOrderHistoryStaffAction,
+  getListOrderStaffAction,
   getListStatusOrderAction,
   getOrderByIdAction,
   setDetailOrder,
   setListOrder,
   setListOrderHistory,
   setListOrderHistoryStaff,
+  setListOrderStaff,
   setOrder,
   setStatusOrder,
   updateOrderAction,
@@ -40,6 +43,7 @@ import {
   TGetOrderHistoryCustomerResponse,
   TGetOrderHistoryStaffResponse,
   TGetOrderResponse,
+  TGetOrderStaffResponse,
   TGetStatusOrderResponse,
   TOrderResponse,
 } from './type';
@@ -85,6 +89,29 @@ function* getListORderSaga(action: any): Generator<any, void, any> {
     handleError(error);
   }
 }
+
+function* getListOrderStaffSaga(action: any) {
+  if (!getListOrderStaffAction.match(action)) {
+    return;
+  }
+  try {
+    const response: TGetOrderStaffResponse = yield call(
+      apiGetOrderStaff,
+      action.payload,
+    );
+    if (response) {
+      yield put(setListOrderStaff(response));
+    }
+    if (response.errors) {
+      toast.error(en.order.error);
+      Navigation.replace(APP_SCREEN.AppStack.name);
+    }
+  } catch (error: any) {
+    toast.error(en.order.error);
+    handleError(error);
+  }
+}
+
 function* UpdateOrderStatusSaga(action: any) {
   if (!updateOrderAction.match(action)) {
     return;
@@ -222,4 +249,5 @@ export default function* () {
   yield takeEvery(getListOrderHistoryAction.type, getOrderHistoryCustomer);
   yield takeEvery(createOrderCustomerAction.type, createOrderCustomerSaga);
   yield takeEvery(getListOrderHistoryStaffAction.type, getOrderHistoryStaff);
+  yield takeEvery(getListOrderStaffAction.type, getListOrderStaffSaga);
 }
