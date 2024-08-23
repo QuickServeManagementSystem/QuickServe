@@ -6,6 +6,7 @@ import {
   productAction,
 } from '@app-core/state/product/reducer';
 import {TCategory, TProduct} from '@app-core/state/product/type';
+import {selectSelectedStoreId} from '@app-core/state/store/reducer';
 import {en} from '@assets/text_constant';
 import CardItem from '@components/CardItem';
 import {SearchBar} from '@components/SearchBar';
@@ -22,6 +23,7 @@ import React, {useEffect} from 'react';
 import {useWindowDimensions, ViewStyle} from 'react-native';
 import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
 function App(): React.JSX.Element {

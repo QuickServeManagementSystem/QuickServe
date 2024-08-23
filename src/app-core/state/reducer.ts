@@ -10,6 +10,7 @@ import orderReducer, {orderSlice} from './order/reducer';
 import paymentReducer, {paymentSlice} from './payment/reducer';
 import productReducer, {productSlice} from './product/reducer';
 import {DEFAULT_STORE_KEY, reduxStorage} from './storage';
+import storeReducer, {storeSlice} from './store/reducer';
 
 const appReducer = {
   [ApplicationSlice.name]: applicationReducer,
@@ -18,6 +19,7 @@ const appReducer = {
   [ingredientSlice.name]: ingredientReducer,
   [orderSlice.name]: orderReducer,
   [paymentSlice.name]: paymentReducer,
+  [storeSlice.name]: storeReducer,
 };
 
 const appCombineReducer = combineReducers(appReducer);

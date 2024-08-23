@@ -12,7 +12,6 @@ import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React from 'react';
-import {Text} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 

@@ -112,7 +112,14 @@ export function storageMMKV() {
         return null; // Or handle the error according to your application's logic
       }
     },
+    setSelectedStoreId: (id: number) => {
+      user_store?.set('selectedStoreId', id.toString());
+    },
 
+    getSelectedStoreId: () => {
+      const value = user_store?.getString('selectedStoreId');
+      return value ? parseInt(value, 10) : 0;
+    },
     removeItem: (key: string) => {
       try {
         user_store?.delete(key);

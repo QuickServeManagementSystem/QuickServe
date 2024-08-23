@@ -1,5 +1,5 @@
-import {useAppDispatch} from '@app-core/state';
-import {userLoginAction} from '@app-core/state/auth/reducer';
+import {useAppDispatch, useAppSelector} from '@app-core/state';
+import {ERole, selectRole, userLoginAction} from '@app-core/state/auth/reducer';
 // import {userLoginAction} from '@app-core/state/auth/reducer';
 import {en} from '@assets/text_constant';
 import {FormTextInput} from '@components/Form/Input';
@@ -34,6 +34,7 @@ const SignIn = () => {
     },
   });
   const dispatch = useAppDispatch();
+  const currentRole = useAppSelector(selectRole);
   const [loading, setLoading] = useState(false);
   const [hiddentText, setHiddenText] = useState(true);
   const appTheme = useTheme();
@@ -58,7 +59,7 @@ const SignIn = () => {
     };
   }, [loading]);
 
-  const handleLogin = (data: FormInput) => {
+  const handleLogin = async (data: FormInput) => {
     setLoading(true);
     dispatch(userLoginAction(data));
   };

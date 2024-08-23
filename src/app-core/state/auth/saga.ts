@@ -48,9 +48,13 @@ function* loginAppSaga(action: any) {
         ...response,
         email: payload.email,
       });
-      // set Role to userStore ==> set Role to App, Router, ...
+      const role = response.data?.roles;
 
-      Navigation.reset(APP_SCREEN.AppStack.name);
+      if (role === 'Customer') {
+        Navigation.reset(APP_SCREEN.StoreSelection.name);
+      } else {
+        Navigation.reset(APP_SCREEN.AppStack.name);
+      }
     }
   } catch (error: any) {
     handleError(error);
