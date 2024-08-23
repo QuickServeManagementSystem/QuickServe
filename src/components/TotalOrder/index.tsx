@@ -1,5 +1,9 @@
 import {en} from '@assets/text_constant';
-import {APP_SCREEN, AUTH_APP_SCREEN} from '@navigation/constant';
+import {
+  APP_SCREEN,
+  AUTH_APP_SCREEN,
+  BOTTOM_TAB_SCREEN,
+} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {formatNumber, Space} from '@utils/common';
 import AppIcon from '@views/AppIcon';
@@ -54,7 +58,11 @@ const TotalOrder = React.forwardRef((props, ref: TotalOrderRef) => {
     currentRoute !== APP_SCREEN.Payment.name &&
     currentRoute !== APP_SCREEN.WebViewPaymentVNPay.name &&
     currentRoute !== APP_SCREEN.StatusOrder.name &&
+    currentRoute !== BOTTOM_TAB_SCREEN.Setting.name &&
     currentRoute !== APP_SCREEN.HistoryOrder.name &&
+    currentRoute !== APP_SCREEN.HistoryOrderDetail.name &&
+    currentRoute !== APP_SCREEN.HistoryOrderStaff.name &&
+    currentRoute !== APP_SCREEN.HistoryOrderStaffDetail.name &&
     state.orderProduct.length !== 0 ? (
     <WrapAddProduct
       {...props}

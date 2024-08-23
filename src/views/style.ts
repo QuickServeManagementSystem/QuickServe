@@ -16,6 +16,7 @@ export const lightColors = {
   gray_9: '#999999',
   green: '#01d911',
   error: '#E11F1F',
+  orange_light: '#FBD78B',
 
   background_overlay: '#fabd0a',
   //text

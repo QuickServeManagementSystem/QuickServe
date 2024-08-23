@@ -174,13 +174,14 @@ const ItemSkeleton = styled.View``;
 
 const ProductItem = styled(AppTouchable)`
   box-shadow: 0px 2px 2px rgba(195, 195, 195, 0.25);
-  flex: 0.5;
+  flex: 1;
   min-height: ${Dimensions.get('window').width < 450
     ? scale(200)
     : scale(100)}px;
   max-width: ${Dimensions.get('window').width < 450
     ? scale(200)
-    : scale(180)}px;
+    : scale(150)}px;
+  margin-bottom: ${({theme}) => theme.gap_15}px;
 `;
 
 const HeaderSearchBar = styled.View`

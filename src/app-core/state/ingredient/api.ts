@@ -14,7 +14,7 @@ export function* apiGetIngedientById(
 
   const apiRequest = (token: string) => {
     return new apiClient(token).get(
-      `v1//IngredientTypeTemplateSteps/all` + queries,
+      `v1/IngredientTypeTemplateSteps/all` + queries,
     );
   };
 

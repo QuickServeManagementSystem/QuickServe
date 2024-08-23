@@ -64,7 +64,7 @@ const WrapInfo = styled.View`
 
 const ImageCard = styled.Image`
   width: 100%;
-  height: ${scale(150)}px;
+  height: ${scale(120)}px;
   border-radius: ${({theme}) => theme.border_radius_12}px;
 `;
 

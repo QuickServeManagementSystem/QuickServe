@@ -63,8 +63,12 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
     });
   };
 
-  const handelIncreaseAmount = (item: any) => {
-    const updatedAmount = (amounts[item.id] || 1) + 1;
+  const handelIncreaseAmount = (item: Ingredient) => {
+    const currentAmount = amounts[item.id] || 1;
+    if (item.remainingQuantity !== null && currentAmount === item.max) {
+      return;
+    }
+    const updatedAmount = currentAmount + 1;
 
     setAmounts(prev => ({...prev, [item.id]: updatedAmount}));
     orderIngredient({
@@ -96,7 +100,6 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
       isSelected: true,
     });
   };
-
   const renderIngredientDetail = (item: Ingredient) => {
     const isSelected = state.orderIngredient.some(
       (ing: any) =>
@@ -105,6 +108,14 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
         ing.productId === productId,
     );
     let isDisabled = false;
+
+    if (!item.isSold) {
+      isDisabled = true;
+    } else if (item.isSold && item.remainingQuantity > 0) {
+      if (item.remainingQuantity < item.max) {
+        isDisabled = true;
+      }
+    }
 
     const index = state.orderIngredient.findIndex(
       (ing: any) => ing.stepId === itemStep.id,

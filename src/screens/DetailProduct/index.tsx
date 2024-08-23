@@ -123,15 +123,15 @@ const DetailProduct = () => {
           <BoxDescriptionProduct>
             <AppText variant="bold_22">{detailProduct.name}</AppText>
             <Space vertical={scale(appTheme.gap_5)} />
-            <AppText variant="regular_16">
+            {/* <AppText variant="regular_16">
               {en.common.calo.replace(
                 '{number}',
                 formatNumber(detailProduct.calo),
               )}
             </AppText>
-            <Space vertical={scale(appTheme.gap_5)} />
+            <Space vertical={scale(appTheme.gap_5)} /> */}
             <AppText numberOfLines={3} variant="thin_16">
-              {detailProduct.description}
+              Mô tả:{detailProduct.description}
             </AppText>
           </BoxDescriptionProduct>
           <Space vertical={scale(appTheme.gap_5)} />

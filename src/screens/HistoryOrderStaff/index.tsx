@@ -29,6 +29,16 @@ const HistoryOrderStaff = () => {
     console.log('Navigating to order details with ID:', orderId);
     Navigation.navigateTo(APP_SCREEN.HistoryOrderStaffDetail.name, {orderId});
   };
+  const getCardBackgroundColor = (status: any) => {
+    switch (status) {
+      case 1:
+        return appTheme.colors.orange_light;
+      case 4:
+        return appTheme.colors.orange_light;
+      default:
+        return appTheme.colors.white;
+    }
+  };
   return (
     <Container>
       <Space vertical={scale(5)} />
@@ -38,7 +48,10 @@ const HistoryOrderStaff = () => {
       <AppFlatlist
         data={orderHistory?.data || []}
         renderItem={({item}) => (
-          <CardContainer>
+          <CardContainer
+            style={{
+              backgroundColor: getCardBackgroundColor(item.status),
+            }}>
             <WrapProduct>
               <WrapInfoProduct>
                 <AppTextSupportColor
@@ -66,8 +79,8 @@ const HistoryOrderStaff = () => {
                 <AppTouchable onPress={() => handleViewDetails(item.id)}>
                   <AppTextSupportColor
                     variant="bold_16"
-                    color={appTheme.colors.primary}>
-                    Xem chi tiết
+                    color={appTheme.colors.black}>
+                    Chi tiết
                   </AppTextSupportColor>
                 </AppTouchable>
               </WrapAction>
@@ -99,7 +112,7 @@ const getPlatformLabel = (status: any) => {
     case 1:
       return 'Đơn đặt tại chỗ';
     case 2:
-      return 'Đơn đặt Onlline';
+      return 'Đơn đặt trước';
     default:
       return 'Đang xử lý';
   }
@@ -113,6 +126,8 @@ const Container = styled.View`
 const CardContainer = styled.View`
   background-color: ${({theme}) => theme.colors.white};
   padding: ${({theme}) => theme.gap_10}px;
+  margin-left: ${({theme}) => theme.gap_10}px;
+  margin-right: ${({theme}) => theme.gap_10}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
   border-width: 1px;
   border-color: ${({theme}) => theme.colors.stroke_primary};

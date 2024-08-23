@@ -41,7 +41,19 @@ const OrderStaff: React.FC = () => {
       );
     }
   }, [data, selectedStatus]);
-
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    };
+    return new Intl.DateTimeFormat('vi-VN', options).format(
+      new Date(dateString),
+    );
+  };
   const formatStatus = (status: number) => {
     switch (status) {
       case 1:
@@ -117,7 +129,7 @@ const OrderStaff: React.FC = () => {
 
   // Sửa hàm handleUpdateOrderStatus để không dùng .then
   const handleUpdateOrderStatus = async (
-    item: TGetOrder,
+    item: TGetOrderStaff,
     newStatus: number,
   ) => {
     if (handleStatusUpdate(item.status, newStatus)) {
@@ -208,7 +220,7 @@ const OrderStaff: React.FC = () => {
         contentContainerStyle={{
           paddingBottom: scale(100),
         }}
-        renderItem={({item}: {item: TGetOrder; index: number}) => {
+        renderItem={({item}: {item: TGetOrderStaff; index: number}) => {
           return (
             <OrderItem
               onPress={() => {
@@ -218,11 +230,14 @@ const OrderStaff: React.FC = () => {
                 });
               }}>
               <OrderDetails>
-                <AppText variant="semibold_16">
+                <AppText variant="semibold_14">
                   Mã đơn hàng: {item.id.toString().substring(0, 6)}
                 </AppText>
-                <AppText variant="regular_16">
-                  Tổng tiền: {item.totalPrice}
+                <AppText variant="regular_14">
+                  Ngày tạo: {formatDate(item.created)}
+                </AppText>
+                <AppText variant="regular_14">
+                  Loại hóa đơn: {getPlatformLabel(item.platform)}
                 </AppText>
               </OrderDetails>
               {formatStatus(item.status)}
@@ -234,6 +249,16 @@ const OrderStaff: React.FC = () => {
   );
 };
 
+const getPlatformLabel = (platform: any) => {
+  switch (platform) {
+    case 1:
+      return 'Đơn đặt tại chỗ';
+    case 2:
+      return 'Đơn đặt trước';
+    default:
+      return 'Đang xử lý';
+  }
+};
 const Container = styled.View`
   flex: 1;
   margin: 0 ${props => props.theme.gap_16}px;

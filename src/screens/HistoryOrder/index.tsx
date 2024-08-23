@@ -40,12 +40,20 @@ const HistoryOrder = () => {
       <RNSwitch value={value} onValueChange={onValueChange} />
     </SwitchContainer>
   );
-
+  const getCardBackgroundColor = (status: any) => {
+    switch (status) {
+      case 3:
+        return appTheme.colors.orange_light;
+      case 4:
+        return appTheme.colors.orange_light;
+      default:
+        return appTheme.colors.white;
+    }
+  };
   return (
     <Container>
       <Space vertical={scale(5)} />
       <AppHeader title="Lịch sử đơn hàng" />
-      {/* Filter UI */}
       <FilterContainer>
         <Switch
           label="7 ngày gần nhất"
@@ -56,7 +64,10 @@ const HistoryOrder = () => {
       <AppFlatlist
         data={orderHistory?.data || []}
         renderItem={({item}) => (
-          <CardContainer>
+          <CardContainer
+            style={{
+              backgroundColor: getCardBackgroundColor(item.status),
+            }}>
             <WrapProduct>
               <WrapInfoProduct>
                 <AppTextSupportColor
@@ -84,7 +95,7 @@ const HistoryOrder = () => {
                 <AppTouchable onPress={() => handleViewDetails(item.id)}>
                   <AppTextSupportColor
                     variant="bold_16"
-                    color={appTheme.colors.primary}>
+                    color={appTheme.colors.black}>
                     Xem chi tiết
                   </AppTextSupportColor>
                 </AppTouchable>
@@ -99,7 +110,6 @@ const HistoryOrder = () => {
   );
 };
 
-// Helper function to get status label
 const getStatusLabel = (status: any) => {
   switch (status) {
     case 3:
@@ -119,6 +129,8 @@ const Container = styled.View`
 
 const CardContainer = styled.View`
   background-color: ${({theme}) => theme.colors.white};
+  margin-left: ${({theme}) => theme.gap_10}px;
+  margin-right: ${({theme}) => theme.gap_10}px;
   padding: ${({theme}) => theme.gap_10}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
   border-width: 1px;
@@ -153,27 +165,6 @@ const FilterContainer = styled.View`
   border-bottom-width: 1px;
   border-color: ${({theme}) => theme.colors.stroke_primary};
   margin-bottom: ${({theme}) => theme.gap_10}px;
-`;
-
-const TouchableDelete = styled(AppTouchable)`
-  padding: ${({theme}) => theme.gap_10}px;
-  border-radius: 99999px;
-  width: ${({theme}) => theme.gap_30}px;
-  height: ${({theme}) => theme.gap_30}px;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-  background-color: ${({theme}) => theme.colors.error + theme.alpha_05};
-`;
-
-const PickerContainer = styled.View`
-  flex: 1;
-  margin-right: ${({theme}) => theme.gap_10}px;
-`;
-
-const PickerLabel = styled.Text`
-  margin-bottom: ${({theme}) => theme.gap_5}px;
-  color: ${({theme}) => theme.colors.black};
 `;
 
 const SwitchContainer = styled.View`

@@ -1,4 +1,5 @@
 import {useAppDispatch, useAppSelector} from '@app-core/state';
+import {ERole, selectRole} from '@app-core/state/auth/reducer';
 import {
   getOrderByIdAction,
   selectOrderByIdSelector,
@@ -19,15 +20,9 @@ import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import CryptoJS from 'crypto-js';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {
-  NativeEventEmitter,
-  NativeModules,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import {StyleProp, ViewStyle} from 'react-native';
 import RadioGroup from 'react-native-radio-buttons-group';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
@@ -37,9 +32,6 @@ import {Context} from '../../reducer';
 type FormInput = {
   message: string;
 };
-const {PayZaloBridge} = NativeModules;
-
-const payZaloBridgeEmitter = new NativeEventEmitter(PayZaloBridge);
 
 const Payment = () => {
   const appTheme = useTheme();
@@ -50,13 +42,14 @@ const Payment = () => {
   const {orderId} = router.params;
   const dispatch = useAppDispatch();
   const listProduct = useAppSelector(selectOrderByIdSelector);
+  const currentRole = useAppSelector(selectRole);
 
   useEffect(() => {
     dispatch(getOrderByIdAction({orderId: orderId}));
   }, [dispatch, orderId]);
 
-  const radioButtons = useMemo(
-    () => [
+  const radioButtons = useMemo(() => {
+    const buttons = [
       {
         id: '1',
         label: 'OCD',
@@ -67,9 +60,12 @@ const Payment = () => {
         label: 'PayOS',
         value: '2',
       },
-    ],
-    [],
-  );
+    ];
+
+    return currentRole === ERole.Customer
+      ? buttons.filter(button => button.id === '2')
+      : buttons;
+  }, [currentRole]);
 
   const [selectedId, setSelectedId] = useState<string>('1');
 
@@ -110,91 +106,7 @@ const Payment = () => {
         }),
       );
     }
-    // if (selectedId === '3') {
-    //   createZaloPayOrder(listProduct?.totalPrice)
-    //     .then(response => {
-    //       console.log('ZaloPay response:', response);
-
-    //       if (response.return_code === 1) {
-    //         var payZP = NativeModules.PayZaloBridge;
-    //         payZP.payOrder(response.zp_trans_token);
-    //       } else {
-    //         toast.error(
-    //           'Thanh toán ZaloPay thất bại: ' + response.return_message,
-    //         );
-    //       }
-    //     })
-    //     .catch(error => {
-    //       console.error('Error in ZaloPay payment:', error);
-    //       toast.error('Đã xảy ra lỗi khi thực hiện thanh toán ZaloPay');
-    //     });
-    // }
-    // clearData();
   };
-
-  // const createZaloPayOrder = async totalPrice => {
-  //   let apptransid = getCurrentDateYYMMDD() + '_' + new Date().getTime();
-  //   let appid = 2553;
-  //   let amount = parseInt(totalPrice);
-  //   let appuser = 'ZaloPayDemo';
-  //   let apptime = new Date().getTime();
-  //   let embeddata = '{}';
-  //   let item = '[]';
-  //   let description = 'Thanh toán đơn hàng #' + apptransid;
-  //   let hmacInput =
-  //     appid +
-  //     '|' +
-  //     apptransid +
-  //     '|' +
-  //     appuser +
-  //     '|' +
-  //     amount +
-  //     '|' +
-  //     apptime +
-  //     '|' +
-  //     embeddata +
-  //     '|' +
-  //     item;
-  //   let mac = CryptoJS.HmacSHA256(
-  //     hmacInput,
-  //     'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL',
-  //   );
-
-  //   var order = {
-  //     app_id: appid,
-  //     app_user: appuser,
-  //     app_time: apptime,
-  //     amount: amount,
-  //     app_trans_id: apptransid,
-  //     embed_data: embeddata,
-  //     item: item,
-  //     description: description,
-  //     mac: mac,
-  //   };
-
-  //   let formBody = [];
-  //   for (let i in order) {
-  //     let encodedKey = encodeURIComponent(i);
-  //     let encodedValue = encodeURIComponent(order[i]);
-  //     formBody.push(encodedKey + '=' + encodedValue);
-  //   }
-  //   formBody = formBody.join('&');
-
-  //   const response = await fetch('https://sb-openapi.zalopay.vn/v2/create', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-  //     },
-  //     body: formBody,
-  //   }).then(response => response.json());
-
-  //   return response;
-  // };
-
-  function getCurrentDateYYMMDD() {
-    var todayDate = new Date().toISOString().slice(2, 10);
-    return todayDate.split('-').join('');
-  }
 
   const toggleIngredients = (productTemplateId: string) => {
     setShowIngredients(prev => ({
@@ -215,7 +127,7 @@ const Payment = () => {
             <AppTextSupportColor
               variant="bold_20"
               color={appTheme.colors.black}>
-              {item.name}
+              {item.name} x {item.quantity}
             </AppTextSupportColor>
             <Space vertical={scale(2)} />
             {showIngredients[item.productTemplateId] && (

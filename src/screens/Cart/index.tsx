@@ -1,4 +1,5 @@
-import {useAppDispatch} from '@app-core/state';
+import {useAppDispatch, useAppSelector} from '@app-core/state';
+import {ERole, selectRole} from '@app-core/state/auth/reducer';
 import {
   createOrderAction,
   createOrderCustomerAction,
@@ -32,7 +33,7 @@ const Cart = () => {
   const [expandedProductIds, setExpandedProductIds] = React.useState<number[]>(
     [],
   );
-
+  const currentRole = useAppSelector(selectRole);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -100,8 +101,7 @@ const Cart = () => {
       };
     });
 
-    if (height > width) {
-      // Portrait mode - call the Customer API
+    if (currentRole === ERole.Customer) {
       dispatch(
         createOrderCustomerAction({
           products: products,
@@ -277,6 +277,7 @@ const CartContainer = styled.View`
   shadow-opacity: 0.1;
   shadow-radius: 10px;
   elevation: 5;
+  border-radius: ${({theme}) => theme.border_radius_8}px;
 `;
 const ContainerCart = styled.View`
   margin: 0 ${({theme}) => theme.gap_16}px;
