@@ -49,12 +49,35 @@ const OrderStore = () => {
     }
   }, [data?.data]);
 
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    };
+    return new Intl.DateTimeFormat('vi-VN', options).format(
+      new Date(dateString),
+    );
+  };
+  const getPlatformLabel = (platform: any) => {
+    switch (platform) {
+      case 1:
+        return 'Đơn đặt trước';
+      case 2:
+        return 'Đơn đặt tại chỗ';
+      default:
+        return 'Đang xử lý';
+    }
+  };
   const formatStatus = (status: number) => {
     switch (status) {
       case 3:
         return (
           <WrapStatus background={appTheme.colors.primary}>
-            <Status variant="semibold_16" color={appTheme.colors.white}>
+            <Status variant="semibold_22" color={appTheme.colors.white}>
               Đang chuẩn bị
             </Status>
           </WrapStatus>
@@ -62,7 +85,7 @@ const OrderStore = () => {
       case 4:
         return (
           <WrapStatus background={appTheme.colors.success}>
-            <Status variant="semibold_16" color={appTheme.colors.white}>
+            <Status variant="semibold_22" color={appTheme.colors.white}>
               Đã hoàn thành
             </Status>
           </WrapStatus>
@@ -80,7 +103,17 @@ const OrderStore = () => {
         renderItem={({item}: {item: TGetOrder}) => {
           return (
             <OrderItem disabled>
-              <AppText variant="semibold_16">Đơn Số: {item?.id}</AppText>
+              <OrderDetails>
+                <AppText variant="semibold_20">
+                  Mã đơn hàng: {item.id.toString().substring(0, 6)}
+                </AppText>
+                <AppText variant="regular_20">
+                  Ngày tạo: {formatDate(item.created)}
+                </AppText>
+                <AppText variant="regular_20">
+                  Loại hóa đơn: {getPlatformLabel(item.platform)}
+                </AppText>
+              </OrderDetails>
               {formatStatus(item.status)}
             </OrderItem>
           );
@@ -99,7 +132,7 @@ const Container = styled.View`
 
 const OrderItem = styled(AppTouchable)`
   border-radius: ${props => props.theme.border_radius_8}px;
-  padding: ${scale(30)}px ${scale(18)}px;
+  padding: ${scale(12)}px ${scale(20)}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -111,7 +144,9 @@ const OrderItem = styled(AppTouchable)`
 const Status = styled(AppTextSupportColor)`
   text-align: center;
 `;
-
+const OrderDetails = styled.View`
+  flex-direction: column;
+`;
 const WrapStatus = styled.View<{background: string}>`
   background-color: ${props => props.background + props.theme.alpha_08};
   max-width: ${scale(110)}px;

@@ -67,6 +67,8 @@ function* createOrderSaga(action: any) {
     }
   } catch (error: any) {
     toast.error(error.errors?.[0]?.description);
+    console.log(error, 'Lỗi đây nè');
+
     handleError(error);
   }
 }
@@ -134,7 +136,6 @@ function* getOrderByIdSaga(action: any) {
     return;
   }
   const currentRoute = Navigation.getRef().current?.getCurrentRoute()?.name;
-
   try {
     const response: BaseResTypeSingle<TGetOrder> = yield call(apiGetOrderById, {
       orderId: action.payload.orderId,
@@ -145,7 +146,9 @@ function* getOrderByIdSaga(action: any) {
       currentRoute === APP_SCREEN.StatusOrder.name
     ) {
       yield delay(5000);
-      Navigation.replace(APP_SCREEN.AppStack.name);
+      Navigation.replace(APP_SCREEN.AppStack.name, {
+        status: response.data.status,
+      });
     }
   } catch (error: any) {
     toast.error(en.order.error);

@@ -69,6 +69,8 @@ export type TGetOrder = {
   status: number;
   storeId: number;
   billCode: string;
+  created: string;
+  platform: number;
   products: [
     {
       id: number;

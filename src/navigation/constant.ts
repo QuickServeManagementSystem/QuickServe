@@ -146,7 +146,7 @@ export const APP_SCREEN = {
 export interface ScreenPropType {
   [APP_SCREEN.AuthStack.name]: undefined;
   [APP_SCREEN.AppStack.name]: {
-    prop_1: string;
+    status?: number;
   };
   [APP_SCREEN.BottomStack.name]: undefined;
 

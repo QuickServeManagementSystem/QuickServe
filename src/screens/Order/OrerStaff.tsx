@@ -230,13 +230,13 @@ const OrderStaff: React.FC = () => {
                 });
               }}>
               <OrderDetails>
-                <AppText variant="semibold_14">
+                <AppText variant="semibold_16">
                   Mã đơn hàng: {item.id.toString().substring(0, 6)}
                 </AppText>
-                <AppText variant="regular_14">
+                <AppText variant="regular_16">
                   Ngày tạo: {formatDate(item.created)}
                 </AppText>
-                <AppText variant="regular_14">
+                <AppText variant="regular_16">
                   Loại hóa đơn: {getPlatformLabel(item.platform)}
                 </AppText>
               </OrderDetails>
@@ -252,9 +252,9 @@ const OrderStaff: React.FC = () => {
 const getPlatformLabel = (platform: any) => {
   switch (platform) {
     case 1:
-      return 'Đơn đặt tại chỗ';
-    case 2:
       return 'Đơn đặt trước';
+    case 2:
+      return 'Đơn đặt tại chỗ';
     default:
       return 'Đang xử lý';
   }

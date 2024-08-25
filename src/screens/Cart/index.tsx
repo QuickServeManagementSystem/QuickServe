@@ -134,11 +134,7 @@ const Cart = () => {
     const productIngredients = listIngredient.filter(
       (ingredient: any) => ingredient.productId === item.productTemplateId,
     );
-    // Tính tổng giá của các nguyên liệu cho sản phẩm
-    const ingredientTotal = productIngredients.reduce(
-      (sum: number, ingredient: any) => sum + ingredient.price,
-      0,
-    );
+
     return (
       <ContainerCart key={item.productTemplateId}>
         <Space vertical={scale(5)} />
@@ -157,7 +153,7 @@ const Cart = () => {
             <AppTextSupportColor
               variant="semibold_16"
               color={appTheme.colors.primary}>
-              {en.common.vnd.replace('{number}', formatNumber(ingredientTotal))}
+              {en.common.vnd.replace('{number}', formatNumber(item.price))}
             </AppTextSupportColor>
           </WrapInfoProduct>
           <WrapAction>

@@ -44,6 +44,7 @@ const Setting = () => {
 
   return (
     <Container>
+      <Space vertical={scale(appTheme.gap_5)} />
       <AppHeader
         iconLeft="ic_quickserve"
         widthIconLeft={scale(100)}

@@ -13,18 +13,21 @@ import {SearchBar} from '@components/SearchBar';
 import Skeleton from '@components/Skeleton';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
+import {useRoute} from '@react-navigation/native';
 import {Space} from '@utils/common';
 import useAPIList from '@utils/hooks/useAPIList';
 import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {useWindowDimensions, ViewStyle} from 'react-native';
 import {Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
+
+import {Context} from '../../reducer';
 
 function App(): React.JSX.Element {
   const appTheme = useTheme();
@@ -35,7 +38,9 @@ function App(): React.JSX.Element {
   const [listProduct, setListProduct] = React.useState<TProduct[]>([]);
   const dispatch = useAppDispatch();
   const listCategory = useAppSelector(getListCategories);
-
+  const route = useRoute();
+  const {status} = route.params || {};
+  const {clearData} = useContext(Context);
   const {
     data: dataProduct,
     isFirstLoading: isFirstLoadingProduct,
@@ -51,6 +56,9 @@ function App(): React.JSX.Element {
     dispatch(categoriesAction({}));
   }, [dispatch]);
 
+  useEffect(() => {
+    clearData();
+  }, [status]);
   const listProductStyle: ViewStyle = {
     flexDirection: 'column',
     paddingBottom: scale(100),
