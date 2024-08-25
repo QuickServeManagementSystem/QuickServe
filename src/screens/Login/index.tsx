@@ -1,3 +1,9 @@
+import {
+  getListStoreAction,
+  selectedListStore,
+  setSelectedStoreId,
+  selectSelectedStoreId,
+} from '@app-core/state/store/reducer';
 import {en} from '@assets/text_constant';
 import {APP_SCREEN, AUTH_APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
@@ -5,19 +11,33 @@ import {Space} from '@utils/common';
 import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React, {useEffect} from 'react';
-import {Dimensions} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Text, TouchableOpacity, FlatList} from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
 const Welcome = () => {
   const appTheme = useTheme();
-  // const {width, height} = Dimensions.get('window');
-  // useEffect(() => {
-  //   if (width > height && width >= 768) {
-  //     Navigation.reset(APP_SCREEN.AppStack.name);
-  //   }
-  // }, [width, height]);
+  const dispatch = useDispatch();
+  const selectedStoreId = useSelector(selectSelectedStoreId);
+  const [showDropdown, setShowDropdown] = useState(!selectedStoreId); // Initialize based on whether a store is already selected
+  const [selectedStore, setSelectedStore] = useState(null);
+
+  const stores = useSelector(selectedListStore).data;
+
+  useEffect(() => {
+    if (!selectedStoreId) {
+      dispatch(getListStoreAction({}));
+    }
+  }, [dispatch, selectedStoreId]);
+
+  const handleStoreSelect = (store: any) => {
+    setSelectedStore(store);
+    dispatch(setSelectedStoreId(store.id));
+    setShowDropdown(false);
+  };
+
   return (
     <Container>
       <WrapTitle>
@@ -32,6 +52,23 @@ const Welcome = () => {
           </AppTextSupportColor>
         </AppTextSupportColor>
       </WrapTitle>
+
+      {showDropdown ? (
+        <DropdownContainer>
+          <FlatList
+            data={stores}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item}) => (
+              <TouchableOpacity onPress={() => handleStoreSelect(item)}>
+                <DropdownItem>
+                  <Text>{item.name}</Text>
+                </DropdownItem>
+              </TouchableOpacity>
+            )}
+          />
+        </DropdownContainer>
+      ) : null}
+
       <WrapAccount>
         <BoxAccountInfo
           onPress={() => Navigation.reset(APP_SCREEN.AppStack.name)}>
@@ -57,6 +94,7 @@ const Welcome = () => {
           <AppText variant="semibold_14">{en.login.youHaveAccount}</AppText>
         </BoxAccountInfo>
       </WrapAccount>
+
       <WrapFooter>
         <AppText variant="regular_14">{en.common.contactUs}</AppText>
         <Space vertical={scale(appTheme.gap_5)} />
@@ -81,7 +119,6 @@ const Container = styled.SafeAreaView`
 const WrapTitle = styled.View`
   align-items: center;
 `;
-
 const WrapAccount = styled.View`
   flex-direction: row;
   align-items: center;
@@ -97,6 +134,30 @@ const BoxAccountInfo = styled(AppTouchable)`
   justify-content: center;
   align-items: center;
 `;
+const DropdownButton = styled.View`
+  width: 80%;
+  padding: 12px;
+  background-color: ${({theme}) => theme.colors.white};
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  align-items: center;
+`;
+
+const DropdownContainer = styled.View`
+  width: 80%;
+  max-height: 200px;
+  background-color: ${({theme}) => theme.colors.white};
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+`;
+
+const DropdownItem = styled.View`
+  padding: 12px;
+  border-bottom-width: 1px;
+  border-bottom-color: #eee;
+`;
+
 const WrapFooter = styled.View`
   align-items: center;
 `;

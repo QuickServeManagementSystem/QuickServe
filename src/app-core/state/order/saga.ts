@@ -63,12 +63,10 @@ function* createOrderSaga(action: any) {
     }
     if (!response.success) {
       toast.error(response.errors?.[0].description ?? '');
-      Navigation.replace(APP_SCREEN.HomeStack.name);
+      Navigation.replace(APP_SCREEN.AppStack.name);
     }
   } catch (error: any) {
     toast.error(error.errors?.[0]?.description);
-    console.log(error, 'Lỗi đây nè');
-
     handleError(error);
   }
 }
@@ -212,8 +210,13 @@ function* createOrderCustomerSaga(action: any) {
       yield put(setOrder(response));
     }
     if (!response.success) {
-      toast.error(response.errors?.[0].description ?? '');
-      Navigation.replace(APP_SCREEN.HomeStack.name);
+      const errorMessage =
+        response.errors?.[0].description ===
+        'Không có phiên làm việc nào đang hoạt động, không thể đặt hàng'
+          ? 'Cửa hàng hiện chưa mở cửa. Vui lòng quay lại sau!'
+          : response.errors?.[0].description ?? '';
+      toast.error(errorMessage);
+      Navigation.replace(APP_SCREEN.AppStack.name);
     }
   } catch (error: any) {
     toast.error(error.errors?.[0]?.description);

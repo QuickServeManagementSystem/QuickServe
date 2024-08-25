@@ -36,6 +36,9 @@ const Setting = () => {
       case ESetting.historyOrderStaff:
         Navigation.navigateTo(APP_SCREEN.HistoryOrderStaff.name);
         return;
+      case ESetting.bill:
+        Navigation.navigateTo(APP_SCREEN.Bill.name);
+        return;
       case ESetting.profile:
         Navigation.navigateTo(APP_SCREEN.Profile.name);
         return;
@@ -65,6 +68,8 @@ const Setting = () => {
             item.id === ESetting.historyOrderStaff &&
             currentRole !== ERole.Staff
           )
+            return null;
+          if (item.id === ESetting.bill && currentRole !== ERole.Staff)
             return null;
           if (item.id === ESetting.login && currentUser) return null;
           if (item.id === ESetting.logout && !currentUser) return null;

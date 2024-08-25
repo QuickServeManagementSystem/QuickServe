@@ -60,6 +60,7 @@ export const en = {
     historyproduct: 'Lịch Sử Đơn Hàng',
     historyOrderStaff: 'Lịch Sử Hóa đơn cửa hàng',
     userHistoryProduct: 'Lịch Sử Mưa Hàng',
+    bill: 'Đơn hàng',
     profile: 'Thông tin cá nhân',
   },
   action: {

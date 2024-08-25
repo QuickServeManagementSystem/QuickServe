@@ -1,7 +1,6 @@
 import {
   getListStoreAction,
   selectedListStore,
-  selectSelectedStoreId,
   setSelectedStoreId,
 } from '@app-core/state/store/reducer';
 import {TStore} from '@app-core/state/store/type';
@@ -14,13 +13,12 @@ import AppHeader from '@views/AppHeader';
 import React from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import {scale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
 const StoreSelection = () => {
   const appTheme = useTheme();
   const dispatch = useDispatch();
-  const selectedStoreId = useSelector(setSelectedStoreId);
   const {data, isLoadMore, isRefreshing, onLoadMore, onRefresh} = useAPIList(
     getListStoreAction,
     selectedListStore,
@@ -40,7 +38,8 @@ const StoreSelection = () => {
           Navigation.goBack();
         }}
       />
-      <Text>Chọn 1 cửa hàng</Text>
+      <Space vertical={scale(appTheme.gap_5)} />
+      <Text>Chọn 1 cửa hàng để đặt món</Text>
       <AppFlatlist
         data={data ?? []}
         isLoadMore={isLoadMore}
@@ -74,6 +73,7 @@ const StoreItem = styled.View`
 const StoreName = styled.Text`
   font-size: 18px;
   font-weight: bold;
+  color: ${({theme}) => theme.colors.primary};
 `;
 
 const StoreAddress = styled.Text`

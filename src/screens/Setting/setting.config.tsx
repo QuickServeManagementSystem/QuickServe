@@ -12,6 +12,7 @@ export enum ESetting {
   logout = 'logout',
   historyProduct = 'historyProduct',
   historyOrderStaff = 'historyOrderStaff',
+  bill = 'bill',
   profile = 'profile',
 }
 
@@ -37,8 +38,13 @@ export const dataSettings: SettingsProps[] = [
     id: ESetting.historyOrderStaff,
   },
   {
-    name: en.setting.profile,
+    name: en.setting.bill,
     icon: 'ic_history',
+    id: ESetting.bill,
+  },
+  {
+    name: en.setting.profile,
+    icon: 'ic_have_account',
     id: ESetting.profile,
   },
 ];

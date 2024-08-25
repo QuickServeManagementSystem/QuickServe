@@ -4,6 +4,7 @@ import {
   createOrderAction,
   createOrderCustomerAction,
 } from '@app-core/state/order/reducer';
+import {selectSelectedStoreId} from '@app-core/state/store/reducer';
 import {en} from '@assets/text_constant';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
@@ -17,6 +18,7 @@ import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect} from 'react';
 import {useWindowDimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
 import {Context} from '../../reducer';
@@ -34,6 +36,7 @@ const Cart = () => {
     [],
   );
   const currentRole = useAppSelector(selectRole);
+  const selectedStoreId = useSelector(selectSelectedStoreId);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -105,14 +108,14 @@ const Cart = () => {
       dispatch(
         createOrderCustomerAction({
           products: products,
-          storeId: 1,
+          storeId: selectedStoreId,
         }),
       );
     } else {
       dispatch(
         createOrderAction({
           products: products,
-          storeId: 1,
+          storeId: selectedStoreId,
         }),
       );
     }
