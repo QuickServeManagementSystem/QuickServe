@@ -11,7 +11,6 @@ import AppHeader from '@views/AppHeader';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect, useState} from 'react';
-import {Dimensions, Switch as RNSwitch} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -19,7 +18,9 @@ const Bill = () => {
   const appTheme = useTheme();
   const dispatch = useAppDispatch();
   const orderHistory = useAppSelector(selectListOrderHistoryStaffSelector);
-  const [selectedStatus, setSelectedStatus] = useState(null);
+
+  // Set the selected status to 2 for filtering
+  const [selectedStatus, setSelectedStatus] = useState(2);
 
   useEffect(() => {
     dispatch(getListOrderHistoryStaffAction({selectedStatus}));
@@ -27,24 +28,23 @@ const Bill = () => {
 
   const handleViewDetails = (orderId: any) => {
     console.log('Navigating to order details with ID:', orderId);
-    Navigation.navigateTo(APP_SCREEN.HistoryOrderStaffDetail.name, {orderId});
+    Navigation.navigateTo(APP_SCREEN.BillDetail.name, {orderId});
   };
+
   const getCardBackgroundColor = (status: any) => {
     switch (status) {
       case 1:
-        return appTheme.colors.orange_light;
       case 4:
         return appTheme.colors.orange_light;
       default:
         return appTheme.colors.white;
     }
   };
+
   return (
     <Container>
       <Space vertical={scale(5)} />
       <AppHeader title="Đơn hàng" />
-      {/* Filter UI */}
-      <FilterContainer></FilterContainer>
       <AppFlatlist
         data={orderHistory?.data || []}
         renderItem={({item}) => (
@@ -80,7 +80,7 @@ const Bill = () => {
                   <AppTextSupportColor
                     variant="bold_16"
                     color={appTheme.colors.black}>
-                    Chi tiết
+                    In Bill
                   </AppTextSupportColor>
                 </AppTouchable>
               </WrapAction>
@@ -93,20 +93,22 @@ const Bill = () => {
     </Container>
   );
 };
+
 const getStatusLabel = (status: any) => {
   switch (status) {
     case 1:
-      return 'Hóa đơn vừa được tạo';
+      return 'Vừa được tạo';
     case 2:
-      return 'Hóa đơn đã thanh toán';
+      return 'Đã thanh toán';
     case 3:
-      return 'Hóa đơn đang chuẩn bị';
+      return 'Đang chuẩn bị';
     case 4:
-      return 'Hóa đơn đã hoàn thành';
+      return 'Đã hoàn thành';
     default:
       return 'Đang xử lý';
   }
 };
+
 const getPlatformLabel = (status: any) => {
   switch (status) {
     case 1:
@@ -117,6 +119,7 @@ const getPlatformLabel = (status: any) => {
       return 'Đang xử lý';
   }
 };
+
 // Styles
 const Container = styled.View`
   flex: 1;
@@ -146,21 +149,12 @@ const WrapProduct = styled.View`
 
 const WrapInfoProduct = styled.View`
   flex: 1;
+  padding: ${({theme}) => theme.gap_10}px;
 `;
 
 const WrapAction = styled.View`
   flex-direction: row;
   align-items: center;
-`;
-const FilterContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: ${({theme}) => theme.gap_10}px;
-  background-color: ${({theme}) => theme.colors.white};
-  border-bottom-width: 1px;
-  border-color: ${({theme}) => theme.colors.stroke_primary};
-  margin-bottom: ${({theme}) => theme.gap_10}px;
 `;
 
 export default Bill;

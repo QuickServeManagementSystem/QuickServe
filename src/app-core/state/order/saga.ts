@@ -10,6 +10,7 @@ import {BaseResType, BaseResTypeSingle} from '../type';
 import {
   apiCreateOrder,
   apiCreateOrderCustomer,
+  apiGetBillById,
   apiGetOrder,
   apiGetOrderById,
   apiGetOrderHistoryCustomer,
@@ -21,12 +22,14 @@ import {
 import {
   createOrderAction,
   createOrderCustomerAction,
+  getBillByIdAction,
   getListOrderAction,
   getListOrderHistoryAction,
   getListOrderHistoryStaffAction,
   getListOrderStaffAction,
   getListStatusOrderAction,
   getOrderByIdAction,
+  setDetailBill,
   setDetailOrder,
   setListOrder,
   setListOrderHistory,
@@ -38,6 +41,7 @@ import {
   updateStatusOrder,
 } from './reducer';
 import {
+  TGetBill,
   TGetOrder,
   TGetOrderHistoryCustomer,
   TGetOrderHistoryCustomerResponse,
@@ -246,6 +250,21 @@ function* getOrderHistoryStaff(action: any) {
   }
 }
 
+function* getBillByIdSaga(action: any) {
+  if (!getBillByIdAction.match(action)) {
+    return;
+  }
+  try {
+    const response: BaseResTypeSingle<TGetBill> = yield call(apiGetBillById, {
+      orderId: action.payload.orderId,
+    });
+    yield put(setDetailBill(response.data));
+  } catch (error: any) {
+    toast.error(en.order.error);
+    handleError(error);
+  }
+}
+
 export default function* () {
   yield takeEvery(createOrderAction.type, createOrderSaga);
   yield takeEvery(getListOrderAction.type, getListORderSaga);
@@ -256,4 +275,5 @@ export default function* () {
   yield takeEvery(createOrderCustomerAction.type, createOrderCustomerSaga);
   yield takeEvery(getListOrderHistoryStaffAction.type, getOrderHistoryStaff);
   yield takeEvery(getListOrderStaffAction.type, getListOrderStaffSaga);
+  yield takeEvery(getBillByIdAction.type, getBillByIdSaga);
 }

@@ -4,6 +4,8 @@ import {AppRootState} from '..';
 import {BaseResType} from '../type';
 
 import {
+  TGetBill,
+  TGetBillByIdRequest,
   TGetOrder,
   TGetOrderByIdRequest,
   TGetOrderHistoryCustomerResponse,
@@ -69,6 +71,7 @@ type SliceState = {
   listOrder: TGetOrderResponse;
   listOrderStaff: TGetOrderStaffResponse;
   detailOrder: TGetOrder;
+  detailBill: TGetBill;
   listStatusOrder: TGetStatusOrderResponse;
   listOrderHistory: TGetOrderHistoryCustomerResponse;
   listOrderHistoryStaff: TGetOrderHistoryStaffResponse;
@@ -79,6 +82,7 @@ const initialState = {
   listOrder: defaultGetOrderResponse,
   listOrderStaff: listStatusDefault,
   detailOrder: {},
+  detailBill: {},
   listStatusOrder: listStatusDefault,
 } as SliceState;
 
@@ -173,6 +177,9 @@ export const orderSlice = createSlice({
     setDetailOrder: (state: SliceState, {payload}: {payload: any}) => {
       state.detailOrder = payload;
     },
+    setDetailBill: (state: SliceState, {payload}: {payload: any}) => {
+      state.detailBill = payload;
+    },
   },
 });
 
@@ -181,6 +188,7 @@ export const {
   setListOrder,
   setListOrderStaff,
   setDetailOrder,
+  setDetailBill,
   setStatusOrder,
   updateStatusOrder,
   setListOrderHistory,
@@ -200,6 +208,10 @@ export const updateOrderAction = createAction<TUpdateOrder>(
 );
 export const getOrderByIdAction = createAction<TGetOrderByIdRequest>(
   `${orderSlice.name}/getOrderByIdAction`,
+);
+
+export const getBillByIdAction = createAction<TGetBillByIdRequest>(
+  `${orderSlice.name}/getBillByIdAction`,
 );
 
 export const getListStatusOrderAction = createAction(
@@ -235,6 +247,9 @@ export const selectListOrderStaff = (state: AppRootState) =>
 
 export const selectOrderByIdSelector = (state: AppRootState) =>
   state.order.detailOrder;
+
+export const selectBillByIdSelector = (state: AppRootState) =>
+  state.order.detailBill;
 
 export const selectStatusOrderSelector = (state: AppRootState) =>
   state.order.listStatusOrder;

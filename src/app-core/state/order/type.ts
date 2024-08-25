@@ -42,6 +42,10 @@ export type TGetOrderByIdRequest = {
   orderId: string;
 };
 
+export type TGetBillByIdRequest = {
+  orderId: string;
+};
+
 export type TOrderResponse = {
   success: boolean;
   errors: [
@@ -141,6 +145,30 @@ export type TGetOrderHistoryStaff = {
   platform: number;
 };
 
+export type TGetBill = {
+  storeName: string;
+  storeAddress: string;
+  currentDate: string;
+  billNumber: string;
+  orderId: number;
+  products: [
+    {
+      productName: string;
+      quantity: number;
+      price: number;
+      ingredients: [
+        {
+          ingredientName: string;
+          quantity: number;
+          price: number;
+        },
+      ];
+    },
+  ];
+  totalPrice: number;
+  paymentMethod: string;
+  platform: number;
+};
 export type TGetStatusOrderResponse = BaseResType<TGetStatusOrder>;
 
 export type TGetOrderResponse = BaseResType<TGetOrder>;

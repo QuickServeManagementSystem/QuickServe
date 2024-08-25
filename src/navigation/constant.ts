@@ -1,6 +1,7 @@
 import {SubmitOrderResponse} from '@app-core/state/payment/type';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import Bill from '@screens/Bill';
+import BillDetail from '@screens/Bill/BillDetail';
 import Cart from '@screens/Cart';
 import HistoryOrder from '@screens/HistoryOrder';
 import HistoryOrderDetail from '@screens/HistoryOrder/HistoryOrderDetail';
@@ -134,6 +135,10 @@ export const APP_SCREEN = {
     name: 'HistoryOrderStaffDetail',
     component: HistoryOrderStaffDetail,
   },
+  BillDetail: {
+    name: 'BillDetail',
+    component: BillDetail,
+  },
   Bill: {
     name: 'Bill',
     component: Bill,
@@ -162,6 +167,7 @@ export interface ScreenPropType {
 
   [APP_SCREEN.Cart.name]: undefined;
   [APP_SCREEN.Bill.name]: undefined;
+  [APP_SCREEN.BillDetail.name]: undefined;
   [APP_SCREEN.Payment.name]: {
     orderId: string;
   };
