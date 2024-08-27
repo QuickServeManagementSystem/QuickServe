@@ -31,7 +31,13 @@ export default {
       text2: typeof text === 'string' && text ? text : 'Warning',
     });
   },
-
+  completedOrder: (text: string) => {
+    Toast.show({
+      type: 'success',
+      text1: 'Thành công',
+      text2: typeof text === 'string' && text ? text : 'Thành công',
+    });
+  },
   goToSetting: (
     type: 'media' | 'camera' | 'location',
     onCancel?: () => void,

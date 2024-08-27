@@ -5,11 +5,11 @@ import {
 } from '@app-core/state/order/reducer';
 import {TGetOrder, TGetStatusOrder} from '@app-core/state/order/type';
 import {useAutoExecutes} from '@utils/hooks/useAutoExcutes';
+import toast from '@utils/toast';
 import AppFlatlist from '@views/AppFlatlist';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect, useState, useRef} from 'react';
-import {ToastAndroid} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -19,35 +19,45 @@ const OrderStore = () => {
 
   const [previousOrders, setPreviousOrders] = useState<TGetStatusOrder[]>([]);
   const [currentOrders, setCurrentOrders] = useState<TGetStatusOrder[]>([]);
+  const [completedOrders, setCompletedOrders] = useState<TGetStatusOrder[]>([]);
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [data] = useAutoExecutes({
     action: getListStatusOrderAction,
     selector: selectStatusOrderSelector,
   });
-
   useEffect(() => {
     if (data?.data) {
-      const pendingOrders = data.data.filter(order => order.status === 3);
+      const pendingOrders = data?.data.filter(order => order.status === 3);
       setCurrentOrders(pendingOrders);
 
-      pendingOrders.forEach(order => {
+      // Kiểm tra xem có đơn hàng nào từ 3 thành 4 hay không
+      data.data.forEach(order => {
         const prevOrder = previousOrders.find(prev => prev.id === order.id);
         if (prevOrder && prevOrder.status === 3 && order.status === 4) {
-          ToastAndroid.show(
-            `Hóa đơn ${order.id} đã hoàn thành!`,
-            ToastAndroid.LONG,
-          );
-
-          setTimeout(() => {
-            setCurrentOrders(prev => prev.filter(o => o.id !== order.id));
-          }, 8000);
+          setCompletedOrders(prev => [...prev, order]);
         }
       });
 
-      setPreviousOrders(data.data);
+      setPreviousOrders(data?.data);
     }
   }, [data?.data]);
+
+  useEffect(() => {
+    if (completedOrders.length > 0) {
+      const lastCompletedOrder = completedOrders[completedOrders.length - 1];
+      toast.completedOrder(`Hóa đơn ${lastCompletedOrder.id} đã hoàn thành!`);
+
+      setTimeout(() => {
+        setCurrentOrders(prev =>
+          prev.filter(o => o.id !== lastCompletedOrder.id),
+        );
+        setCompletedOrders(prev =>
+          prev.filter(o => o.id !== lastCompletedOrder.id),
+        );
+      }, 5000);
+    }
+  }, [completedOrders]);
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -111,7 +121,7 @@ const OrderStore = () => {
                   Ngày tạo: {formatDate(item.created)}
                 </AppText>
                 <AppText variant="regular_20">
-                  Loại hóa đơn: {getPlatformLabel(item.platform)}
+                  Hình thức đặt món: {getPlatformLabel(item.platform)}
                 </AppText>
               </OrderDetails>
               {formatStatus(item.status)}

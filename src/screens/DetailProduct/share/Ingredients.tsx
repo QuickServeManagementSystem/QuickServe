@@ -7,7 +7,7 @@ import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect, useState} from 'react';
-import {Dimensions} from 'react-native';
+import {Dimensions, ToastAndroid} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -86,9 +86,21 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
 
   const handelIncreaseAmount = (item: Ingredient) => {
     const currentAmount = amounts[item.id] || 1;
-    if (item.remainingQuantity !== null && currentAmount === item.max) {
+
+    if (
+      item.isSold &&
+      item.remainingQuantity !== null &&
+      item.remainingQuantity > 0 &&
+      currentAmount >= item.remainingQuantity
+    ) {
+      // Hiển thị thông báo toast
+      ToastAndroid.show(
+        'Số lượng nguyên liệu trong món này đã hết.',
+        ToastAndroid.SHORT,
+      );
       return;
     }
+
     const updatedAmount = currentAmount + 1;
 
     setAmounts(prev => ({...prev, [item.id]: updatedAmount}));
@@ -137,8 +149,10 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
       item.remainingQuantity < item.max &&
       item.remainingQuantity > 0
     ) {
-      if (isSelected && amounts[item.id] > item.remainingQuantity) {
+      if (isSelected && amounts[item.id] >= item.remainingQuantity) {
         isDisabled = true;
+      } else {
+        isDisabled = false;
       }
     }
 

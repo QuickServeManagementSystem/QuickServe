@@ -5,7 +5,7 @@ import {
 } from '@app-core/state/order/reducer';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import {formatNumber, Space} from '@utils/common';
 import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
