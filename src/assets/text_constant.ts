@@ -22,7 +22,8 @@ export const en = {
   },
   order: {
     error: 'Đặt hàng thất bại',
-    message: 'Ghi Chú',
+    message:
+      'Để đảm bảo trải nghiệm mua sắm suôn sẻ và bảo vệ quyền lợi của mình, quý khách vui lòng đọc kỹ chính sách đặt hàng và hoàn tiền trước khi mua. Cảm ơn quý khách đã tin tưởng sử dụng dịch vụ của QuickServe!',
     done: 'Đã hoàn thành',
     pending: 'Đơn hàng vừa được tạo',
     paided: 'Đơn hàng đã thanh toán',

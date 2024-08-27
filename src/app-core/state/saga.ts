@@ -6,6 +6,7 @@ import ingredientSaga from './ingredient/saga';
 import orderSaga from './order/saga';
 import paymentSaga from './payment/saga';
 import productSaga from './product/saga';
+import profileSaga from './profile/saga';
 import storeSaga from './store/saga';
 
 export function* rootSaga() {
@@ -17,5 +18,6 @@ export function* rootSaga() {
     orderSaga(),
     paymentSaga(),
     storeSaga(),
+    profileSaga(),
   ]);
 }

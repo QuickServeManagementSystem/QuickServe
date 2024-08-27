@@ -1,15 +1,36 @@
+import {useAppDispatch, useAppSelector} from '@app-core/state';
+import {
+  getProfileAction,
+  selectedProfileStore,
+} from '@app-core/state/profile/reducer';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {AppButton} from '@views/AppButton';
 import AppHeader from '@views/AppHeader';
 import {AppText} from '@views/AppText';
-import React from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import React, {useEffect} from 'react';
 import styled, {useTheme} from 'styled-components/native';
 
 const Profile = () => {
   const appTheme = useTheme();
+  const dispatch = useAppDispatch();
+  const profileData = useAppSelector(selectedProfileStore);
 
+  useEffect(() => {
+    dispatch(getProfileAction());
+  }, [dispatch]);
+
+  const getFallbackValue = (value: string | undefined) =>
+    value || 'Chưa cập nhật';
+
+  const getRolesLabel = (roles: any) => {
+    switch (roles) {
+      case 'Customer':
+        return 'Khách hàng';
+      default:
+        return 'Chưa cập nhập';
+    }
+  };
   return (
     <Container>
       <AppHeader
@@ -19,24 +40,38 @@ const Profile = () => {
         }}
       />
       <Header>
-        <ProfileImage source={{uri: 'https://your-image-url.com'}} />
+        <ProfileImage source={{uri: profileData?.avatar}} />
         <UserInfo>
-          <AppText variant="bold_24">John Doe</AppText>
-          <AppText variant="regular_16">john.doe@example.com</AppText>
+          <AppText variant="bold_24">
+            {getFallbackValue(profileData?.name)}
+          </AppText>
+          <AppText variant="regular_16">
+            {getFallbackValue(profileData?.email)}
+          </AppText>
         </UserInfo>
       </Header>
       <Section>
         <AppText variant="bold_20">Thông tin thêm</AppText>
         <InfoItem>
           <Label variant="regular_16">Số điện thoại:</Label>
-          <Value variant="regular_16">(123) 456-7890</Value>
+          <Value variant="regular_16">
+            {getFallbackValue(profileData?.phone)}
+          </Value>
         </InfoItem>
         <InfoItem>
           <Label variant="regular_16">Địa chỉ:</Label>
-          <Value variant="regular_16">123 Main Street, City, Country</Value>
+          <Value variant="regular_16">
+            {getFallbackValue(profileData?.address)}
+          </Value>
+        </InfoItem>
+        <InfoItem>
+          <Label variant="regular_16">Vai trò:</Label>
+          <Value variant="regular_16">
+            {getFallbackValue(getRolesLabel(profileData?.roles))}
+          </Value>
         </InfoItem>
       </Section>
-      <ButtonContainer>
+      {/* <ButtonContainer>
         <AppButton
           title="Chỉnh sửa profile"
           backgroundColor={appTheme.colors.button_background_secondary}
@@ -49,11 +84,10 @@ const Profile = () => {
           textColor={appTheme.colors.white}
           variant="regular_16"
         />
-      </ButtonContainer>
+      </ButtonContainer> */}
     </Container>
   );
 };
-
 const Container = styled.ScrollView`
   flex: 1;
 `;

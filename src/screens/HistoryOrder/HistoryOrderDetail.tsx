@@ -3,13 +3,17 @@ import {
   getOrderByIdAction,
   selectOrderByIdSelector,
 } from '@app-core/state/order/reducer';
-import {en} from '@assets/text_constant';
+import {
+  getListStoreAction,
+  selectedListStore,
+} from '@app-core/state/store/reducer';
 import {useRoute} from '@react-navigation/native';
 import {formatNumber, Space} from '@utils/common';
 import AppHeader from '@views/AppHeader';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
 
 const HistoryOrderDetail = () => {
@@ -17,12 +21,17 @@ const HistoryOrderDetail = () => {
   const route = useRoute();
   const dispatch = useAppDispatch();
   const orderHistoryDetail = useAppSelector(selectOrderByIdSelector);
+  const stores = useSelector(selectedListStore).data;
   const {orderId} = route.params;
 
+  const [expandedIngredientIndex, setExpandedIngredientIndex] = useState<
+    number | null
+  >(null);
   useEffect(() => {
     if (orderId) {
       console.log('Fetching order details for ID:', orderId);
       dispatch(getOrderByIdAction({orderId: orderId}));
+      dispatch(getListStoreAction({}));
     } else {
       console.error('orderId is undefined or null');
     }
@@ -32,7 +41,17 @@ const HistoryOrderDetail = () => {
     return <Text>Loading...</Text>;
   }
 
-  const {id, totalPrice, status, products} = orderHistoryDetail;
+  const {id, totalPrice, status, products, storeId} = orderHistoryDetail;
+
+  // Find the store name based on the storeId
+  const currentStore = stores.find(store => store.id === storeId);
+  const storeName = currentStore ? currentStore.name : 'Chưa cập nhật';
+
+  const handleToggleIngredients = (index: number) => {
+    setExpandedIngredientIndex(
+      expandedIngredientIndex === index ? null : index,
+    );
+  };
 
   return (
     <Container>
@@ -41,6 +60,9 @@ const HistoryOrderDetail = () => {
       <OrderInfoContainer>
         <TextInfo>
           Mã đơn hàng: <BoldText>{id}</BoldText>
+        </TextInfo>
+        <TextInfo>
+          Cửa hàng: <BoldText>{storeName}</BoldText>
         </TextInfo>
         <TextInfo>
           Đơn giá: <BoldText>{totalPrice} đ</BoldText>
@@ -55,14 +77,51 @@ const HistoryOrderDetail = () => {
           <ProductItem key={index}>
             <ProductNamePriceContainer>
               <ProductName>{product.name}</ProductName>
-              <ProductPrice>
-                {en.common.vnd.replace(
-                  '{number}',
-                  formatNumber(product.price ?? 0),
-                )}
-              </ProductPrice>
+              <ProductPrice>{formatNumber(product.price ?? 0)} đ</ProductPrice>
             </ProductNamePriceContainer>
             <ProductQuantity>Số lượng: {product.quantity}</ProductQuantity>
+            {product.ingredients && (
+              <>
+                <IngredientsContainer>
+                  {expandedIngredientIndex === index
+                    ? product.ingredients.map((ingredient, idx) => (
+                        <IngredientItem key={idx}>
+                          <IngredientName>{ingredient.name}</IngredientName>
+                          <IngredientInfo>
+                            <IngredientQuantity>
+                              Số lượng: {ingredient.defaultQuantity}
+                            </IngredientQuantity>
+                            <IngredientPrice>
+                              Giá: {formatNumber(ingredient.price)} đ
+                            </IngredientPrice>
+                          </IngredientInfo>
+                        </IngredientItem>
+                      ))
+                    : product.ingredients.slice(0, 2).map((ingredient, idx) => (
+                        <IngredientItem key={idx}>
+                          <IngredientName>{ingredient.name}</IngredientName>
+                          <IngredientInfo>
+                            <IngredientQuantity>
+                              Số lượng: {ingredient.defaultQuantity}
+                            </IngredientQuantity>
+                            <IngredientPrice>
+                              Giá: {formatNumber(ingredient.price)} đ
+                            </IngredientPrice>
+                          </IngredientInfo>
+                        </IngredientItem>
+                      ))}
+                </IngredientsContainer>
+                {product.ingredients.length > 2 && (
+                  <ToggleButton onPress={() => handleToggleIngredients(index)}>
+                    <ToggleButtonText>
+                      {expandedIngredientIndex === index
+                        ? 'Ẩn bớt'
+                        : 'Xem thêm'}
+                    </ToggleButtonText>
+                  </ToggleButton>
+                )}
+              </>
+            )}
           </ProductItem>
         ))}
       </ProductList>
@@ -70,13 +129,21 @@ const HistoryOrderDetail = () => {
   );
 };
 
-// Helper function to get status label
-const getStatusLabel = (status: any) => {
+// Updated helper function to get status label
+const getStatusLabel = (status: number) => {
   switch (status) {
+    case 1:
+      return 'Chờ xác nhận';
+    case 2:
+      return 'Đã thanh toán';
     case 3:
       return 'Đang chuẩn bị';
     case 4:
       return 'Đã hoàn thành';
+    case 5:
+      return 'Đơn đã được lấy';
+    case 6:
+      return 'Đơn đã bị hủy';
     default:
       return 'Chưa xác định';
   }
@@ -134,6 +201,51 @@ const ProductQuantity = styled.Text`
 const ProductPrice = styled.Text`
   font-size: ${scale(16)}px;
   font-weight: bold;
+  color: ${({theme}) => theme.colors.primary};
+`;
+
+const IngredientsContainer = styled.View`
+  margin-top: ${scale(10)}px;
+  padding: ${scale(5)}px;
+  border-top-width: 1px;
+  border-color: ${({theme}) => theme.colors.stroke_primary};
+`;
+
+const IngredientItem = styled.View`
+  padding: ${scale(5)}px;
+  border-bottom-width: 1px;
+  border-color: ${({theme}) => theme.colors.stroke_primary};
+`;
+
+const IngredientName = styled.Text`
+  font-size: ${scale(12)}px;
+  color: ${({theme}) => theme.colors.black};
+  margin-bottom: ${scale(3)}px;
+`;
+
+const IngredientInfo = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const IngredientQuantity = styled.Text`
+  font-size: ${scale(12)}px;
+  color: ${({theme}) => theme.colors.gray_9};
+`;
+
+const IngredientPrice = styled.Text`
+  font-size: ${scale(12)}px;
+  color: ${({theme}) => theme.colors.primary};
+`;
+
+const ToggleButton = styled.TouchableOpacity`
+  margin-top: ${scale(10)}px;
+  padding: ${scale(5)}px;
+  align-items: center;
+`;
+
+const ToggleButtonText = styled.Text`
+  font-size: ${scale(14)}px;
   color: ${({theme}) => theme.colors.primary};
 `;
 

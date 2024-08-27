@@ -22,7 +22,7 @@ import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {StyleProp, ViewStyle} from 'react-native';
+import {Alert, StyleProp, ViewStyle} from 'react-native';
 import RadioGroup from 'react-native-radio-buttons-group';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
@@ -88,6 +88,12 @@ const Payment = () => {
   const ContainerStyle: StyleProp<ViewStyle> = {};
 
   const handleOrder = (data: any) => {
+    // Check if a payment method is selected
+    if (!selectedId) {
+      toast.error('Vui lòng chọn phương thức thanh toán');
+      return;
+    }
+
     if (selectedId === '1') {
       dispatch(
         paymentOCDAction({
@@ -96,8 +102,7 @@ const Payment = () => {
           orderInfo: data.message,
         }),
       );
-    }
-    if (selectedId === '2') {
+    } else if (selectedId === '2') {
       dispatch(
         paymentVNPayOSAction({
           orderId: orderId,
@@ -160,18 +165,42 @@ const Payment = () => {
       </ContainerCart>
     );
   };
-
+  const handleBackPress = () => {
+    Alert.alert(
+      'Xác nhận',
+      'Bạn có chắc chắn muốn hủy hóa đơn? Tất cả dữ liệu sẽ bị mất.',
+      [
+        {
+          text: 'Hủy',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Xác nhận',
+          onPress: () => {
+            // Show error message and navigate back
+            toast.error('Đơn thanh toán đã được tạo nhưng chưa thanh toán!');
+            Navigation.replace(APP_SCREEN.AppStack.name);
+            clearData();
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+  const MessageDisplay = () => {
+    return (
+      <AppTextSupportColor
+        variant="bold_12"
+        color={appTheme.colors.text_input_primary}>
+        {en.order.message}
+      </AppTextSupportColor>
+    );
+  };
   return (
     <>
       <Space vertical={scale(5)} />
-      <AppHeader
-        title="Thanh Toán"
-        onPressIconLeft={() => {
-          toast.error('Thanh toán thất bại');
-          Navigation.replace(APP_SCREEN.AppStack.name);
-          clearData();
-        }}
-      />
+      <AppHeader title="Thanh Toán" onPressIconLeft={handleBackPress} />
       <Container>
         <AppTextSupportColor variant="regular_24" color={appTheme.colors.black}>
           Hoá đơn
@@ -183,7 +212,7 @@ const Payment = () => {
           keyExtractor={(item: any) => item.productTemplateId.toString()}
         />
         <Footer>
-          <FormTextInput
+          {/* <FormTextInput
             placeholder={en.order.message}
             placeholderTextColor={appTheme.colors.text_input_primary}
             itemContainerStyle={containerStyle}
@@ -196,7 +225,8 @@ const Payment = () => {
             inputMode="text"
             autoCorrect={false}
             autoComplete="off"
-          />
+          /> */}
+          <MessageDisplay />
           <WrapPrice>
             <RadioGroup
               radioButtons={radioButtons}

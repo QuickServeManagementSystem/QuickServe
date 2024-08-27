@@ -19,15 +19,11 @@ const HistoryOrder = () => {
   const appTheme = useTheme();
   const dispatch = useAppDispatch();
   const orderHistory = useAppSelector(selectListOrderHistorySelector);
-  const [selectedStore, setSelectedStore] = useState('');
   const [last7Days, setLast7Days] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState('');
 
   useEffect(() => {
-    dispatch(
-      getListOrderHistoryAction({selectedStore, last7Days, selectedStatus}),
-    );
-  }, [dispatch, selectedStore, last7Days, selectedStatus]);
+    dispatch(getListOrderHistoryAction({last7Days}));
+  }, [dispatch, last7Days]);
 
   const handleViewDetails = (orderId: any) => {
     console.log('Navigating to order details with ID:', orderId);
@@ -42,11 +38,17 @@ const HistoryOrder = () => {
   );
   const getCardBackgroundColor = (status: any) => {
     switch (status) {
+      case 2:
+        return appTheme.colors.blu_light;
       case 3:
         return appTheme.colors.orange_light;
       case 4:
       case 5:
         return appTheme.colors.sussces_light;
+      case 6:
+      case 7:
+      case 8:
+        return appTheme.colors.red_light;
       default:
         return appTheme.colors.white;
     }
@@ -113,12 +115,20 @@ const HistoryOrder = () => {
 
 const getStatusLabel = (status: any) => {
   switch (status) {
+    case 2:
+      return 'Hóa đơn đã thanh toán';
     case 3:
-      return 'Đang chuẩn bị';
+      return 'Hóa đơn đang chuẩn bị';
     case 4:
-      return 'Đã hoàn thành';
+      return 'Hóa đơn đã hoàn thành';
+    case 5:
+      return 'Đơn khách đã lấy';
+    case 6:
+      return 'Đơn đã bị hủy';
+    case 7:
+      return 'Đơn đã hoàn tiền';
     default:
-      return 'Chưa xác định';
+      return 'Đang xử lý';
   }
 };
 
