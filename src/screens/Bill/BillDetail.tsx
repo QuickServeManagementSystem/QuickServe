@@ -170,8 +170,11 @@ const ProductItem = styled.View`
 `;
 
 const ProductName = styled.Text`
-  font-size: ${scale(12)}px;
+  font-size: ${scale(13)}px;
   font-weight: bold;
+  flex: 1;
+  flex-wrap: wrap;
+  max-width: ${scale(90)}px;
 `;
 
 const ProductInfo = styled.View`
@@ -202,6 +205,9 @@ const IngredientInfo = styled.View`
 
 const IngredientName = styled.Text`
   font-size: ${scale(12)}px;
+  flex: 1;
+  flex-wrap: wrap;
+  max-width: ${scale(85)}px;
 `;
 
 const IngredientQuantity = styled.Text`

@@ -11,62 +11,45 @@ import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
 export type PopupStatusRefType = {
-  display: (onOk: (status: string) => void) => void;
+  display: (currentStatus: number, onOk: (status: string) => void) => void;
   hide: () => void;
 };
 
 export type PopupStatusRef = React.ForwardedRef<PopupStatusRefType>;
-
 export default React.forwardRef((props, ref: PopupStatusRef) => {
   const appTheme = useTheme();
   const actionSheetType = 'enterStatus';
   const popupStatusProps = React.useRef<(status: string) => void>();
   const [selectedId, setSelectedId] = useState<string>('1');
+  const [filteredRadioButtons, setFilteredRadioButtons] = useState([]);
 
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: '1',
-        label: en.order.create,
-        value: '1',
-      },
-      {
-        id: '2',
-        label: en.order.paid,
+  const allRadioButtons = [
+    {id: '1', label: en.order.create, value: '1'},
+    {id: '2', label: en.order.paid, value: '2'},
+    {id: '3', label: en.order.pending, value: '3'},
+    {id: '4', label: en.order.success, value: '4'},
+    {id: '5', label: en.order.error, value: '5'},
+  ];
 
-        value: '2',
-      },
-      {
-        id: '3',
-        label: en.order.pending,
-
-        value: '3',
-      },
-      {
-        id: '4',
-        label: en.order.success,
-
-        value: '4',
-      },
-      {
-        id: '5',
-        label: en.order.error,
-        value: '5',
-      },
-    ],
-    [],
-  );
-
-  const styleDefault: ViewStyle = {
-    backgroundColor: appTheme.colors.transparent,
-    shadowColor: appTheme.colors.transparent,
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+  const filterRadioButtons = (currentStatus: number) => {
+    switch (currentStatus) {
+      case 1:
+        return allRadioButtons.filter(option => ['2', '5'].includes(option.id));
+      case 2:
+        return allRadioButtons.filter(option => ['3', '5'].includes(option.id));
+      case 3:
+        return allRadioButtons.filter(option => ['4', '5'].includes(option.id));
+      case 4:
+        return allRadioButtons.filter(option => option.id === '5');
+      default:
+        return allRadioButtons;
+    }
   };
+
   useImperativeHandle(ref, () => ({
-    display: (onOk: (status: string) => void) => {
+    display: (currentStatus: number, onOk: (status: string) => void) => {
       popupStatusProps.current = onOk;
+      setFilteredRadioButtons(filterRadioButtons(currentStatus));
       SheetManager.show(actionSheetType);
     },
     hide: hidePopup,
@@ -74,6 +57,13 @@ export default React.forwardRef((props, ref: PopupStatusRef) => {
 
   const hidePopup = () => {
     SheetManager.hide(actionSheetType);
+  };
+  const styleDefault: ViewStyle = {
+    backgroundColor: appTheme.colors.transparent,
+    shadowColor: appTheme.colors.transparent,
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   };
   const ContainerStyle: StyleProp<ViewStyle> = {
     alignItems: 'flex-start',
@@ -104,10 +94,8 @@ export default React.forwardRef((props, ref: PopupStatusRef) => {
         <Space vertical={scale(appTheme.gap_10)} />
         <WrapContent>
           <RadioGroup
-            radioButtons={radioButtons}
-            onPress={data => {
-              setSelectedId(data);
-            }}
+            radioButtons={filteredRadioButtons}
+            onPress={data => setSelectedId(data)}
             labelStyle={[
               [appTheme.fonts.medium_16],
               {color: appTheme.colors.black},

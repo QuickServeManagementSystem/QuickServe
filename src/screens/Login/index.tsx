@@ -12,7 +12,7 @@ import AppIcon from '@views/AppIcon';
 import {AppText, AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useState, useEffect} from 'react';
-import {Text, TouchableOpacity, FlatList} from 'react-native';
+import {Text, TouchableOpacity, FlatList, Dimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import {useDispatch, useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
@@ -21,19 +21,23 @@ const Welcome = () => {
   const appTheme = useTheme();
   const dispatch = useDispatch();
   const selectedStoreId = useSelector(selectSelectedStoreId);
-  const [showDropdown, setShowDropdown] = useState(!selectedStoreId); // Initialize based on whether a store is already selected
+  const [showDropdown, setShowDropdown] = useState(!selectedStoreId);
+  const stores = useSelector(selectedListStore).data;
   const [selectedStore, setSelectedStore] = useState(null);
 
-  const stores = useSelector(selectedListStore).data;
+  // Get device dimensions
+  const {width, height} = Dimensions.get('window');
+  const isTabletLandscape = width > height && width > 600;
 
   useEffect(() => {
-    if (!selectedStoreId) {
+    if (!selectedStoreId && isTabletLandscape) {
       dispatch(getListStoreAction({}));
     }
-  }, [dispatch, selectedStoreId]);
+  }, [dispatch, selectedStoreId, isTabletLandscape]);
 
   const handleStoreSelect = (store: any) => {
     setSelectedStore(store);
+    console.log(selectedStore);
     dispatch(setSelectedStoreId(store.id));
     setShowDropdown(false);
   };
@@ -53,7 +57,7 @@ const Welcome = () => {
         </AppTextSupportColor>
       </WrapTitle>
 
-      {showDropdown ? (
+      {showDropdown && isTabletLandscape ? (
         <DropdownContainer>
           <FlatList
             data={stores}

@@ -147,7 +147,7 @@ const DetailProduct = () => {
               </AppTextSupportColor>
             </WrapPrice>
             <Space horizontal={scale(10)} />
-            {!expandProduct && (
+            {/* {!expandProduct && (
               <WrapActionAmount>
                 <TouchableMinus onPress={() => handelDecreaseAmount()}>
                   <AppIcon
@@ -176,7 +176,7 @@ const DetailProduct = () => {
                   />
                 </TouchableAdd>
               </WrapActionAmount>
-            )}
+            )} */}
           </BoxAction>
         </WrapInfoProduct>
       </WrapDetailProduct>

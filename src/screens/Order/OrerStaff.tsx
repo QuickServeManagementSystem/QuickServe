@@ -143,6 +143,10 @@ const OrderStaff: React.FC = () => {
         unwrapResult(resultAction); // Lấy kết quả nếu thành công
         setSelectedStatus(newStatus);
         handleFilterChange(newStatus); // cập nhật lại filter
+
+        const updatedDataAction = await dispatch(getListOrderStaffAction());
+        const updatedData = unwrapResult(updatedDataAction);
+        setListOrderStaff(updatedData);
       } catch (error) {
         console.error('Failed to update order status:', error);
         Alert.alert(
@@ -224,10 +228,13 @@ const OrderStaff: React.FC = () => {
           return (
             <OrderItem
               onPress={() => {
-                popupStatusRef.current?.display((status: string) => {
-                  const newStatus = Number(status);
-                  handleUpdateOrderStatus(item, newStatus);
-                });
+                popupStatusRef.current?.display(
+                  item.status,
+                  (status: string) => {
+                    const newStatus = Number(status);
+                    handleUpdateOrderStatus(item, newStatus);
+                  },
+                );
               }}>
               <OrderDetails>
                 <AppText variant="semibold_16">

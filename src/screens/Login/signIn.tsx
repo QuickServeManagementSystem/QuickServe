@@ -4,7 +4,7 @@ import {ERole, selectRole, userLoginAction} from '@app-core/state/auth/reducer';
 import {en} from '@assets/text_constant';
 import {FormTextInput} from '@components/Form/Input';
 import {FormItemProps} from '@components/Form/Item';
-import {APP_SCREEN} from '@navigation/constant';
+import {APP_SCREEN, AUTH_APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import {Space} from '@utils/common';
 import EventInstance from '@utils/eventInstance/eventInstance';
@@ -164,6 +164,16 @@ const SignIn = () => {
                 {en.login.backIndex}
               </TextBackStyled>
             </AppTouchable>
+            <Space vertical={scale(appTheme.gap_10)} />
+            <AppTouchable>
+              <TextSignUpStyled
+                onPress={() =>
+                  Navigation.navigateTo(AUTH_APP_SCREEN.SignUp.name)
+                }
+                variant="regular_14">
+                {en.login.signUp}
+              </TextSignUpStyled>
+            </AppTouchable>
           </FormContent>
         </Content>
       </KeyboardAwareScrollView>
@@ -173,6 +183,11 @@ const SignIn = () => {
 
 const TextBackStyled = styled(AppText)`
   text-decoration: underline;
+`;
+const TextSignUpStyled = styled(AppText)`
+  color: ${props => props.theme.colors.primary};
+  text-decoration: underline;
+  text-align: center;
 `;
 const ContainerError = styled.View`
   background-color: ${props => props.theme.colors.error}${props => props.theme.alpha_025};

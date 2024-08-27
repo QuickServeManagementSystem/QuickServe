@@ -65,7 +65,10 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
 
   const handelIncreaseAmount = (item: Ingredient) => {
     const currentAmount = amounts[item.id] || 1;
-    if (item.remainingQuantity !== null && currentAmount === item.max) {
+    if (
+      item.remainingQuantity !== null &&
+      currentAmount >= item.remainingQuantity
+    ) {
       return;
     }
     const updatedAmount = currentAmount + 1;
@@ -108,11 +111,12 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
         ing.productId === productId,
     );
     let isDisabled = false;
-
+    // có nguyên liệu bán ra
     if (!item.isSold) {
       isDisabled = true;
-    } else if (item.isSold && item.remainingQuantity > 0) {
-      if (item.remainingQuantity < item.max) {
+    }
+    if (item.remainingQuantity < item.max) {
+      if (isSelected && amounts[item.id] > item.remainingQuantity) {
         isDisabled = true;
       }
     }

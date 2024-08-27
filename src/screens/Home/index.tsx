@@ -38,19 +38,22 @@ function App(): React.JSX.Element {
   const [listProduct, setListProduct] = React.useState<TProduct[]>([]);
   const dispatch = useAppDispatch();
   const listCategory = useAppSelector(getListCategories);
+  const storeId = useAppSelector(selectSelectedStoreId);
   const route = useRoute();
   const {status} = route.params || {};
   const {clearData} = useContext(Context);
+
   const {
     data: dataProduct,
     isFirstLoading: isFirstLoadingProduct,
     isLoadMore: isLoadMoreProduct,
     isRefreshing: isRefreshingProduct,
-  } = useAPIList(productAction, getListProruct);
+  } = useAPIList(productAction, getListProruct, {StoreId: storeId});
 
   useEffect(() => {
     if (!selectedCategory) setListProduct(dataProduct ?? []);
   }, [dataProduct, selectedCategory]);
+  console.log(storeId, 'Cửa hàng đây nè');
 
   useEffect(() => {
     dispatch(categoriesAction({}));

@@ -8,7 +8,12 @@ import {
 import {AppRootState} from '..';
 import {AUTH_KEY, storageMMKV} from '../storage';
 
-import {AuthBaseResponse, LoginResponseType} from './type';
+import {
+  AuthBaseResponse,
+  LoginResponseType,
+  RegisterRequest,
+  RegisterResponseType,
+} from './type';
 
 export enum ERole {
   Staff = 'Staff',
@@ -18,17 +23,29 @@ export enum ERole {
   Brand_Manager = 'Brand_Manager',
   Guest = 'Guest',
 }
+const defaultAccount: RegisterResponseType = {
+  success: true,
+  errors: [
+    {
+      errorCode: 0,
+      fieldName: '',
+      description: '',
+    },
+  ],
+};
 
 type SliceState = {
   email: string;
   error: string;
   role?: ERole;
+  account: {};
 };
 
 const initialState = {
   email: '',
   error: '',
   role: ERole.Guest,
+  account: defaultAccount,
 } as SliceState;
 
 const userStore = storageMMKV();
@@ -37,6 +54,13 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     // add reducers here
+    setAccount: (
+      state: SliceState,
+      {payload}: {payload: RegisterResponseType},
+    ) => {
+      state.account = payload;
+    },
+
     setUserPreferences: (
       state: SliceState,
       {payload}: PayloadAction<Partial<{email: string; role: ERole}>>,
@@ -57,9 +81,14 @@ export const userLoginAction = createAction<{
 }>('user/login');
 
 // actions
-export const {setUserPreferences, setRole} = authSlice.actions;
+export const {setUserPreferences, setRole, setAccount} = authSlice.actions;
+
+export const registerAccountAction = createAction<RegisterRequest>(
+  `${authSlice.name}/registerAccountAction`,
+);
 // selectors
 // export const handelLoading = (state: AppRootState) => state.auth.isLoading;
+export const selectAccount = (state: AppRootState) => state.auth.account;
 export const selectEmail = (state: AppRootState) => state.auth.email;
 export const selectRole = (state: AppRootState) => state.auth.role;
 

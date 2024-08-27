@@ -17,6 +17,7 @@ import {
   apiGetOrderHistoryStaff,
   apiGetOrderStaff,
   apiGetStatusOrder,
+  apiPrintBillPDFById,
   apiUpdateOrder,
 } from './api';
 import {
@@ -29,6 +30,7 @@ import {
   getListOrderStaffAction,
   getListStatusOrderAction,
   getOrderByIdAction,
+  getPrintBillPDFAction,
   setDetailBill,
   setDetailOrder,
   setListOrder,
@@ -36,6 +38,7 @@ import {
   setListOrderHistoryStaff,
   setListOrderStaff,
   setOrder,
+  setPrintBillPDF,
   setStatusOrder,
   updateOrderAction,
   updateStatusOrder,
@@ -265,6 +268,21 @@ function* getBillByIdSaga(action: any) {
   }
 }
 
+function* getPrintBillSaga(action: any) {
+  if (!getPrintBillPDFAction.match(action)) {
+    return;
+  }
+  try {
+    const response: BaseResTypeSingle<any> = yield call(apiPrintBillPDFById, {
+      orderId: action.payload.orderId,
+    });
+    yield put(setPrintBillPDF(response.data));
+  } catch (error: any) {
+    toast.error(en.order.error);
+    handleError(error);
+  }
+}
+
 export default function* () {
   yield takeEvery(createOrderAction.type, createOrderSaga);
   yield takeEvery(getListOrderAction.type, getListORderSaga);
@@ -276,4 +294,5 @@ export default function* () {
   yield takeEvery(getListOrderHistoryStaffAction.type, getOrderHistoryStaff);
   yield takeEvery(getListOrderStaffAction.type, getListOrderStaffSaga);
   yield takeEvery(getBillByIdAction.type, getBillByIdSaga);
+  yield takeEvery(getPrintBillPDFAction.type, getPrintBillSaga);
 }

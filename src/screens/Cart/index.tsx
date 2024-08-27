@@ -138,6 +138,13 @@ const Cart = () => {
       (ingredient: any) => ingredient.productId === item.productTemplateId,
     );
 
+    // Calculate total ingredient price
+    const totalIngredientPrice = productIngredients.reduce(
+      (total, ingredient) => total + ingredient.price * ingredient.quantity,
+      0,
+    );
+
+    const totalPrice = (item.price + totalIngredientPrice) * item.quantity;
     return (
       <ContainerCart key={item.productTemplateId}>
         <Space vertical={scale(5)} />

@@ -1,24 +1,236 @@
-import AppHeader from '@views/AppHeader';
-import React from 'react';
+import {useAppDispatch} from '@app-core/state';
+import {registerAccountAction} from '@app-core/state/auth/reducer';
+import {en} from '@assets/text_constant';
+import {FormTextInput} from '@components/Form/Input';
+import {FormItemProps} from '@components/Form/Item';
+import Navigation from '@navigation/Provider';
+import {Space} from '@utils/common';
+import {AppButton} from '@views/AppButton';
+import AppIcon from '@views/AppIcon';
+import {AppText, AppTextSupportColor} from '@views/AppText';
+import AppTouchable from '@views/AppTouchable';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {scale} from 'react-native-size-matters';
-import styled from 'styled-components/native';
+import styled, {useTheme} from 'styled-components/native';
+
+export type FormInput = {
+  email: string;
+  password: string;
+  userName: string;
+  name: string;
+};
 
 const SignUp = () => {
+  const {handleSubmit, control} = useForm<FormInput>({
+    defaultValues: {
+      email: '',
+      password: '',
+      userName: '',
+      name: '',
+    },
+  });
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
+  const [hiddenText, setHiddenText] = useState(true);
+  const appTheme = useTheme();
+  const [error, setError] = useState('');
+
+  const handleSignUp = async (data: FormInput) => {
+    setLoading(true);
+    try {
+      await dispatch(registerAccountAction(data));
+    } catch (err) {
+      setError('Sign up failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const containerStyle: FormItemProps['containerStyle'] = {};
+
+  const formInputStyle: FormItemProps['containerStyle'] = {
+    borderWidth: 1,
+    padding: 10,
+    backgroundColor: appTheme.colors.white,
+  };
+
   return (
     <Container>
-      <AppHeader
-        icon="ic_quickserve"
-        widthIcon={scale(150)}
-        heightIcon={scale(20)}
-      />
-      <BoxScanQr />
+      <KeyboardAwareScrollView
+        enableResetScrollToCoords={true}
+        enableAutomaticScroll={true}
+        enableOnAndroid
+        extraScrollHeight={appTheme.gap_24}>
+        <Content>
+          <WrapHeader>
+            <AppIcon
+              name="ic_quickserve"
+              width={215}
+              height={42}
+              fill={appTheme.colors.primary}
+            />
+          </WrapHeader>
+          <FormContent>
+            {error && (
+              <ContainerError>
+                <AppTextSupportColor
+                  color={appTheme.colors.error}
+                  variant="regular_14">
+                  {error}
+                </AppTextSupportColor>
+                <AppIcon
+                  name="ic_error_circle"
+                  fill_color={appTheme.colors.error}
+                  width={appTheme.gap_24}
+                  height={appTheme.gap_24}
+                />
+              </ContainerError>
+            )}
+            <FormInput>
+              <FormTextInput
+                label={en.signup.email}
+                fullWidth
+                placeholder={en.signup.email}
+                placeholderTextColor={appTheme.colors.text_input_primary}
+                itemContainerStyle={containerStyle}
+                containerStyle={formInputStyle}
+                control={control}
+                name="email"
+                autoCorrect={false}
+                textContentType="none"
+                autoComplete="off"
+                onExtraChange={() => {
+                  setError('');
+                }}
+                isRequired
+                rules={{required: en.error.requireEmail}}
+              />
+              <FormTextInput
+                label={en.signup.password}
+                fullWidth
+                secureTextEntry={hiddenText}
+                placeholder={en.signup.password}
+                placeholderTextColor={appTheme.colors.text_input_primary}
+                itemContainerStyle={containerStyle}
+                containerStyle={formInputStyle}
+                iconRight={hiddenText ? 'ic_eye_close' : 'ic_eye_open'}
+                iconRightProps={{
+                  fill_color: appTheme.colors.background,
+                  onPress: () => {
+                    setHiddenText(!hiddenText);
+                  },
+                }}
+                onExtraChange={() => {
+                  setError('');
+                }}
+                control={control}
+                name="password"
+                isRequired
+                rules={{required: en.error.requirePassword}}
+              />
+              <FormTextInput
+                label={en.signup.userName}
+                fullWidth
+                placeholder={en.signup.userName}
+                placeholderTextColor={appTheme.colors.text_input_primary}
+                itemContainerStyle={containerStyle}
+                containerStyle={formInputStyle}
+                control={control}
+                name="userName"
+                autoCorrect={false}
+                textContentType="none"
+                autoComplete="off"
+                onExtraChange={() => {
+                  setError('');
+                }}
+                isRequired
+                rules={{required: en.error.requireUserName}}
+              />
+              <FormTextInput
+                label={en.signup.name}
+                fullWidth
+                placeholder={en.signup.name}
+                placeholderTextColor={appTheme.colors.text_input_primary}
+                itemContainerStyle={containerStyle}
+                containerStyle={formInputStyle}
+                control={control}
+                name="name"
+                autoCorrect={false}
+                textContentType="none"
+                autoComplete="off"
+                onExtraChange={() => {
+                  setError('');
+                }}
+                isRequired
+                rules={{required: en.error.requireName}}
+              />
+            </FormInput>
+            <ButtonSubmit
+              loading={loading}
+              disabled={loading}
+              borderRadius={appTheme.border_radius_4}
+              onPress={handleSubmit(handleSignUp)}
+              backgroundColor={appTheme.colors.primary}
+              title="Sign Up"
+              variant="semibold_14"
+            />
+            <Space vertical={scale(appTheme.gap_5)} />
+            <AppTouchable>
+              <TextBackStyled
+                onPress={() => Navigation.goBack()}
+                variant="regular_14">
+                {en.signup.backIndex}
+              </TextBackStyled>
+            </AppTouchable>
+          </FormContent>
+        </Content>
+      </KeyboardAwareScrollView>
     </Container>
   );
 };
 
-const Container = styled.View`
-  flex: 1;
+const TextBackStyled = styled(AppText)`
+  text-decoration: underline;
+`;
+const ContainerError = styled.View`
+  background-color: ${props => props.theme.colors.error}${props => props.theme.alpha_025};
+  margin-top: ${props => props.theme.gap_26}px;
+  padding: ${props => props.theme.gap_12}px ${props => props.theme.gap_16}px;
+  border-radius: ${props => props.theme.gap_4}px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
-const BoxScanQr = styled.View``;
+const Container = styled.SafeAreaView`
+  flex: 1;
+  background-color: ${props =>
+    props.theme.colors.primary + props.theme.alpha_008};
+  padding-top: ${props => props.theme.gap_130}px;
+`;
+
+const FormContent = styled.View`
+  margin: ${props => props.theme.gap_0}px ${props => props.theme.gap_17}px;
+`;
+
+const FormInput = styled.View`
+  margin-top: ${props => props.theme.gap_25}px;
+`;
+
+const Content = styled.View`
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const ButtonSubmit = styled(AppButton)`
+  margin-top: ${props => props.theme.gap_12}px;
+  padding: ${props => props.theme.gap_0}px ${props => props.theme.gap_16}px;
+`;
+
+const WrapHeader = styled.View`
+  align-self: center;
+`;
+
 export default SignUp;

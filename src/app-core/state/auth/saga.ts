@@ -7,15 +7,20 @@ import {call, put, select, takeEvery} from 'redux-saga/effects';
 
 import {AUTH_KEY} from '../storage';
 
-import {requestAuth} from './api';
+import {registerAccount, requestAuth} from './api';
 import {
+  registerAccountAction,
   selectUserPreferences,
   setRole,
   setUserPreferences,
   userLoginAction,
   UserPreferencesType,
 } from './reducer';
-import {AuthBaseResponse, LoginResponseType} from './type';
+import {
+  AuthBaseResponse,
+  LoginResponseType,
+  RegisterResponseType,
+} from './type';
 
 function* loginAppSaga(action: any) {
   if (!userLoginAction.match(action)) {
@@ -61,6 +66,26 @@ function* loginAppSaga(action: any) {
   }
 }
 
+function* registerCutomerSaga(action: any) {
+  if (!registerAccountAction.match(action)) {
+    return;
+  }
+  try {
+    const response: RegisterResponseType = yield call(
+      registerAccount,
+      action.payload,
+    );
+
+    if (response?.errors) {
+      yield handleError(response.errors);
+      return;
+    }
+  } catch (error: any) {
+    handleError(error);
+  }
+}
+
 export default function* () {
   yield takeEvery(userLoginAction.type, loginAppSaga);
+  yield takeEvery(registerAccountAction.type, registerCutomerSaga);
 }

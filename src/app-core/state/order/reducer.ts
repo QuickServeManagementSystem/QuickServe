@@ -72,6 +72,7 @@ type SliceState = {
   listOrderStaff: TGetOrderStaffResponse;
   detailOrder: TGetOrder;
   detailBill: TGetBill;
+  printBill: any;
   listStatusOrder: TGetStatusOrderResponse;
   listOrderHistory: TGetOrderHistoryCustomerResponse;
   listOrderHistoryStaff: TGetOrderHistoryStaffResponse;
@@ -83,6 +84,7 @@ const initialState = {
   listOrderStaff: listStatusDefault,
   detailOrder: {},
   detailBill: {},
+  printBill: {},
   listStatusOrder: listStatusDefault,
 } as SliceState;
 
@@ -180,6 +182,9 @@ export const orderSlice = createSlice({
     setDetailBill: (state: SliceState, {payload}: {payload: any}) => {
       state.detailBill = payload;
     },
+    setPrintBillPDF: (state: SliceState, {payload}: {payload: any}) => {
+      state.printBill = payload;
+    },
   },
 });
 
@@ -193,6 +198,7 @@ export const {
   updateStatusOrder,
   setListOrderHistory,
   setListOrderHistoryStaff,
+  setPrintBillPDF,
 } = orderSlice.actions;
 
 export const createOrderAction = createAction<TOrderRequest>(
@@ -212,6 +218,10 @@ export const getOrderByIdAction = createAction<TGetOrderByIdRequest>(
 
 export const getBillByIdAction = createAction<TGetBillByIdRequest>(
   `${orderSlice.name}/getBillByIdAction`,
+);
+
+export const getPrintBillPDFAction = createAction<TGetBillByIdRequest>(
+  `${orderSlice.name}/getPrintBillPDFAction`,
 );
 
 export const getListStatusOrderAction = createAction(
@@ -250,6 +260,9 @@ export const selectOrderByIdSelector = (state: AppRootState) =>
 
 export const selectBillByIdSelector = (state: AppRootState) =>
   state.order.detailBill;
+
+export const selectPrintBillSelector = (state: AppRootState) =>
+  state.order.printBill;
 
 export const selectStatusOrderSelector = (state: AppRootState) =>
   state.order.listStatusOrder;

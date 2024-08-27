@@ -118,3 +118,13 @@ export function* apiGetBillById(param: {
 
   return yield call(apiCallProxy, apiRequest);
 }
+
+export function* apiPrintBillPDFById(param: {
+  orderId: string;
+}): Generator<any, any, any> {
+  const apiRequest = (token: string) => {
+    return new apiClient(token).get(`v1/Orders/PrintBillPdf/` + param.orderId);
+  };
+
+  return yield call(apiCallProxy, apiRequest);
+}

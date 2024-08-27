@@ -10,6 +10,7 @@ export interface TProductRequest {
   name?: string;
   pageNumber?: number;
   pageSize?: number;
+  StoreId?: number;
 }
 
 export interface TProductIngredient {

@@ -3,6 +3,13 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  userName: string;
+  name: string;
+}
+
 export type LoginResponseType = {
   id: string;
   userName: string;
@@ -12,7 +19,16 @@ export type LoginResponseType = {
   accessToken: string;
   refreshToken: string;
 };
-
+export type RegisterResponseType = {
+  success: boolean;
+  errors: [
+    {
+      errorCode: number;
+      fieldName: string;
+      description: string;
+    },
+  ];
+};
 export interface AuthBaseResponse<T> {
   success: boolean;
   errors: [

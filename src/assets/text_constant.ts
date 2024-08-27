@@ -45,6 +45,7 @@ export const en = {
     confirm: 'Xác Nhận',
   },
   login: {
+    signUp: 'Đăng Ký',
     welcomeTo: 'Welcome to',
     youHaveAccount: 'Đã có tài khoản',
     younotAccount: 'Chưa có tài khoản',
@@ -52,7 +53,13 @@ export const en = {
     password: 'Password',
     backIndex: 'Quay lại trang chủ',
   },
-
+  signup: {
+    email: 'Email',
+    password: 'Password',
+    userName: 'Tên tài khoản',
+    name: 'Tên người dùng',
+    backIndex: 'Quay lại trang chủ',
+  },
   setting: {
     setting: 'Setting',
     logout: 'Logout',
@@ -80,5 +87,7 @@ export const en = {
   error: {
     requireEmail: 'Email không được để trống',
     requirePassword: 'Password không được để trống',
+    requireName: 'Tên người dùng không được để trống',
+    requireUserName: 'Tên tài khoản không được để trống',
   },
 };
