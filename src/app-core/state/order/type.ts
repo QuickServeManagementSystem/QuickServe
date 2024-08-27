@@ -38,6 +38,10 @@ export type TUpdateOrder = {
   status: number;
 };
 
+export type TUpdateOrderCustomer = {
+  orderId: string;
+};
+
 export type TGetOrderByIdRequest = {
   orderId: string;
 };

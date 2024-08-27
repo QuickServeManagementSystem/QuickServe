@@ -192,7 +192,7 @@ const DetailProduct = () => {
             <AppTextSupportColor
               variant="regular_16"
               color={appTheme.colors.white}>
-              Vui Thêm Món
+              Vui lòng thêm món ăn
             </AppTextSupportColor>
           </TouchAddProduct>
         </WrapAtionAddProduct>

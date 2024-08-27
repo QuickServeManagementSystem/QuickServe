@@ -19,6 +19,7 @@ import {
   apiGetStatusOrder,
   apiPrintBillPDFById,
   apiUpdateOrder,
+  apiUpdateOrderCustomer,
 } from './api';
 import {
   createOrderAction,
@@ -41,7 +42,9 @@ import {
   setPrintBillPDF,
   setStatusOrder,
   updateOrderAction,
+  updateOrderCustomerAction,
   updateStatusOrder,
+  updateStatusOrderCustomer,
 } from './reducer';
 import {
   TGetBill,
@@ -200,6 +203,31 @@ function* getOrderHistoryCustomer(action: any) {
   }
 }
 
+function* UpdateOrderCustomerStatusSaga(action: any) {
+  if (!updateOrderCustomerAction.match(action)) {
+    return;
+  }
+  try {
+    const response: TOrderResponse = yield call(
+      apiUpdateOrderCustomer,
+      action.payload,
+    );
+    if (response.success) {
+      yield put(updateStatusOrderCustomer(response.data));
+      yield put({
+        type: 'ORDER_STATUS_UPDATE_SUCCESS',
+        payload: response.data.status,
+      }); // Dispatch a success action
+      Navigation.navigateTo(APP_SCREEN.HistoryOrder.name);
+      toast.success(`Đã hủy đơn hàng ${response.data.orderId} thành công`);
+    } else {
+      toast.success('Thay đổi trạng thái không thành công');
+    }
+  } catch (error: any) {
+    toast.error('Đơn hàng không update được!');
+    handleError(error);
+  }
+}
 function* createOrderCustomerSaga(action: any) {
   if (!createOrderCustomerAction.match(action)) {
     return;
@@ -295,4 +323,8 @@ export default function* () {
   yield takeEvery(getListOrderStaffAction.type, getListOrderStaffSaga);
   yield takeEvery(getBillByIdAction.type, getBillByIdSaga);
   yield takeEvery(getPrintBillPDFAction.type, getPrintBillSaga);
+  yield takeEvery(
+    updateOrderCustomerAction.type,
+    UpdateOrderCustomerStatusSaga,
+  );
 }

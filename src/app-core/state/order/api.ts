@@ -17,6 +17,7 @@ import {
   TOrderRequest,
   TOrderResponse,
   TUpdateOrder,
+  TUpdateOrderCustomer,
 } from './type';
 
 export function* apiCreateOrder(
@@ -104,6 +105,16 @@ export function* apiGetOrderHistoryStaff(
 ): Generator<any, TGetOrderHistoryStaff, any> {
   const apiRequest = (token: string) => {
     return new apiClient(token).get(`v1/Orders/Staff/OrderStatus`, param);
+  };
+
+  return yield call(apiCallProxy, apiRequest);
+}
+
+export function* apiUpdateOrderCustomer(
+  param: TUpdateOrderCustomer,
+): Generator<any, TOrderResponse, any> {
+  const apiRequest = (token: string) => {
+    return new apiClient(token).put(`v1/Orders/CancelOrder`, param);
   };
 
   return yield call(apiCallProxy, apiRequest);

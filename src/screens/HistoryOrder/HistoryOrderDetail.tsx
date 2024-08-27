@@ -2,6 +2,7 @@ import {useAppDispatch, useAppSelector} from '@app-core/state';
 import {
   getOrderByIdAction,
   selectOrderByIdSelector,
+  updateOrderCustomerAction,
 } from '@app-core/state/order/reducer';
 import {
   getListStoreAction,
@@ -52,6 +53,11 @@ const HistoryOrderDetail = () => {
       expandedIngredientIndex === index ? null : index,
     );
   };
+  const handleCancelOrder = () => {
+    if (orderId) {
+      dispatch(updateOrderCustomerAction({orderId: orderId}));
+    }
+  };
 
   return (
     <Container>
@@ -71,6 +77,11 @@ const HistoryOrderDetail = () => {
           Trạng thái đơn: <BoldText>{getStatusLabel(status)}</BoldText>
         </TextInfo>
       </OrderInfoContainer>
+      {status === 1 || status === 2 ? (
+        <CancelOrderButton onPress={handleCancelOrder}>
+          <CancelOrderButtonText>Tiến hành hủy đơn</CancelOrderButtonText>
+        </CancelOrderButton>
+      ) : null}
       <Space vertical={scale(20)} />
       <ProductList>
         {products?.map((product, index) => (
@@ -249,4 +260,15 @@ const ToggleButtonText = styled.Text`
   color: ${({theme}) => theme.colors.primary};
 `;
 
+const CancelOrderButton = styled.TouchableOpacity`
+  background-color: ${({theme}) => theme.colors.primary};
+  padding: ${scale(10)}px;
+  align-items: center;
+  border-radius: ${scale(5)}px;
+`;
+
+const CancelOrderButtonText = styled.Text`
+  font-size: ${scale(16)}px;
+  color: ${({theme}) => theme.colors.white};
+`;
 export default HistoryOrderDetail;

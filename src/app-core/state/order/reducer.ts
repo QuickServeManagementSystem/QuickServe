@@ -170,6 +170,20 @@ export const orderSlice = createSlice({
     ) => {
       state.listOrderHistory = payload;
     },
+    updateStatusOrderCustomer: (
+      state: SliceState,
+      {payload}: {payload: TUpdateOrder},
+    ) => {
+      const index = state.listOrder.data.findIndex(
+        item => item.id === payload.orderId,
+      );
+      if (index !== -1) {
+        state.listOrder.data[index].status = payload.status;
+      } else {
+        state.detailOrder.status = payload.status;
+      }
+    },
+
     setListOrderHistoryStaff: (
       state: SliceState,
       {payload}: {payload: TGetOrderHistoryStaffResponse},
@@ -196,6 +210,7 @@ export const {
   setDetailBill,
   setStatusOrder,
   updateStatusOrder,
+  updateStatusOrderCustomer,
   setListOrderHistory,
   setListOrderHistoryStaff,
   setPrintBillPDF,
@@ -238,6 +253,11 @@ export const getListOrderHistoryAction = createAction(
 export const createOrderCustomerAction = createAction<TOrderCustomerRequest>(
   `${orderSlice.name}/orderCustomerAction`,
 );
+
+export const updateOrderCustomerAction = createAction<TUpdateOrder>(
+  `${orderSlice.name}/updateOrderCustomerAction`,
+);
+
 export const getListOrderHistoryStaffAction = createAction(
   `${orderSlice.name}/getListOrderHistoryStaffAction`,
   ({selectedStatus}) => ({

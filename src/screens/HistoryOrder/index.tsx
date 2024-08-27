@@ -5,6 +5,7 @@ import {
 } from '@app-core/state/order/reducer';
 import {APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
+import { useRoute } from '@react-navigation/native';
 import {formatNumber, Space} from '@utils/common';
 import AppFlatlist from '@views/AppFlatlist';
 import AppHeader from '@views/AppHeader';
@@ -20,10 +21,12 @@ const HistoryOrder = () => {
   const dispatch = useAppDispatch();
   const orderHistory = useAppSelector(selectListOrderHistorySelector);
   const [last7Days, setLast7Days] = useState(false);
+  const route = useRoute();
+  const {status} = route.params || {};
 
   useEffect(() => {
     dispatch(getListOrderHistoryAction({last7Days}));
-  }, [dispatch, last7Days]);
+  }, [dispatch, last7Days, status]);
 
   const handleViewDetails = (orderId: any) => {
     console.log('Navigating to order details with ID:', orderId);
@@ -116,11 +119,11 @@ const HistoryOrder = () => {
 const getStatusLabel = (status: any) => {
   switch (status) {
     case 2:
-      return 'Hóa đơn đã thanh toán';
+      return 'Đơn đã thanh toán';
     case 3:
-      return 'Hóa đơn đang chuẩn bị';
+      return 'Đơn đang chuẩn bị';
     case 4:
-      return 'Hóa đơn đã hoàn thành';
+      return 'Đơn đã hoàn thành';
     case 5:
       return 'Đơn khách đã lấy';
     case 6:

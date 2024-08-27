@@ -67,7 +67,9 @@ const Payment = () => {
       : buttons;
   }, [currentRole]);
 
-  const [selectedId, setSelectedId] = useState<string>('1');
+  const [selectedId, setSelectedId] = useState<string>(
+    currentRole === ERole.Customer ? '2' : '1',
+  );
 
   const containerStyle: FormItemProps['containerStyle'] = {};
 
@@ -88,7 +90,6 @@ const Payment = () => {
   const ContainerStyle: StyleProp<ViewStyle> = {};
 
   const handleOrder = (data: any) => {
-    // Check if a payment method is selected
     if (!selectedId) {
       toast.error('Vui lòng chọn phương thức thanh toán');
       return;
@@ -178,23 +179,15 @@ const Payment = () => {
         {
           text: 'Xác nhận',
           onPress: () => {
-            // Show error message and navigate back
-            toast.error('Đơn thanh toán đã được tạo nhưng chưa thanh toán!');
+            toast.error(
+              'Đơn đã được tạo nhưng chưa thanh toán! vui lòng thanh toán tại cửa hàng hoặc hủy đơn hàng',
+            );
             Navigation.replace(APP_SCREEN.AppStack.name);
             clearData();
           },
         },
       ],
       {cancelable: false},
-    );
-  };
-  const MessageDisplay = () => {
-    return (
-      <AppTextSupportColor
-        variant="bold_12"
-        color={appTheme.colors.text_input_primary}>
-        {en.order.message}
-      </AppTextSupportColor>
     );
   };
   return (
@@ -212,7 +205,7 @@ const Payment = () => {
           keyExtractor={(item: any) => item.productTemplateId.toString()}
         />
         <Footer>
-          {/* <FormTextInput
+          <FormTextInput
             placeholder={en.order.message}
             placeholderTextColor={appTheme.colors.text_input_primary}
             itemContainerStyle={containerStyle}
@@ -225,8 +218,7 @@ const Payment = () => {
             inputMode="text"
             autoCorrect={false}
             autoComplete="off"
-          /> */}
-          <MessageDisplay />
+          />
           <WrapPrice>
             <RadioGroup
               radioButtons={radioButtons}
