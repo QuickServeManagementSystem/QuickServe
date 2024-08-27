@@ -2,7 +2,12 @@ import {handleError} from '@app-core/network/proxy';
 import {call, put, takeEvery} from 'redux-saga/effects';
 
 import {apiGetCategory, apiGetProduct} from './api';
-import {categoriesAction, setListCategories, setListProduct} from './reducer';
+import {
+  categoriesAction,
+  productAction,
+  setListCategories,
+  setListProduct,
+} from './reducer';
 import {TCategoriesResponse, TProductResponse} from './type';
 
 function* getCategorySaga(action: any) {
@@ -28,7 +33,7 @@ function* getCategorySaga(action: any) {
 }
 
 function* getProductSaga(action: any) {
-  if (!categoriesAction.match(action)) {
+  if (!productAction.match(action)) {
     return;
   }
   const {payload} = action;
@@ -51,5 +56,5 @@ function* getProductSaga(action: any) {
 
 export default function* () {
   yield takeEvery(categoriesAction.type, getCategorySaga);
-  yield takeEvery(categoriesAction.type, getProductSaga);
+  yield takeEvery(productAction.type, getProductSaga);
 }

@@ -42,6 +42,9 @@ const Setting = () => {
       case ESetting.profile:
         Navigation.navigateTo(APP_SCREEN.Profile.name);
         return;
+      case ESetting.orderPolicy:
+        Navigation.navigateTo(APP_SCREEN.OrderPolicy.name);
+        return;
     }
   };
 

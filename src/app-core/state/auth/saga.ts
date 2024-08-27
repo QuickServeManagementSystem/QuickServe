@@ -1,8 +1,9 @@
 import {handleError} from '@app-core/network/proxy';
-import {APP_SCREEN} from '@navigation/constant';
+import {APP_SCREEN, AUTH_APP_SCREEN} from '@navigation/constant';
 import Navigation from '@navigation/Provider';
 import EventInstance from '@utils/eventInstance/eventInstance';
 import {EventType} from '@utils/eventInstance/type';
+import toast from '@utils/toast';
 import {call, put, select, takeEvery} from 'redux-saga/effects';
 
 import {AUTH_KEY} from '../storage';
@@ -79,6 +80,10 @@ function* registerCutomerSaga(action: any) {
     if (response?.errors) {
       yield handleError(response.errors);
       return;
+    }
+    if (response) {
+      Navigation.reset(AUTH_APP_SCREEN.SignIn.name);
+      toast.success('Đăng ký thành công!');
     }
   } catch (error: any) {
     handleError(error);

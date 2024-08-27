@@ -48,7 +48,7 @@ function App(): React.JSX.Element {
     isFirstLoading: isFirstLoadingProduct,
     isLoadMore: isLoadMoreProduct,
     isRefreshing: isRefreshingProduct,
-  } = useAPIList(productAction, getListProruct, {StoreId: storeId});
+  } = useAPIList(productAction, getListProruct, {storeId});
 
   useEffect(() => {
     if (!selectedCategory) setListProduct(dataProduct ?? []);
@@ -62,6 +62,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     clearData();
   }, [status]);
+
   const listProductStyle: ViewStyle = {
     flexDirection: 'column',
     paddingBottom: scale(100),

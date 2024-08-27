@@ -173,7 +173,7 @@ const SignUp = () => {
               borderRadius={appTheme.border_radius_4}
               onPress={handleSubmit(handleSignUp)}
               backgroundColor={appTheme.colors.primary}
-              title="Sign Up"
+              title="Đăng ký"
               variant="semibold_14"
             />
             <Space vertical={scale(appTheme.gap_5)} />

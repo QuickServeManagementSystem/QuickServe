@@ -11,6 +11,7 @@ import {DetailProduct, Home, Order, Setting, Splash} from '@screens/index';
 import Welcome from '@screens/Login';
 import SignIn from '@screens/Login/signIn';
 import SignUp from '@screens/Login/signUp';
+import OrderPolicy from '@screens/OrderPolicy';
 import Payment from '@screens/Payment';
 import WebViewPaymentVNPay from '@screens/PaymentVNPay';
 import Profile from '@screens/Profile';
@@ -143,6 +144,10 @@ export const APP_SCREEN = {
     name: 'Bill',
     component: Bill,
   },
+  OrderPolicy: {
+    name: 'OrderPolicy',
+    component: OrderPolicy,
+  },
   Profile: {
     name: 'Profile',
     component: Profile,
@@ -173,7 +178,7 @@ export interface ScreenPropType {
   };
 
   [APP_SCREEN.Order.name]: undefined;
-
+  [APP_SCREEN.OrderPolicy.name]: undefined;
   [APP_SCREEN.WebViewPaymentVNPay.name]: {
     url: string;
   };

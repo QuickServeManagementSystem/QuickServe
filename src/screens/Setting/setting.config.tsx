@@ -14,6 +14,7 @@ export enum ESetting {
   historyOrderStaff = 'historyOrderStaff',
   bill = 'bill',
   profile = 'profile',
+  orderPolicy = 'orderPolicy',
 }
 
 export const dataSettings: SettingsProps[] = [
@@ -41,6 +42,11 @@ export const dataSettings: SettingsProps[] = [
     name: en.setting.bill,
     icon: 'ic_history',
     id: ESetting.bill,
+  },
+  {
+    name: en.setting.OrderPolicy,
+    icon: 'ic_history',
+    id: ESetting.orderPolicy,
   },
   {
     name: en.setting.profile,

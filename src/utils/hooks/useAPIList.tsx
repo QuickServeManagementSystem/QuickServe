@@ -7,7 +7,12 @@ import {
   TGetStatusOrder,
   TGetStatusOrderResponse,
 } from '@app-core/state/order/type';
-import {TCategoriesRequest, TCategory} from '@app-core/state/product/type';
+import {
+  TCategoriesRequest,
+  TCategory,
+  TProduct,
+  TProductRequest,
+} from '@app-core/state/product/type';
 import {BaseResType} from '@app-core/state/type';
 import {ActionCreatorWithPayload} from '@reduxjs/toolkit';
 import {isNull} from '@utils/common';
@@ -19,12 +24,14 @@ export type TypeAPIRequest =
   | TIngredientRequest
   | TGetOrderRequest
   | TGetOrderByIdRequest
+  | TProductRequest
   | undefined;
 export type TypeAPIRespone =
   | TCategory
   | TIngredient
   | TGetOrder
   | TGetStatusOrder
+  | TProduct
   | undefined;
 
 const useAPIList = <T extends TypeAPIRespone, P extends TypeAPIRequest>(

@@ -69,6 +69,7 @@ export const en = {
     userHistoryProduct: 'Lịch Sử Mưa Hàng',
     bill: 'Đơn hàng',
     profile: 'Thông tin cá nhân',
+    OrderPolicy: 'Chính sách đặt hàng',
   },
   action: {
     off: 'Off',
