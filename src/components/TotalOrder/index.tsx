@@ -49,13 +49,14 @@ const TotalOrder = React.forwardRef((props, ref: TotalOrderRef) => {
       calculateTotalPriceSelector(state.orderProduct, state.orderIngredient),
     [calculateTotalPriceSelector, state.orderIngredient, state.orderProduct],
   );
-
   return currentRoute &&
     currentRoute !== AUTH_APP_SCREEN.SignIn.name &&
     currentRoute !== AUTH_APP_SCREEN.Welcome.name &&
     currentRoute !== APP_SCREEN.Splash.name &&
     currentRoute !== APP_SCREEN.Cart.name &&
     currentRoute !== APP_SCREEN.Payment.name &&
+    currentRoute !== APP_SCREEN.Bill.name &&
+    currentRoute !== APP_SCREEN.BillDetail.name &&
     currentRoute !== APP_SCREEN.WebViewPaymentVNPay.name &&
     currentRoute !== APP_SCREEN.StatusOrder.name &&
     currentRoute !== BOTTOM_TAB_SCREEN.Setting.name &&

@@ -28,21 +28,42 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
   const [amounts, setAmounts] = useState<{[key: number]: number}>({});
 
   useEffect(() => {
-    const arrayStepIds = state.orderIngredient
-      .filter((_ing: any) => _ing.productId === productId)
-      .flatMap((_ing: any) => _ing.stepId);
-    const idsStepList = listStep.map(step => step.id);
+    // Collect selected step IDs from the order ingredient state
+    const selectedStepIds = state.orderIngredient
+      .filter((ingredient: any) => ingredient.productId === productId)
+      .map((ingredient: any) => ingredient.stepId);
 
-    const uniqueStepIds = [...new Set(arrayStepIds)];
+    // Unique selected step IDs
+    const uniqueSelectedStepIds = [...new Set(selectedStepIds)];
 
-    const areArraysEqual =
-      uniqueStepIds.length === idsStepList.length &&
-      uniqueStepIds.every((item: any) => idsStepList.includes(item));
+    // IDs from the listStep state
+    const allStepIds = listStep.map(step => step.id);
 
-    if (!areArraysEqual) {
-      totalPrice.current?.onOk(false);
-    } else {
+    // Check if all required steps are covered
+    const allRequiredStepsCovered = listStep.every(step => {
+      if (step.min === 0) {
+        // If min is 0, the step is optional
+        return true;
+      }
+      // Check if the step is in the selected steps and meets the min requirement
+      return uniqueSelectedStepIds.includes(step.id);
+    });
+
+    // Validate if all steps with min > 0 are either covered or optional
+    const areAllRequiredStepsCovered = listStep.every(step => {
+      if (step.min > 0) {
+        const selectedIds = state.orderIngredient
+          .filter((ingredient: any) => ingredient.stepId === step.id)
+          .map((ingredient: any) => ingredient.id);
+        return selectedIds.length >= step.min;
+      }
+      return true; // Optional steps (min = 0) are considered covered
+    });
+
+    if (allRequiredStepsCovered && areAllRequiredStepsCovered) {
       totalPrice.current?.onOk(true);
+    } else {
+      totalPrice.current?.onOk(false);
     }
   }, [listStep, productId, state.orderIngredient, totalPrice]);
 
@@ -100,6 +121,7 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
       isSelected: true,
     });
   };
+
   const renderIngredientDetail = (item: Ingredient) => {
     const isSelected = state.orderIngredient.some(
       (ing: any) =>
@@ -111,8 +133,10 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
     // có nguyên liệu bán ra
     if (!item.isSold) {
       isDisabled = true;
-    }
-    if (item.remainingQuantity < item.max && item.remainingQuantity > 0) {
+    } else if (
+      item.remainingQuantity < item.max &&
+      item.remainingQuantity > 0
+    ) {
       if (isSelected && amounts[item.id] > item.remainingQuantity) {
         isDisabled = true;
       }

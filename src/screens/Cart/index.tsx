@@ -138,13 +138,12 @@ const Cart = () => {
       (ingredient: any) => ingredient.productId === item.productTemplateId,
     );
 
-    // Calculate total ingredient price
-    const totalIngredientPrice = productIngredients.reduce(
+    const totalIngredientPricePerItem = productIngredients.reduce(
       (total, ingredient) => total + ingredient.price * ingredient.quantity,
       0,
     );
+    const totalIngredientPrice = totalIngredientPricePerItem * item.quantity;
 
-    const totalPrice = (item.price + totalIngredientPrice) * item.quantity;
     return (
       <ContainerCart key={item.productTemplateId}>
         <Space vertical={scale(5)} />
@@ -163,7 +162,10 @@ const Cart = () => {
             <AppTextSupportColor
               variant="semibold_24"
               color={appTheme.colors.primary}>
-              {en.common.vnd.replace('{number}', formatNumber(item.price))}
+              {en.common.vnd.replace(
+                '{number}',
+                formatNumber(totalIngredientPrice),
+              )}
             </AppTextSupportColor>
           </WrapInfoProduct>
           <WrapAction>
@@ -354,7 +356,7 @@ const WrapButton = styled(AppTouchable)`
   bottom: 0;
   align-items: center;
   align-self: center;
-  margin-bottom: ${scale(30)}px;
+  margin-bottom: ${scale(20)}px;
   border-radius: ${({theme}) => theme.border_radius_8}px;
   width: ${MaxSize.WIDTH / 1.1}px;
   padding: ${({theme}) => theme.gap_10}px;
