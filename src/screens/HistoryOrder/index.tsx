@@ -45,7 +45,8 @@ const HistoryOrder = () => {
       case 3:
         return appTheme.colors.orange_light;
       case 4:
-        return appTheme.colors.orange_light;
+      case 5:
+        return appTheme.colors.sussces_light;
       default:
         return appTheme.colors.white;
     }

@@ -65,10 +65,7 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
 
   const handelIncreaseAmount = (item: Ingredient) => {
     const currentAmount = amounts[item.id] || 1;
-    if (
-      item.remainingQuantity !== null &&
-      currentAmount >= item.remainingQuantity
-    ) {
+    if (item.remainingQuantity !== null && currentAmount === item.max) {
       return;
     }
     const updatedAmount = currentAmount + 1;
@@ -115,7 +112,7 @@ const Ingredients = ({itemStep, productId, listStep}: IIngredients) => {
     if (!item.isSold) {
       isDisabled = true;
     }
-    if (item.remainingQuantity < item.max) {
+    if (item.remainingQuantity < item.max && item.remainingQuantity > 0) {
       if (isSelected && amounts[item.id] > item.remainingQuantity) {
         isDisabled = true;
       }

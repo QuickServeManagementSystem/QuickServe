@@ -34,8 +34,8 @@ const Bill = () => {
   const getCardBackgroundColor = (status: any) => {
     switch (status) {
       case 1:
-      case 4:
-        return appTheme.colors.orange_light;
+      case 2:
+        return appTheme.colors.blu_light;
       default:
         return appTheme.colors.white;
     }

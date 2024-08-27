@@ -1,13 +1,14 @@
 import {useAppDispatch, useAppSelector} from '@app-core/state';
 import {
   getBillByIdAction,
+  getPrintBillPDFAction,
   selectBillByIdSelector,
 } from '@app-core/state/order/reducer';
 import {useRoute} from '@react-navigation/native';
 import {formatNumber, Space} from '@utils/common';
 import AppHeader from '@views/AppHeader';
 import React, {useEffect} from 'react';
-import {Text} from 'react-native';
+import {Button, Text} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -30,7 +31,14 @@ const BillDetail = () => {
   if (!billDetail) {
     return <Text>Loading...</Text>;
   }
-
+  const handlePrintBill = async () => {
+    try {
+      const response = await dispatch(getPrintBillPDFAction({orderId}));
+      console.log(response);
+    } catch (error) {
+      console.error('Error printing bill:', error);
+    }
+  };
   const {
     storeName,
     storeAddress,
@@ -94,6 +102,9 @@ const BillDetail = () => {
       <PaymentMethod>Phương thức thanh toán: {paymentMethod}</PaymentMethod>
       <Divider />
       <ThankYou>CẢM ƠN QUÝ KHÁCH! HẸN GẶP LẠI!</ThankYou>
+
+      <Button title="Tiến hành in bill" onPress={handlePrintBill} />
+      <Space vertical={scale(10)} />
     </Container>
   );
 };

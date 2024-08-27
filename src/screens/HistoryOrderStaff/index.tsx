@@ -11,7 +11,6 @@ import AppHeader from '@views/AppHeader';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useEffect, useState} from 'react';
-import {Dimensions, Switch as RNSwitch} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import styled, {useTheme} from 'styled-components/native';
 
@@ -31,22 +30,32 @@ const HistoryOrderStaff = () => {
   };
   const getCardBackgroundColor = (status: any) => {
     switch (status) {
-      case 1:
+      case 3:
         return appTheme.colors.orange_light;
       case 4:
-        return appTheme.colors.orange_light;
+      case 5:
+        return appTheme.colors.sussces_light;
+      case 6:
+      case 7:
+      case 8:
+        return appTheme.colors.red_light;
       default:
         return appTheme.colors.white;
     }
   };
+
+  const filteredOrders =
+    orderHistory?.data.filter(
+      order => order.status >= 3 && order.status <= 8,
+    ) || [];
+
   return (
     <Container>
       <Space vertical={scale(5)} />
       <AppHeader title="Lịch sử đơn hàng" />
       {/* Filter UI */}
-      <FilterContainer></FilterContainer>
       <AppFlatlist
-        data={orderHistory?.data || []}
+        data={filteredOrders}
         renderItem={({item}) => (
           <CardContainer
             style={{
@@ -93,16 +102,21 @@ const HistoryOrderStaff = () => {
     </Container>
   );
 };
+
 const getStatusLabel = (status: any) => {
   switch (status) {
-    case 1:
-      return 'Hóa đơn vừa được tạo';
-    case 2:
-      return 'Hóa đơn đã thanh toán';
     case 3:
       return 'Hóa đơn đang chuẩn bị';
     case 4:
       return 'Hóa đơn đã hoàn thành';
+    case 5:
+      return 'Đơn khách đã lấy';
+    case 6:
+      return 'Đơn đã bị hủy';
+    case 7:
+      return 'Đơn đã hoàn tiền';
+    case 8:
+      return 'Đơn thất bại';
     default:
       return 'Đang xử lý';
   }

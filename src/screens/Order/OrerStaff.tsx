@@ -60,7 +60,7 @@ const OrderStaff: React.FC = () => {
         return (
           <WrapStatus background={appTheme.colors.primary}>
             <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.create}
+              {en.order.pending}
             </Status>
           </WrapStatus>
         );
@@ -68,7 +68,7 @@ const OrderStaff: React.FC = () => {
         return (
           <WrapStatus background={appTheme.colors.primary}>
             <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.paid}
+              {en.order.paided}
             </Status>
           </WrapStatus>
         );
@@ -76,7 +76,7 @@ const OrderStaff: React.FC = () => {
         return (
           <WrapStatus background={appTheme.colors.primary}>
             <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.pending}
+              {en.order.preparing}
             </Status>
           </WrapStatus>
         );
@@ -91,9 +91,33 @@ const OrderStaff: React.FC = () => {
         );
       case 5:
         return (
+          <WrapStatus background={appTheme.colors.green}>
+            <Status variant="semibold_16" color={appTheme.colors.white}>
+              {en.order.got}
+            </Status>
+          </WrapStatus>
+        );
+      case 6:
+        return (
           <WrapStatus background={appTheme.colors.error}>
             <Status variant="semibold_16" color={appTheme.colors.white}>
-              {en.order.error}
+              {en.order.canceled}
+            </Status>
+          </WrapStatus>
+        );
+      case 7:
+        return (
+          <WrapStatus background={appTheme.colors.error}>
+            <Status variant="semibold_16" color={appTheme.colors.white}>
+              {en.order.refund}
+            </Status>
+          </WrapStatus>
+        );
+      case 8:
+        return (
+          <WrapStatus background={appTheme.colors.error}>
+            <Status variant="semibold_16" color={appTheme.colors.white}>
+              {en.order.failed}
             </Status>
           </WrapStatus>
         );
@@ -112,22 +136,29 @@ const OrderStaff: React.FC = () => {
   );
 
   const handleStatusUpdate = (currentStatus: number, newStatus: number) => {
-    if (newStatus === 5) return true;
+    if (newStatus === 8) return true;
     switch (currentStatus) {
       case 1:
-        return newStatus === 2;
+        return newStatus === 2 || newStatus === 6;
       case 2:
-        return newStatus === 3;
+        return newStatus === 3 || newStatus === 6;
       case 3:
         return newStatus === 4;
       case 4:
+        return newStatus === 5;
+      case 5:
+        return newStatus === 6;
+      case 6:
+        return false;
+      case 7:
+        return false;
+      case 8:
         return false;
       default:
         return false;
     }
   };
 
-  // Sửa hàm handleUpdateOrderStatus để không dùng .then
   const handleUpdateOrderStatus = async (
     item: TGetOrderStaff,
     newStatus: number,
@@ -140,9 +171,9 @@ const OrderStaff: React.FC = () => {
             status: newStatus,
           }),
         );
-        unwrapResult(resultAction); // Lấy kết quả nếu thành công
+        unwrapResult(resultAction);
         setSelectedStatus(newStatus);
-        handleFilterChange(newStatus); // cập nhật lại filter
+        handleFilterChange(newStatus);
 
         const updatedDataAction = await dispatch(getListOrderStaffAction());
         const updatedData = unwrapResult(updatedDataAction);
@@ -189,7 +220,7 @@ const OrderStaff: React.FC = () => {
           </FilterButton>
           <FilterButton onPress={() => handleFilterChange(1)}>
             <FilterText variant="regular_16" selected={selectedStatus === 1}>
-              Tạo mới
+              Vừa tạo mới
             </FilterText>
           </FilterButton>
           <FilterButton onPress={() => handleFilterChange(2)}>
@@ -209,7 +240,22 @@ const OrderStaff: React.FC = () => {
           </FilterButton>
           <FilterButton onPress={() => handleFilterChange(5)}>
             <FilterText variant="regular_16" selected={selectedStatus === 5}>
-              Lỗi
+              Đã được lấy
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(6)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 6}>
+              Đã bị hủy
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(7)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 7}>
+              Đã bị hoàn trả
+            </FilterText>
+          </FilterButton>
+          <FilterButton onPress={() => handleFilterChange(8)}>
+            <FilterText variant="regular_16" selected={selectedStatus === 8}>
+              Đã Thất bại
             </FilterText>
           </FilterButton>
         </FilterContainer>

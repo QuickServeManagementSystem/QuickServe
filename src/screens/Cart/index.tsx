@@ -16,7 +16,7 @@ import AppIcon from '@views/AppIcon';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
 import React, {useContext, useEffect} from 'react';
-import {useWindowDimensions} from 'react-native';
+import {Dimensions, useWindowDimensions} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 import styled, {useTheme} from 'styled-components/native';
@@ -148,20 +148,20 @@ const Cart = () => {
     return (
       <ContainerCart key={item.productTemplateId}>
         <Space vertical={scale(5)} />
-        <AppTextSupportColor variant="medium_18" color={appTheme.colors.black}>
+        <AppTextSupportColor variant="medium_20" color={appTheme.colors.black}>
           {en.cart.mainDishes}
         </AppTextSupportColor>
         <Space vertical={scale(10)} />
         <WrapProduct>
           <WrapInfoProduct>
             <AppTextSupportColor
-              variant="bold_20"
+              variant="bold_24"
               color={appTheme.colors.black}>
               {item.name}
             </AppTextSupportColor>
             <Space vertical={scale(10)} />
             <AppTextSupportColor
-              variant="semibold_16"
+              variant="semibold_24"
               color={appTheme.colors.primary}>
               {en.common.vnd.replace('{number}', formatNumber(item.price))}
             </AppTextSupportColor>
@@ -208,7 +208,6 @@ const Cart = () => {
             </WrapActionAmount>
           </WrapAction>
         </WrapProduct>
-        <Space vertical={scale(10)} />
         {productIngredients.length > 0 ? (
           <ButtonViewMore
             onPress={() => {
@@ -248,6 +247,7 @@ const Cart = () => {
 
   return (
     <Container>
+      <Space vertical={scale(5)} />
       <AppHeader
         title="Giỏ Hàng"
         onPressIconLeft={() => {
@@ -278,12 +278,13 @@ const Cart = () => {
 const CartContainer = styled.View`
   background-color: ${({theme}) => theme.colors.gray_9};
   padding: ${({theme}) => theme.gap_10}px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: ${({theme}) => theme.border_radius_8}px;
   shadow-color: ${({theme}) => theme.colors.black};
   shadow-offset: 0px 4px;
   shadow-opacity: 0.1;
   shadow-radius: 10px;
   elevation: 5;
-  border-radius: ${({theme}) => theme.border_radius_8}px;
 `;
 const ContainerCart = styled.View`
   margin: 0 ${({theme}) => theme.gap_16}px;
@@ -328,7 +329,11 @@ const WrapProduct = styled(CartContainer)`
   border-radius: ${({theme}) => theme.border_radius_8}px;
 `;
 
-const WrapInfoProduct = styled.View``;
+const WrapInfoProduct = styled.View`
+  padding-left: ${Dimensions.get('window').width < 450
+    ? scale(0)
+    : scale(10)}px;
+`;
 
 const WrapAction = styled.View``;
 

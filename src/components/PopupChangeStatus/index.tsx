@@ -3,7 +3,7 @@ import {MaxSize, Space} from '@utils/common';
 import AppIcon from '@views/AppIcon';
 import {AppTextSupportColor} from '@views/AppText';
 import AppTouchable from '@views/AppTouchable';
-import React, {useImperativeHandle, useMemo, useState} from 'react';
+import React, {useImperativeHandle, useState} from 'react';
 import {StyleProp, ViewStyle} from 'react-native';
 import ActionSheet, {SheetManager} from 'react-native-actions-sheet';
 import RadioGroup from 'react-native-radio-buttons-group';
@@ -24,23 +24,31 @@ export default React.forwardRef((props, ref: PopupStatusRef) => {
   const [filteredRadioButtons, setFilteredRadioButtons] = useState([]);
 
   const allRadioButtons = [
-    {id: '1', label: en.order.create, value: '1'},
-    {id: '2', label: en.order.paid, value: '2'},
-    {id: '3', label: en.order.pending, value: '3'},
+    {id: '1', label: en.order.pending, value: '1'},
+    {id: '2', label: en.order.paided, value: '2'},
+    {id: '3', label: en.order.preparing, value: '3'},
     {id: '4', label: en.order.success, value: '4'},
-    {id: '5', label: en.order.error, value: '5'},
+    {id: '5', label: en.order.got, value: '5'},
+    {id: '6', label: en.order.canceled, value: '6'},
+    {id: '7', label: en.order.refund, value: '7'},
+    {id: '8', label: en.order.failed, value: '8'},
   ];
 
   const filterRadioButtons = (currentStatus: number) => {
     switch (currentStatus) {
       case 1:
-        return allRadioButtons.filter(option => ['2', '5'].includes(option.id));
+        return allRadioButtons.filter(option => ['2', '6'].includes(option.id));
       case 2:
-        return allRadioButtons.filter(option => ['3', '5'].includes(option.id));
+        return allRadioButtons.filter(option => ['3', '6'].includes(option.id));
       case 3:
-        return allRadioButtons.filter(option => ['4', '5'].includes(option.id));
+        return allRadioButtons.filter(option => option.id === '4');
       case 4:
         return allRadioButtons.filter(option => option.id === '5');
+      case 5:
+      case 6:
+      case 7:
+      case 8:
+        return [];
       default:
         return allRadioButtons;
     }
