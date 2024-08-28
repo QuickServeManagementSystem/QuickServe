@@ -28,9 +28,9 @@ const StatusOrder = () => {
   const statusOrder = React.useMemo(() => {
     switch (data?.status) {
       case 1:
-        return en.order.create;
+        return en.order.pending;
       case 2:
-        return en.order.paid;
+        return en.order.paided;
       case 3:
         return en.order.pending;
     }

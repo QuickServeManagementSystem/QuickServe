@@ -28,7 +28,7 @@ export const en = {
     pending: 'Đơn hàng vừa được tạo',
     paided: 'Đơn hàng đã thanh toán',
     preparing: 'Đơn hàng đang chuẩn bị',
-    success: 'Đơn hàng vừa được tạo!',
+    success: 'Đơn hàng đã hoàn thành!',
     got: 'Đơn đã được lấy',
     canceled: 'Đơn đã bị hủy',
     refund: 'Đơn hoàn tiền lại',
